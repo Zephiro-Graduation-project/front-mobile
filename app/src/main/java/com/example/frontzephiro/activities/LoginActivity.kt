@@ -1,8 +1,9 @@
-package com.example.frontzephiro
+package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.frontzephiro.R
 import com.example.frontzephiro.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {

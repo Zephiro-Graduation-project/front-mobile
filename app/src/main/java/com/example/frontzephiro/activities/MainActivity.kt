@@ -1,4 +1,4 @@
-package com.example.frontzephiro
+package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
