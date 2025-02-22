@@ -14,6 +14,8 @@
     <string name="correoElectronico">Correo electrónico</string>
     <string name="confirmarContrasena">Confirmar contraseña</string>
     <string name="fechaNacimiento">Fecha de nacimiento</string>
+
     <!-- RegisterFragment -->
+    <string name="registrarse">Registrarme</string>
 
 </resources>
