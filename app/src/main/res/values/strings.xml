@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Zephiro</string>
+    <string name="nombreApp">Zephiro</string>
+    <!-- LoginFragment -->
+    <string name="botonInicioSesion">Iniciar sesión</string>
+    <string name="mensajeBienvenida">¡Bienvenido de vuelta!</string>
+    <string name="correo">Correo electronico</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="olvidasteContrasena">¿Olvidaste tu contraseña?</string>
+    <!-- Fin LoginFragment -->
+    <string name="Register">Registrarme</string>
+    <string name="Login">Iniciar sesión</string>
+    <string name="nombreCompleto">Nombre completo</string>
+    <string name="correoElectronico">Correo electrónico</string>
+    <string name="confirmarContrasena">Confirmar contraseña</string>
+    <string name="fechaNacimiento">Fecha de nacimiento</string>
+    <!-- RegisterFragment -->
+
+</resources>
