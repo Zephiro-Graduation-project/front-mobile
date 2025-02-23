@@ -50,4 +50,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    //Implementation para hacer llamadas al al backend (Retrofit)
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Para manejar logs (opcional)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    // Para manejar fechas con LocalDate en JSON
+    implementation ("com.google.code.gson:gson:2.10.1")
+
 }
