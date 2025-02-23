@@ -33,16 +33,23 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         // Manejar clic en el botón de login
-        binding.btnLogin.setOnClickListener {
+        binding.botonIniciarSesion.setOnClickListener {
+            Log.d("LoginActivity", "🟢 Botón de login presionado")
+            Toast.makeText(this, "🟢 Botón presionado", Toast.LENGTH_SHORT).show()
+
             val email = binding.emailInput.text.toString().trim()
             val password = binding.passwordInput.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
+                Log.d("LoginActivity", "🟢 Iniciando sesión con: $email")
                 loginUser(email, password)
             } else {
-                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                Log.e("LoginActivity", "❌ Campos vacíos")
+                Toast.makeText(this, "❌ Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
         // Cambiar a pantalla de registro
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, _ ->
@@ -57,30 +64,33 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val call = apiService.login(UserEntity(null, email, password, null))
+        val user = UserEntity(mail = email, password = password) // ✅ Se asegura que birthdate no se envíe
+        val call = apiService.login(user)
 
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val token = response.body()!!.token
                     saveToken(token)
-                    Toast.makeText(applicationContext, "Login exitoso", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "✅ Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
-                    // Ir a la pantalla principal después del login
+                    // Redirigir a HomeActivity después del login
                     val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(applicationContext, "Error en las credenciales", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "❌ Credenciales incorrectas", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Log.e("LoginActivity", "Error de conexión", t)
-                Toast.makeText(applicationContext, "Error de conexión", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "❌ Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
             }
         })
     }
+
+
+
 
     private fun saveToken(token: String) {
         val editor = sharedPreferences.edit()
