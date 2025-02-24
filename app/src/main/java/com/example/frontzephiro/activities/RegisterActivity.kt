@@ -28,11 +28,11 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Animación de registro
+        // Esto es para que inicie lo del lotti
         binding.animationRegister.setAnimation(R.raw.flower)
         binding.animationRegister.playAnimation()
 
-        // Botón para ir al Login
+        // Para cambiar al login
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, _ ->
             if (checkedId == R.id.btnLogin) {
                 val intent = Intent(this, LoginActivity::class.java)
@@ -42,11 +42,10 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        // Mostrar DatePicker al tocar el campo de fecha
+        // esto es para que las fechas inicien
         binding.birthdateInput.setOnClickListener { showDatePicker() }
         binding.birthdatePicker.setOnClickListener { showDatePicker() }
 
-        // Manejo del botón de registro
         binding.botonIniciarSesion.setOnClickListener {
             Log.d("RegisterActivity", "🟢 Botón de registro presionado")
             Toast.makeText(this, "🟢 Botón presionado", Toast.LENGTH_SHORT).show()
@@ -97,7 +96,6 @@ class RegisterActivity : AppCompatActivity() {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
         val user = UserEntity(name, email, password, birthdate) // ✅ Birthdate sigue siendo Date
 
-        // 🔥 Log para depuración
         val gson = Gson()
         val jsonBody = gson.toJson(user)
         Log.d("RegisterActivity", "📡 Enviando JSON: $jsonBody")
@@ -108,23 +106,23 @@ class RegisterActivity : AppCompatActivity() {
                 Log.d("RegisterActivity", "📡 Respuesta del servidor: $responseBody")
 
                 if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "✅ Registro exitoso", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Log.e("RegisterActivity", "❌ Error en el registro: Código ${response.code()}, Respuesta: $responseBody")
+                    Log.e("RegisterActivity", "Error en el registro: Código ${response.code()}, Respuesta: $responseBody")
 
                     // 🟢 Cambio en los Toasts: Mensaje más claro
-                    Toast.makeText(applicationContext, "❌ No se pudo registrar. Verifica los datos.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "No se pudo registrar. Verifica los datos.", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("RegisterActivity", "❌ Error de conexión en registro", t)
+                Log.e("RegisterActivity", "Error de conexión en registro", t)
 
                 // 🟢 Cambio en los Toasts: Mensaje más claro
-                Toast.makeText(applicationContext, "❌ Error de conexión. Intenta de nuevo más tarde.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Error de conexión. Intenta de nuevo más tarde.", Toast.LENGTH_LONG).show()
             }
         })
     }

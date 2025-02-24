@@ -11,7 +11,7 @@ class DateAdapter : TypeAdapter<Date?>() {
 
     override fun write(out: JsonWriter, value: Date?) {
         if (value == null) {
-            out.nullValue() // ✅ Evita el error si la fecha es null
+            out.nullValue()
         } else {
             out.value(dateFormat.format(value))
         }

@@ -13,7 +13,7 @@ class LocalDateAdapter : TypeAdapter<LocalDate>() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
     override fun write(out: JsonWriter, value: LocalDate) {
-        out.value(value.format(formatter)) // Convertir LocalDate a String antes de enviarlo
+        out.value(value.format(formatter))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -22,7 +22,7 @@ class LocalDateAdapter : TypeAdapter<LocalDate>() {
         return LocalDate.parse(
             `in`.nextString(),
             formatter
-        ) // Convertir String a LocalDate al recibir
+        )
     }
 
     companion object {

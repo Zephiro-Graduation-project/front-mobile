@@ -14,7 +14,7 @@ public class RetrofitClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new DateAdapter()) // Adaptador para fechas
+                    .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
             retrofit = new Retrofit.Builder()

@@ -24,15 +24,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
-        // Animación de login
+        // Esto es para que el lotti inicie
         binding.animationLogin.setAnimation(R.raw.flower)
         binding.animationLogin.playAnimation()
         setContentView(binding.root)
 
-        // Inicializar SharedPreferences para guardar el token
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
-        // Manejar clic en el botón de login
         binding.botonIniciarSesion.setOnClickListener {
             Log.d("LoginActivity", "🟢 Botón de login presionado")
             Toast.makeText(this, "🟢 Botón presionado", Toast.LENGTH_SHORT).show()
@@ -49,9 +47,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
-
-        // Cambiar a pantalla de registro
+        // Esto es para que cambie a la pantalla de registro
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, _ ->
             if (checkedId == R.id.btnRegister) {
                 val intent = Intent(this, RegisterActivity::class.java)
@@ -64,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val user = UserEntity(mail = email, password = password) // ✅ Se asegura que birthdate no se envíe
+        val user = UserEntity(mail = email, password = password)
         val call = apiService.login(user)
 
         call.enqueue(object : Callback<LoginResponse> {
@@ -72,19 +68,19 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     val token = response.body()!!.token
                     saveToken(token)
-                    Toast.makeText(applicationContext, "✅ Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
-                    // Redirigir a HomeActivity después del login
+                    // redireccion a homepage para que probar que si sirviera
                     val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(applicationContext, "❌ Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "❌ Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
             }
         })
     }
