@@ -18,4 +18,12 @@
     <!-- RegisterFragment -->
     <string name="registrarse">Registrarme</string>
 
+    <!-- HomeFragment -->
+    <string name="opcion1">Inicio</string>
+    <string name="opcion2">Seguimiento</string>
+    <string name="opcion3">Jardin</string>
+    <string name="opcion4">Contenido</string>
+    <string name="opcion5">Perfil</string>
+    <!-- Fin HomeFragment -->
+
 </resources>
