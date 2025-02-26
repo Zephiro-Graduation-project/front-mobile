@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
@@ -22,8 +23,8 @@ class HomeActivity : AppCompatActivity() {
         textViewToken.text = "Token: $token"
 
         // Botón para cerrar sesión
-        val btnLogout = findViewById<Button>(R.id.btnLogout)
-        btnLogout.setOnClickListener {
+        val exit = findViewById<ImageView>(R.id.exit)
+        exit.setOnClickListener {
             logout()
         }
     }

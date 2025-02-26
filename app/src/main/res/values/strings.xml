@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Zephiro</string>
     <string name="nombreApp">Zephiro</string>
+
     <!-- LoginFragment -->
     <string name="botonInicioSesion">Iniciar sesión</string>
     <string name="mensajeBienvenida">¡Bienvenido de vuelta!</string>
@@ -18,12 +19,16 @@
     <!-- RegisterFragment -->
     <string name="registrarse">Registrarme</string>
 
-    <!-- HomeFragment -->
+    <!-- Menu de navegación -->
     <string name="opcion1">Inicio</string>
     <string name="opcion2">Seguimiento</string>
     <string name="opcion3">Jardin</string>
     <string name="opcion4">Contenido</string>
     <string name="opcion5">Perfil</string>
-    <!-- Fin HomeFragment -->
+    <!-- Fin Menu de navegación -->
+
+    <!-- Home -->
+    <string name="mensajePersona">Hola, [Nombre]!</string>
+    <!-- Fin Home -->
 
 </resources>
