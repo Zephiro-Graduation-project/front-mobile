@@ -236,6 +236,60 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- CardView de Registro Diario -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardRegDiario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        android:background="#FFF8FC"
+        app:layout_constraintTop_toBottomOf="@id/cardContRecom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvTitleC4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registro Diario:"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvDescrpC4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Si / No has hecho tu registro diario"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitleC4"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/ivCard4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_coin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="Icono de moneda"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
 
 
