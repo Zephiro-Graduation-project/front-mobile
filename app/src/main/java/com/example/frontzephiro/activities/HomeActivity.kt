@@ -20,8 +20,8 @@ class HomeActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("TOKEN", "")
 
-        val textViewToken = findViewById<TextView>(R.id.textViewToken)
-        textViewToken.text = "Token: $token"
+        //val textViewToken = findViewById<TextView>(R.id.textViewToken)
+        //textViewToken.text = "Token: $token"
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->

@@ -33,5 +33,8 @@
 
     <!-- ContentFragment -->
     <string name="ejemplo">Contenido</string>
+    <string name="nombreCategoria">Nombre categoria</string>
+    <string name="titulo">Titulo</string>
+    <string name="autor">Autor</string>
     <!-- Fin ContentFragment -->
 </resources>
