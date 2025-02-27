@@ -1,37 +1,29 @@
 package com.example.frontzephiro.activities
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class HomeActivity : AppCompatActivity() {
-    private lateinit var sharedPreferences: SharedPreferences
+class ContentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_content) // Asegúrate de que este XML tenga el mismo nombre que tu layout
 
-        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        val token = sharedPreferences.getString("TOKEN", "")
-
-        val textViewToken = findViewById<TextView>(R.id.textViewToken)
-        textViewToken.text = "Token: $token"
-
+        // Configurar BottomNavigationView
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+        bottomNavigationView.selectedItemId = R.id.menuContenido // Resalta la pestaña actual
+
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menuInicio -> {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
-                /*
-                R.id.menuSeguimiento -> {
+                /*R.id.menuSeguimiento -> {
                     startActivity(Intent(this, SeguimientoActivity::class.java))
                     true
                 }
@@ -39,11 +31,8 @@ class HomeActivity : AppCompatActivity() {
                     startActivity(Intent(this, JardinActivity::class.java))
                     true
                 }*/
-                R.id.menuContenido -> {
-                    startActivity(Intent(this, ContentActivity::class.java))
-                    true
-                }/*
-                R.id.menuPerfil -> {
+                R.id.menuContenido -> true
+                /*R.id.menuPerfil -> {
                     startActivity(Intent(this, PerfilActivity::class.java))
                     true
                 }*/
@@ -51,6 +40,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        // Botón de logout
         val exit = findViewById<ImageView>(R.id.exit)
         exit.setOnClickListener {
             logout()
@@ -58,10 +48,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val editor = sharedPreferences.edit()
-        editor.remove("TOKEN")
-        editor.apply()
-
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()

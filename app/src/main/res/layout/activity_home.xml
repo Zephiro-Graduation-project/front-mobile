@@ -2,20 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!-- Esto es por si se decide dejar el nombre arriba a la izquierda en vez del logo -->
-    <!--<TextView
-        android:id="@+id/logoHome"
-        android:layout_width="120sp"
-        android:layout_height="30sp"
-        android:textSize="20sp"
-        android:text="@string/nombreApp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>-->
 
     <ImageView
         android:id="@+id/logoHome"
@@ -38,7 +27,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- esto es para el logo de cerrar la sesión -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/exit"
         android:layout_width="30dp"
@@ -52,31 +40,209 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardLottiHome"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:cardCornerRadius="90dp"
+        app:cardElevation="4dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="0dp"
+        app:cardBackgroundColor="@color/moradoTesis"
+        app:layout_constraintTop_toBottomOf="@id/logoHome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottiHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:lottie_rawRes="@raw/tiger"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"/>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/namePersona"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/mensajePersona"
-        app:layout_constraintTop_toBottomOf="@id/lottiHome"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="20dp"
-        android:textSize="18sp"/>
-
-    <!-- esto es para el logo de cerrar la sesión -->
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottiHome"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        app:lottie_rawRes="@raw/tiger"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/logoHome"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/cardLottiHome"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- CardView de Estado actual -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardEstadoAct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        android:background="#FFF8FC"
+        app:layout_constraintTop_toBottomOf="@id/namePersona"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvTitleC1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estado actual:"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvDescrpC1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ultima emoción registrada:____"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitleC1"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/ivCard1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_coin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="Icono de moneda"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- CardView de las monedas -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardMonedas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        android:background="#FFF8FC"
+        app:layout_constraintTop_toBottomOf="@id/cardEstadoAct"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tus monedas:"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¡Tienes ### monedas!"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/ivCoin"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_coin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="Icono de moneda"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- CardView de Contenido recomendado -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardContRecom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        android:background="#FFF8FC"
+        app:layout_constraintTop_toBottomOf="@id/cardMonedas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvTitleC3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contenido recomendado:"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvDescrpC3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Titulo Ej ¿Qué es ansiedad / estrés?"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitleC3"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/ivCard3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_coin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="Icono de moneda"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+
+
+
+    <!--Esto es lo que muestra el token
     <TextView
         android:id="@+id/textViewToken"
         android:layout_width="wrap_content"
@@ -85,12 +251,10 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:paddingBottom="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardMonedas"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>-->
 
-    <!-- menu de navegación, solo es pegar lo de abajo para q funcione en todas las pantallas -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

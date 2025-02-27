@@ -31,4 +31,7 @@
     <string name="mensajePersona">Hola, [Nombre]!</string>
     <!-- Fin Home -->
 
+    <!-- ContentFragment -->
+    <string name="ejemplo">Contenido</string>
+    <!-- Fin ContentFragment -->
 </resources>
