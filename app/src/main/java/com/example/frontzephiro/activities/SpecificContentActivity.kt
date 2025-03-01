@@ -7,11 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class ContentActivity : AppCompatActivity() {
-
+class SpecificContentActivity : AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_content)
+        setContentView(R.layout.activity_specific_content)
 
         // Configurar BottomNavigationView
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)

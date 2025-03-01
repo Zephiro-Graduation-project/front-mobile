@@ -26,19 +26,16 @@ class HomeActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.menuInicio -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    true
-                }
+                R.id.menuInicio -> true
                 /*
                 R.id.menuSeguimiento -> {
                     startActivity(Intent(this, SeguimientoActivity::class.java))
                     true
-                }
-                R.id.menuJardin -> {
-                    startActivity(Intent(this, JardinActivity::class.java))
-                    true
                 }*/
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, SpecificContentActivity::class.java))
+                    true
+                }
                 R.id.menuContenido -> {
                     startActivity(Intent(this, ContentActivity::class.java))
                     true
