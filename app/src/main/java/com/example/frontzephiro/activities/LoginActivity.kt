@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
 import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.databinding.ActivityLoginBinding
+import com.example.frontzephiro.models.LoginRequest
 import com.example.frontzephiro.models.LoginResponse
-import com.example.frontzephiro.models.UserEntity
 import com.example.frontzephiro.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
-        // Esto es para que el lotti inicie
+        // Inicializa la animación si la usas
         binding.animationLogin.setAnimation(R.raw.flower)
         binding.animationLogin.playAnimation()
         setContentView(binding.root)
@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // Esto es para que cambie a la pantalla de registro
+        // Cambio a pantalla de registro
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, _ ->
             if (checkedId == R.id.btnRegister) {
                 val intent = Intent(this, RegisterActivity::class.java)
@@ -60,8 +60,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val user = UserEntity(mail = email, password = password)
-        val call = apiService.login(user)
+        // Se utiliza LoginRequest en lugar de UserEntity
+        val loginRequest = LoginRequest(mail = email, password = password)
+        val call = apiService.login(loginRequest)
 
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -70,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
                     saveToken(token)
                     Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
-                    // redireccion a homepage para que probar que si sirviera
+                    // Redirige a HomeActivity
                     val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -81,12 +82,10 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
+                Log.e("LoginActivity", "Error de conexión: ${t.localizedMessage}")
             }
         })
     }
-
-
-
 
     private fun saveToken(token: String) {
         val editor = sharedPreferences.edit()
