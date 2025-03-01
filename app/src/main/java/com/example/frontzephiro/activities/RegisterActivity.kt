@@ -47,8 +47,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.birthdatePicker.setOnClickListener { showDatePicker() }
 
         binding.botonIniciarSesion.setOnClickListener {
-            Log.d("RegisterActivity", "🟢 Botón de registro presionado")
-            Toast.makeText(this, "🟢 Botón presionado", Toast.LENGTH_SHORT).show()
 
             val name = binding.nameInput.text.toString().trim()
             val email = binding.emailInput.text.toString().trim()
@@ -57,19 +55,18 @@ class RegisterActivity : AppCompatActivity() {
 
             if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && birthdateText.isNotEmpty()) {
                 try {
-                    // Convertir la fecha de String a Date
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val birthdate: Date = dateFormat.parse(birthdateText)!!
 
-                    Log.d("RegisterActivity", "🟢 Registrando usuario: $name, $email, ${dateFormat.format(birthdate)}")
+                    Log.d("RegisterActivity", "Registrando usuario: $name, $email, ${dateFormat.format(birthdate)}")
                     registerUser(name, email, password, birthdate)
                 } catch (e: Exception) {
-                    Log.e("RegisterActivity", "❌ Formato de fecha incorrecto", e)
-                    Toast.makeText(this, "❌ Formato de fecha incorrecto", Toast.LENGTH_SHORT).show()
+                    Log.e("RegisterActivity", "Formato de fecha incorrecto", e)
+                    Toast.makeText(this, "Formato de fecha incorrecto", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Log.e("RegisterActivity", "❌ Campos vacíos")
-                Toast.makeText(this, "❌ Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                Log.e("RegisterActivity", "Campos vacíos")
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -83,7 +80,7 @@ class RegisterActivity : AppCompatActivity() {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                binding.birthdateInput.setText(dateFormat.format(calendar.time)) // Seteamos la fecha en el input
+                binding.birthdateInput.setText(dateFormat.format(calendar.time))
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -94,7 +91,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun registerUser(name: String, email: String, password: String, birthdate: Date) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val user = UserEntity(name, email, password, birthdate) // ✅ Birthdate sigue siendo Date
+        val user = UserEntity(name, email, password, birthdate)
 
         val gson = Gson()
         val jsonBody = gson.toJson(user)
@@ -113,7 +110,6 @@ class RegisterActivity : AppCompatActivity() {
                 } else {
                     Log.e("RegisterActivity", "Error en el registro: Código ${response.code()}, Respuesta: $responseBody")
 
-                    // 🟢 Cambio en los Toasts: Mensaje más claro
                     Toast.makeText(applicationContext, "No se pudo registrar. Verifica los datos.", Toast.LENGTH_LONG).show()
                 }
             }
@@ -121,7 +117,6 @@ class RegisterActivity : AppCompatActivity() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Log.e("RegisterActivity", "Error de conexión en registro", t)
 
-                // 🟢 Cambio en los Toasts: Mensaje más claro
                 Toast.makeText(applicationContext, "Error de conexión. Intenta de nuevo más tarde.", Toast.LENGTH_LONG).show()
             }
         })

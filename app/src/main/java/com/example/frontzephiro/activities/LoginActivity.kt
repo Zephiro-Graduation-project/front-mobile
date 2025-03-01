@@ -24,7 +24,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
-        // Inicializa la animación si la usas
         binding.animationLogin.setAnimation(R.raw.flower)
         binding.animationLogin.playAnimation()
         setContentView(binding.root)
@@ -32,18 +31,15 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         binding.botonIniciarSesion.setOnClickListener {
-            Log.d("LoginActivity", "🟢 Botón de login presionado")
-            Toast.makeText(this, "🟢 Botón presionado", Toast.LENGTH_SHORT).show()
 
             val email = binding.emailInput.text.toString().trim()
             val password = binding.passwordInput.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                Log.d("LoginActivity", "🟢 Iniciando sesión con: $email")
                 loginUser(email, password)
             } else {
-                Log.e("LoginActivity", "❌ Campos vacíos")
-                Toast.makeText(this, "❌ Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                Log.e("LoginActivity", "Campos vacíos")
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -67,8 +63,9 @@ class LoginActivity : AppCompatActivity() {
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val token = response.body()!!.token
-                    saveToken(token)
+                    val loginResponse = response.body()!!
+                    // Guarda token, nombre e id en SharedPreferences
+                    saveUserData(loginResponse.token, loginResponse.name, loginResponse.id)
                     Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
                     // Redirige a HomeActivity
@@ -87,9 +84,11 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveToken(token: String) {
+    private fun saveUserData(token: String, name: String, id: Long) {
         val editor = sharedPreferences.edit()
         editor.putString("TOKEN", token)
+        editor.putString("USER_NAME", name)
+        editor.putLong("USER_ID", id)
         editor.apply()
     }
 }

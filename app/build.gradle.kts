@@ -59,5 +59,6 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
     //Implementacion para materialDesign
     implementation ("com.google.android.material:material:1.11.0")
-
+    //Implementacion para poder leer token JWT
+    implementation ("com.auth0.android:jwtdecode:2.0.1")
 }
