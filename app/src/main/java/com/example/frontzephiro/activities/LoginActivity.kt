@@ -15,6 +15,10 @@ import com.example.frontzephiro.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.util.Base64
+import com.example.frontzephiro.utils.EncryptionUtils
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -56,21 +60,23 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        // Se utiliza LoginRequest en lugar de UserEntity
-        val loginRequest = LoginRequest(mail = email, password = password)
+        // Define una clave secreta compartida (asegúrate de que sea la misma en el back-end)
+        val secretKey = "1234567890123456"  // Ejemplo: 16 caracteres para AES-128
+
+        // Encriptar la contraseña
+        val encryptedPassword = EncryptionUtils.encryptAES(password, secretKey)
+
+        // Crear la solicitud con la contraseña encriptada
+        val loginRequest = LoginRequest(mail = email, password = encryptedPassword)
         val call = apiService.login(loginRequest)
 
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val loginResponse = response.body()!!
-                    // Guarda token, nombre e id en SharedPreferences
                     saveUserData(loginResponse.token, loginResponse.name, loginResponse.id)
                     Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-
-                    // Redirige a HomeActivity
-                    val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(applicationContext, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
@@ -79,7 +85,6 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
-                Log.e("LoginActivity", "Error de conexión: ${t.localizedMessage}")
             }
         })
     }

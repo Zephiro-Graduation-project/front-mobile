@@ -11,6 +11,7 @@ import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.databinding.ActivityRegisterBinding
 import com.example.frontzephiro.models.UserEntity
 import com.example.frontzephiro.network.RetrofitClient
+import com.example.frontzephiro.utils.EncryptionUtils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -91,32 +92,26 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun registerUser(name: String, email: String, password: String, birthdate: Date) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val user = UserEntity(name, email, password, birthdate)
+        val secretKey = "1234567890123456"  // La misma clave que en el login
 
-        val gson = Gson()
-        val jsonBody = gson.toJson(user)
-        Log.d("RegisterActivity", "📡 Enviando JSON: $jsonBody")
+        // Encriptar la contraseña
+        val encryptedPassword = EncryptionUtils.encryptAES(password, secretKey)
+
+        // Crear el objeto de usuario usando la contraseña encriptada
+        val user = UserEntity(name, email, encryptedPassword, birthdate)
 
         apiService.register(user).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val responseBody = response.body()?.string()
-                Log.d("RegisterActivity", "📡 Respuesta del servidor: $responseBody")
-
                 if (response.isSuccessful) {
                     Toast.makeText(applicationContext, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
                     finish()
                 } else {
-                    Log.e("RegisterActivity", "Error en el registro: Código ${response.code()}, Respuesta: $responseBody")
-
                     Toast.makeText(applicationContext, "No se pudo registrar. Verifica los datos.", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("RegisterActivity", "Error de conexión en registro", t)
-
                 Toast.makeText(applicationContext, "Error de conexión. Intenta de nuevo más tarde.", Toast.LENGTH_LONG).show()
             }
         })
