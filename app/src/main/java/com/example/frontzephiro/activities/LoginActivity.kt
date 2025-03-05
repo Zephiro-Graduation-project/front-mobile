@@ -99,4 +99,11 @@ class LoginActivity : AppCompatActivity() {
         editor.putLong("USER_ID", id)
         editor.apply()
     }
+    //para  poder recuperar la data en caualquier parte de la app usar
+    /*
+    val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+    val token = sharedPreferences.getString("TOKEN", null)
+    val userName = sharedPreferences.getString("USER_NAME", null)
+    val userId = sharedPreferences.getLong("USER_ID", -1L)
+     */
 }
