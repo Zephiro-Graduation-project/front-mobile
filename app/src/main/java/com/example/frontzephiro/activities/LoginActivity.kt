@@ -74,6 +74,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val loginResponse = response.body()!!
+                    //esto es para guardar en el cache el token, nombre y id
                     saveUserData(loginResponse.token, loginResponse.name, loginResponse.id)
                     Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
@@ -83,6 +84,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
+
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
             }
@@ -90,6 +92,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveUserData(token: String, name: String, id: Long) {
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("TOKEN", token)
         editor.putString("USER_NAME", name)
