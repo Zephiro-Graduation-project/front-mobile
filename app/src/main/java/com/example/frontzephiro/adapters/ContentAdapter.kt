@@ -27,7 +27,6 @@ class ContentAdapter(private val contentList: List<Content>) : RecyclerView.Adap
 
     class ContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(content: Content) {
-            // Asigna el título, autor y descripción
             itemView.findViewById<TextView>(R.id.tvTitle).text = content.name
             itemView.findViewById<TextView>(R.id.tvAuthor).text = content.author
             itemView.findViewById<TextView>(R.id.tvDescription).text = content.description
