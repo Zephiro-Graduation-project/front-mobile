@@ -49,6 +49,7 @@
     <string name="botonEliminarCuenta">Eliminar cuenta</string>
     <string name="contactosEmergencia">Contactos de emergencia</string>
     <string name="metricas">Métricas</string>
+    <string name="eliminarCuenta">Eliminar tu cuenta</string>
     <!-- Fin ProfileFragment -->
 
     <!-- CreateEmergencyContactFragment -->

@@ -38,11 +38,11 @@ class HomeActivity : AppCompatActivity() {
                 R.id.menuContenido -> {
                     startActivity(Intent(this, ContentActivity::class.java))
                     true
-                }/*
+                }
                 R.id.menuPerfil -> {
-                    startActivity(Intent(this, PerfilActivity::class.java))
+                    startActivity(Intent(this, ProfileActivity::class.java))
                     true
-                }*/
+                }
                 else -> false
             }
         }
