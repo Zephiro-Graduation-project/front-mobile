@@ -60,13 +60,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        // Define una clave secreta compartida (asegúrate de que sea la misma en el back-end)
-        val secretKey = "1234567890123456"  // Ejemplo: 16 caracteres para AES-128
+        val secretKey = "1234567890123456"
 
-        // Encriptar la contraseña
         val encryptedPassword = EncryptionUtils.encryptAES(password, secretKey)
 
-        // Crear la solicitud con la contraseña encriptada
         val loginRequest = LoginRequest(mail = email, password = encryptedPassword)
         val call = apiService.login(loginRequest)
 
@@ -91,12 +88,12 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveUserData(token: String, name: String, id: Long) {
+    private fun saveUserData(token: String, name: String, id: String) {
         val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("TOKEN", token)
         editor.putString("USER_NAME", name)
-        editor.putLong("USER_ID", id)
+        editor.putString("USER_ID", id)
         editor.apply()
     }
 

@@ -11,6 +11,6 @@ object EncryptionUtils {
         val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val encryptedBytes = cipher.doFinal(input.toByteArray(Charsets.UTF_8))
-        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT).trim()
+        return Base64.encodeToString(encryptedBytes, Base64.NO_WRAP)
     }
 }
