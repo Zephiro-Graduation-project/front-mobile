@@ -8,7 +8,7 @@
     tools:context=".activities.activity_create_emergency_contact">
 
     <ImageView
-        android:id="@+id/topLeftImage"
+        android:id="@+id/btnBack"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_margin="16dp"
@@ -24,7 +24,7 @@
         android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
         app:lottie_rawRes="@raw/emergency_contact"
-        app:layout_constraintTop_toBottomOf="@id/topLeftImage"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -40,6 +40,10 @@
             android:exported="false" />
         <activity android:name=".activities.ProfileActivity"
             android:exported="false" />
+        <activity android:name=".activities.EmergencyContactsActivity"
+            android:exported="false" />
+        <activity android:name=".activities.CreateEmergencyContactActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

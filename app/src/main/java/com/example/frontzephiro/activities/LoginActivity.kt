@@ -47,7 +47,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // Cambio a pantalla de registro
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, _ ->
             if (checkedId == R.id.btnRegister) {
                 val intent = Intent(this, RegisterActivity::class.java)
@@ -71,8 +70,8 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val loginResponse = response.body()!!
-                    //esto es para guardar en el cache el token, nombre y id
-                    saveUserData(loginResponse.token, loginResponse.name, loginResponse.id)
+                    //esto es para guardar en el cache el token, nombre, id y correo
+                    saveUserData(loginResponse.token, loginResponse.name, loginResponse.id, email)
                     Toast.makeText(applicationContext, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
                     finish()
@@ -81,20 +80,21 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error de conexión. Revisa tu internet.", Toast.LENGTH_LONG).show()
             }
         })
     }
 
-    private fun saveUserData(token: String, name: String, id: String) {
+    private fun saveUserData(token: String, name: String, id: String, email: String) {
         val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("TOKEN", token)
         editor.putString("USER_NAME", name)
         editor.putString("USER_ID", id)
+        editor.putString("email", email)
         editor.apply()
+        //Log.d("LOGIN_ACTIVITY", "Email guardado: '${sharedPreferences.getString("email", "")}'")
     }
 
     //para  poder recuperar la data en caualquier parte de la app usar
