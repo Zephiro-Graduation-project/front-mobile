@@ -1,10 +1,12 @@
 package com.example.frontzephiro.activities
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.widget.EditText
+import android.widget.TextView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,6 +19,8 @@ import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.models.MailDTO
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import okhttp3.ResponseBody
 
 class ProfileActivity : AppCompatActivity() {
@@ -25,10 +29,21 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var lottieCard1: LottieAnimationView
     private lateinit var lottieCard2: LottieAnimationView
     private lateinit var lottieCard3: LottieAnimationView
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+
+        val userName = sharedPreferences.getString("USER_NAME", "Usuario")
+        val namePersona = findViewById<TextView>(R.id.name)
+        namePersona.text = "$userName"
+
+        val userEmail = sharedPreferences.getString("email", "Correo")
+        val emailPersona = findViewById<TextView>(R.id.correoProfile)
+        emailPersona.text = "$userEmail"
 
         initLottieAnimations()
         setupCardInteractions()
@@ -99,37 +114,32 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun showDeleteAccountDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Eliminar Cuenta")
-        builder.setMessage("Para confirmar la eliminación, ingresa tu correo:")
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input_email, null)
+        val editTextEmail = dialogView.findViewById<TextInputEditText>(R.id.editTextEmail)
 
-        val input = EditText(this)
-        input.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        builder.setView(input)
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Eliminar Cuenta")
+            .setMessage("Para confirmar la eliminación, ingresa tu correo:")
+            .setView(dialogView)
+            .setPositiveButton("Confirmar") { dialog, _ ->
+                val enteredEmail = editTextEmail.text.toString().trim()
+                val storedEmail = sharedPreferences.getString("email", "")?.trim() ?: ""
 
-        builder.setPositiveButton("Confirmar") { dialog, _ ->
-            val enteredEmail = input.text.toString().trim()
-            val sharedPrefs = getSharedPreferences("AppPrefs", MODE_PRIVATE) // Usar "AppPrefs" en lugar de "MyPrefs"
-            val storedEmail = sharedPrefs.getString("email", "")?.trim() ?: ""
+                Log.d("DELETE_ACCOUNT", "Correo ingresado: '$enteredEmail'")
+                Log.d("DELETE_ACCOUNT", "Correo almacenado: '$storedEmail'")
 
-            Log.d("DELETE_ACCOUNT", "Correo ingresado: '$enteredEmail'")
-            Log.d("DELETE_ACCOUNT", "Correo almacenado: '$storedEmail'")
-
-            if (enteredEmail.equals(storedEmail, ignoreCase = true)) {
-                val userId = sharedPrefs.getString("USER_ID", "") ?: ""
-                deleteAccount(userId, enteredEmail)
-            } else {
-                Toast.makeText(this, "El correo ingresado no coincide", Toast.LENGTH_LONG).show()
+                if (enteredEmail.equals(storedEmail, ignoreCase = true)) {
+                    val userId = sharedPreferences.getString("USER_ID", "") ?: ""
+                    deleteAccount(userId, enteredEmail)
+                } else {
+                    Toast.makeText(this, "El correo ingresado no coincide", Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
             }
-            dialog.dismiss()
-        }
-
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun deleteAccount(userId: String, email: String) {
