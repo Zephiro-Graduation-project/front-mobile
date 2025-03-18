@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:layout_margin="8dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Recompensa en monedas -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_coin"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:lottie_rawRes="@raw/coin"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
+            <TextView
+                android:id="@+id/txt_reward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5$ de recompensa"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <!-- Número de días de racha -->
+        <TextView
+            android:id="@+id/txt_streak_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 días de racha"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/txt_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Para conseguir la recompensa se debe realizar el registro diario 10 días consecutivos, ¡Tú puedes!"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

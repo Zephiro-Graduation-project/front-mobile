@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     //Implementation para que los lotti funcionen
     implementation("com.airbnb.android:lottie:6.0.0")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

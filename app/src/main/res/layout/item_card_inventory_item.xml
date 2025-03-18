@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:layout_margin="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:gravity="center_horizontal">
+
+        <!-- Imagen del Producto -->
+        <ImageView
+            android:id="@+id/img_product"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:background="#F0F0F0"/>
+
+        <!-- Nombre del Producto -->
+        <TextView
+            android:id="@+id/txt_product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Planta A"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Cantidad disponible de ese producto -->
+        <TextView
+            android:id="@+id/txt_product_cuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x100"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

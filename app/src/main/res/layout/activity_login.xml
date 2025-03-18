@@ -5,14 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8EDF7"
+    android:background="@color/background"
     tools:context=".activities.LoginActivity">
 
+    <!-- Encabezado -->
     <FrameLayout
         android:id="@+id/headerLogin"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#F3E5F5"
+        android:background="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -24,7 +25,7 @@
             android:text="@string/nombreApp"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="?attr/colorOnPrimary"
             android:layout_gravity="center"/>
     </FrameLayout>
 
@@ -35,7 +36,6 @@
         android:layout_height="180dp"
         app:lottie_rawRes="@raw/flower"
         android:scaleType="centerCrop"
-        android:layout_gravity="center"
         app:layout_constraintTop_toBottomOf="@id/headerLogin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,14 +57,14 @@
             android:id="@+id/btnRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Register"/>
+            android:text="@string/Register"
+            android:checked="true" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Login"
-            android:checked="true"/>
+            android:text="@string/Login"/>
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <!-- Campos de entrada -->
@@ -73,6 +73,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/correoElectronico"
+        app:boxBackgroundMode="filled"
+        app:boxBackgroundColor="@color/textFieldBackground"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/toggleGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +95,9 @@
         android:layout_height="wrap_content"
         android:hint="@string/contrasena"
         app:endIconMode="password_toggle"
-        app:boxStrokeWidth="1dp"
+        app:boxBackgroundMode="filled"
+        app:boxBackgroundColor="@color/textFieldBackground"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:hintEnabled="true"
         app:startIconDrawable="@drawable/baseline_password_24"
         app:layout_constraintTop_toBottomOf="@id/emailInputLayout"
@@ -108,32 +113,31 @@
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <!-- Botón de iniciar sesión -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/botonIniciarSesion"
         android:layout_width="180dp"
         android:layout_height="50dp"
         android:text="@string/botonInicioSesion"
         android:textSize="20sp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintTop_toBottomOf="@id/passwordInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"/>
 
-    <!-- Botón para la parte de olvidar la contra -->
+    <!-- Botón para "Olvidaste tu contraseña" -->
     <TextView
         android:id="@+id/olvidasteContrasena"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/olvidasteContrasena"
         android:textSize="15sp"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="?attr/colorSecondary"
         android:clickable="true"
         app:layout_constraintTop_toBottomOf="@id/botonIniciarSesion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp"/>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

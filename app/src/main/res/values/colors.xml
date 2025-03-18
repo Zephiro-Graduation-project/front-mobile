@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="backTop">#fee7f4</color>
+    <!-- Paleta Principal (Tonos Azules) -->
+    <color name="primary">#4A90E2</color>
+    <color name="primaryVariant">#2C6BB2</color>
+    <color name="primaryLight">#B3D4FC</color>
+    <color name="secondary">#5AABD7</color>
+    <color name="background">#FFFFFF</color> <!-- Fondo Blanco -->
+    <color name="textFieldBackground">#E8F1FA</color> <!-- Color para TextFields -->
+    <color name="textPrimary">#1F3A5F</color>
+    <color name="textSecondary">#4A657A</color>
+
+    <!-- Paleta Secundaria (Elementos gráficos - Inspirada en "Intensamente") -->
+    <color name="azulTesis">#8CD9E3</color>
+    <color name="amarilloTesis">#FBE088</color>
+    <color name="verdeTesis">#C4E69E</color>
+    <color name="naranjaTesis">#FFB870</color>
     <color name="moradoTesis">#C2BAF2</color>
     <color name="fondoCardProfile">#EADDFF</color>
 </resources>
