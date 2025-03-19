@@ -1,6 +1,7 @@
 package com.example.frontzephiro.activities
 
 import android.content.ClipData
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.DragEvent
@@ -17,12 +18,13 @@ class GardenMain : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_garden_main)
 
+        setupCardInteractions()
+
         val gridJardin = findViewById<GridLayout>(R.id.gridJardin)
 
-        // Agregar elementos de prueba
         for (i in 0 until 9) {
             val planta = ImageView(this)
-            planta.setImageResource(R.drawable.basura) // Reemplaza con tu imagen
+            planta.setImageResource(R.drawable.basura)
             planta.layoutParams = GridLayout.LayoutParams().apply {
                 width = 100
                 height = 100
@@ -38,7 +40,6 @@ class GardenMain : AppCompatActivity() {
             gridJardin.addView(planta)
         }
 
-        // Configurar Drag & Drop en el GridLayout
         gridJardin.setOnDragListener { _, event ->
             when (event.action) {
                 DragEvent.ACTION_DRAG_ENTERED -> {
@@ -64,6 +65,20 @@ class GardenMain : AppCompatActivity() {
                 }
             }
             true
+        }
+    }
+
+    private fun setupCardInteractions() {
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btnAlmacen).setOnClickListener {
+            startActivity(Intent(this, GardenInventory::class.java))
+        }
+
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btnTienda).setOnClickListener {
+            startActivity(Intent(this, GardenStore::class.java))
+        }
+
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogros).setOnClickListener {
+            startActivity(Intent(this, GardenAchievements::class.java))
         }
     }
 }

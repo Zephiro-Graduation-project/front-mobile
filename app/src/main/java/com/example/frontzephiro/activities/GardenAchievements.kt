@@ -12,8 +12,8 @@ import com.example.frontzephiro.databinding.ActivityGardenAchievementsBinding
 
 class GardenAchievements : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-private lateinit var binding: ActivityGardenAchievementsBinding
-
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_garden_achievements)
+    }
 }

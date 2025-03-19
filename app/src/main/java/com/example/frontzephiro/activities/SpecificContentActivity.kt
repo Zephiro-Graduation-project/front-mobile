@@ -26,10 +26,11 @@ class SpecificContentActivity : AppCompatActivity()  {
                     startActivity(Intent(this, SeguimientoActivity::class.java))
                     true
                 }
+                */
                 R.id.menuJardin -> {
-                    startActivity(Intent(this, JardinActivity::class.java))
+                    startActivity(Intent(this, GardenMain::class.java))
                     true
-                }*/
+                }
                 R.id.menuContenido -> true
                 /*R.id.menuPerfil -> {
                     startActivity(Intent(this, PerfilActivity::class.java))

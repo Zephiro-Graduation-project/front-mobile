@@ -99,8 +99,13 @@ class ProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
+                /*
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, TrackingActivity::class.java))
+                    true
+                }*/
                 R.id.menuJardin -> {
-                    startActivity(Intent(this, SpecificContentActivity::class.java))
+                    startActivity(Intent(this, GardenMain::class.java))
                     true
                 }
                 R.id.menuContenido -> {
