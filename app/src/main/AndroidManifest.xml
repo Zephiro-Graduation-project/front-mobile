@@ -59,6 +59,8 @@
             android:exported="false" />
         <activity android:name=".activities.CreateEmergencyContactActivity"
             android:exported="false" />
+        <activity android:name=".activities.EmergencyNumbersActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

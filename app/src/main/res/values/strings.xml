@@ -100,4 +100,13 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <!-- Fin CreateEmergencyContactFragment -->
+
+    <!-- EmergencyNumbersFragment -->
+    <string name="tituloColombia">Colombia</string>
+    <string name="numeroColombia">32011010101</string>
+    <string name="lineaNacional">Linea a nivel nacional</string>
+    <string name="numeroNacional">123</string>
+    <string name="ayudaLinea">Ayuda en linea</string>
+    <string name="url">google.com</string>
+    <!-- Fin EmergencyNumbersFragment -->
 </resources>
