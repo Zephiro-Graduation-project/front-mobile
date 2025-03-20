@@ -50,6 +50,7 @@
     <string name="contactosEmergencia">Contactos de emergencia</string>
     <string name="metricas">Métricas</string>
     <string name="eliminarCuenta">Eliminar tu cuenta</string>
+    <string name="numerosEmergencia">Ayuda de emergencia</string>
     <!-- Fin ProfileFragment -->
 
     <!-- CreateEmergencyContactFragment -->
@@ -108,5 +109,6 @@
     <string name="numeroNacional">123</string>
     <string name="ayudaLinea">Ayuda en linea</string>
     <string name="url">google.com</string>
+    <string name="avisoImportante">No tenemos afiliación con estos recursos, pero los compartimos como opciones disponibles para quienes requieran apoyo psicológico.</string>
     <!-- Fin EmergencyNumbersFragment -->
 </resources>

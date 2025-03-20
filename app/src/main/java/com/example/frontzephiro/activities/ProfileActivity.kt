@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,6 +30,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var lottieCard1: LottieAnimationView
     private lateinit var lottieCard2: LottieAnimationView
     private lateinit var lottieCard3: LottieAnimationView
+    private lateinit var lottieCard4: LottieAnimationView
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,7 @@ class ProfileActivity : AppCompatActivity() {
         setupCardInteractions()
         setupBottomNavigation()
 
-        listOf(lottieCard1, lottieCard2, lottieCard3).forEach {
+        listOf(lottieCard1, lottieCard2, lottieCard3,lottieCard4).forEach {
             it.repeatCount = 0
             it.playAnimation()
         }
@@ -60,12 +62,14 @@ class ProfileActivity : AppCompatActivity() {
         lottieCard1 = findViewById(R.id.ivCard1)
         lottieCard2 = findViewById(R.id.ivCard2)
         lottieCard3 = findViewById(R.id.ivCard3)
+        lottieCard4 = findViewById(R.id.ivCard4)
     }
 
     private fun setupCardInteractions() {
         val card1 = findViewById<androidx.cardview.widget.CardView>(R.id.cardContactos)
         val card2 = findViewById<androidx.cardview.widget.CardView>(R.id.cardMetricas)
         val card3 = findViewById<androidx.cardview.widget.CardView>(R.id.cardEliminar)
+        val card4 = findViewById<androidx.cardview.widget.CardView>(R.id.cardNumerosEmergencia)
 
         card1.setOnClickListener {
             lottieCard1.playAnimation()
@@ -81,6 +85,12 @@ class ProfileActivity : AppCompatActivity() {
         card3.setOnClickListener {
             lottieCard3.playAnimation()
             showDeleteAccountDialog()
+        }
+
+        card4.setOnClickListener {
+            lottieCard4.playAnimation()
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
         }
 
         lottieExit.setOnClickListener {

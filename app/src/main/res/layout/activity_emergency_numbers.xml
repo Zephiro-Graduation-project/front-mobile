@@ -191,6 +191,16 @@
         </LinearLayout>
     </ScrollView>
 
+    <TextView
+        android:id="@+id/textoImportante"
+        android:layout_width="380dp"
+        android:layout_height="75dp"
+        android:text="@string/avisoImportante"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- MENÚ INFERIOR -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
