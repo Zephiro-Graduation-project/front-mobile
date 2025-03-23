@@ -111,4 +111,8 @@
     <string name="url">google.com</string>
     <string name="avisoImportante">No tenemos afiliación con estos recursos, pero los compartimos como opciones disponibles para quienes requieran apoyo psicológico.</string>
     <!-- Fin EmergencyNumbersFragment -->
+
+    <!-- SurveyLargeFragment -->
+    <string name="tituloEncuesta">Titulo - Encuesta larga</string>
+    <!-- Fin SurveyLargeFragment -->
 </resources>

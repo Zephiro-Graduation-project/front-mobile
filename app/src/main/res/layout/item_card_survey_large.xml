@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardContent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Title, secondary and supporting text -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Pregunta x "
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="¿Porque ......? Seleccione una de las opciones"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/checkbox_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/checkbox_margin"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/checkbox_child_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Respuesta 1"/>
+
+            <CheckBox
+                android:id="@+id/checkbox_child_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Respuesta 2"/>
+
+            <CheckBox
+                android:id="@+id/checkbox_child_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Respuesta 3"/>
+
+
+            <CheckBox
+                android:id="@+id/checkbox_child_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Respuesta 4"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

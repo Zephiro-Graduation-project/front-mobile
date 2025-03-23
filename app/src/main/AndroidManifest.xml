@@ -61,6 +61,8 @@
             android:exported="false" />
         <activity android:name=".activities.EmergencyNumbersActivity"
             android:exported="false" />
+        <activity android:name=".activities.SurveyLargeActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

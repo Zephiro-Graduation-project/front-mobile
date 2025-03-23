@@ -33,7 +33,22 @@ class ContentActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
-                R.id.menuContenido -> true
+                /*
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, SeguimientoActivity::class.java))
+                    true
+                } */
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, GardenMain::class.java))
+                    true
+                }
+                R.id.menuContenido -> {
+                    true
+                }
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
