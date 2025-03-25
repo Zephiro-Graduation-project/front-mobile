@@ -130,6 +130,7 @@
     <string name="desayuno">Desayuno</string>
     <string name="almuerzo">Almuerzo</string>
     <string name="cena">Cena</string>
+    <string name="slider_desc">Ajusta el nivel</string>
     <!-- Fin SurveySmallFragment y SurveySmallPm-->
 
 </resources>
