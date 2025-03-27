@@ -2,6 +2,7 @@ package com.example.frontzephiro.activities
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -57,6 +58,7 @@ class Store_ItemDetailDialogFragment : DialogFragment() {
         // Acción del botón "Comprar"
         btnBuy.setOnClickListener {
             // Aquí podrías agregar la lógica de compra
+            val intent = Intent(requireContext(), GardenMain::class.java)
             dismiss() // Cerrar el popup
         }
 

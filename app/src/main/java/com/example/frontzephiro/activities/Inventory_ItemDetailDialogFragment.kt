@@ -47,7 +47,7 @@ class Inventory_ItemDetailDialogFragment : DialogFragment() {
         txtProductDescription.text = description
 
         btnSembrar.setOnClickListener {
-            val intent = Intent(requireContext(), MainActivity::class.java)
+            val intent = Intent(requireContext(), GardenMain::class.java)
             intent.putExtra("PLANTA_RES_ID", imageResId)
             intent.putExtra("PLANTA_NOMBRE", name)
             startActivity(intent)
