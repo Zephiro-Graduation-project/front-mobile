@@ -133,4 +133,9 @@
     <string name="slider_desc">Ajusta el nivel</string>
     <!-- Fin SurveySmallFragment y SurveySmallPm-->
 
+    <!-- SurveySmall -->
+    <string name="volver">Volver</string>
+    <string name="tituloEncuestaCorta">Titulo - Encuesta corta am</string>
+    <string name="tituloEncuestaCortaPm">Titulo - Encuesta corta pm</string>
+
 </resources>

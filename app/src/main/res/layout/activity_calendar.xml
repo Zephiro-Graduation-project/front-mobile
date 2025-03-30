@@ -60,49 +60,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
-        android:id="@+id/tituloEncuesta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tituloEncuesta"
-        app:layout_constraintTop_toBottomOf="@id/nombreApp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="50dp"
-        android:textSize="20dp"/>
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/tituloEncuesta"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <include layout="@layout/item_card_estres"/>
-
-            <include layout="@layout/item_card_ansiedad"/>
-
-            <include layout="@layout/item_card_alimentacion"/>
-
-            <include layout="@layout/item_card_ejercicio"/>
-
-            <Button
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:id="@+id/botonEnviar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Enviar"
-                android:layout_gravity="center"/>
-
-        </LinearLayout>
-    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
