@@ -7,12 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
+import com.bumptech.glide.Glide
 import com.example.frontzephiro.R
 import com.example.frontzephiro.models.Store_Item
 
 class Store_ItemAdapter(
     private val storeItemList: List<Store_Item>,
-    private val onProductClick: (Store_Item) -> Unit // Click listener
+    private val onProductClick: (Store_Item) -> Unit
 ) : RecyclerView.Adapter<Store_ItemAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,11 +32,14 @@ class Store_ItemAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = storeItemList[position]
 
-        holder.imgProduct.setImageResource(product.imageResId) // To do: Ver como se va a recibir la imagen
+        Glide.with(holder.itemView.context)
+            .load(product.imageResId)
+            .override(200, 200)
+            .into(holder.imgProduct)
+
         holder.txtProductName.text = product.name
         holder.txtPrice.text = "${product.price}$"
 
-        // Click en la card para abrir el popup de detalles
         holder.itemView.setOnClickListener { onProductClick(product) }
     }
 

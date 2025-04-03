@@ -10,9 +10,6 @@ class SurveyLargeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_survey_large)
-
-        val exit = findViewById<ImageView>(R.id.exit)
-        exit.setOnClickListener { logout() }
     }
 
     private fun logout() {

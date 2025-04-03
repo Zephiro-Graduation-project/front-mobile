@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -17,6 +18,13 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
 
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
         val namePersona = findViewById<TextView>(R.id.namePersona)
@@ -46,22 +54,5 @@ class HomeActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-        val exit = findViewById<ImageView>(R.id.exit)
-        exit.setOnClickListener {
-            logout()
-        }
-    }
-
-    private fun logout() {
-        val editor = sharedPreferences.edit()
-        editor.remove("USER_ID")
-        editor.remove("USER_NAME")
-        editor.remove("TOKEN")
-        editor.apply()
-
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }
