@@ -34,11 +34,11 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menuInicio -> true
-                /*
+
                 R.id.menuSeguimiento -> {
                     startActivity(Intent(this, SeguimientoActivity::class.java))
                     true
-                }*/
+                }
                 R.id.menuJardin -> {
                     startActivity(Intent(this, GardenMain::class.java))
                     true

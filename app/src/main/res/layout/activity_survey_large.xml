@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/background_microsurveys"
+        android:src="@drawable/background_encuesta_dia"
         android:layout_marginTop="10dp"
         android:contentDescription="@null"
         app:layout_constraintTop_toBottomOf="@id/nombreApp"
