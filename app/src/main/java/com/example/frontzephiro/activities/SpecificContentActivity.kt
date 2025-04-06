@@ -39,12 +39,6 @@ class SpecificContentActivity : AppCompatActivity()  {
                 else -> false
             }
         }
-
-        // Botón de logout
-        val exit = findViewById<ImageView>(R.id.exit)
-        exit.setOnClickListener {
-            logout()
-        }
     }
 
     private fun logout() {

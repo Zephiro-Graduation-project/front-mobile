@@ -9,42 +9,68 @@
     tools:context=".activities.GardenInventory">
 
     <!-- HEADER -->
-    <LinearLayout
+    <!-- HEADER -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical"
+        android:background="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="#FFFFFF">
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Logo -->
         <ImageView
             android:id="@+id/logoHome"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/logozephiro_cuadrado"/>
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/logozephiro_cuadrado"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <TextView
+        <!-- Nombre App -->
+        <ImageView
             android:id="@+id/nombreApp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/nombreApp"
-            android:textSize="20sp"
-            android:gravity="center"/>
+            android:layout_width="74dp"
+            android:layout_height="24dp"
+            android:src="@drawable/zephiro_letra"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/logoHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <!-- Icono Call -->
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/exit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:lottie_rawRes="@raw/logout"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            android:clickable="true"/>
-    </LinearLayout>
+            android:id="@+id/call"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:lottie_rawRes="@raw/call"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            android:clickable="true"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/alert"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Icono Alert -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/alert"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:lottie_rawRes="@raw/alert"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            android:clickable="true"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!-- TÍTULO -->
     <LinearLayout
@@ -65,19 +91,17 @@
             android:layout_height="15dp"
             android:src="@drawable/volver"/>
 
-        <!-- Título del amacen -->
+        <!-- Título del almacén -->
         <TextView
             android:id="@+id/txt_almacen"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Almacen"
+            android:text="Almacén"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginStart="20dp"/>
-
     </LinearLayout>
-
 
     <!-- LISTA DE PRODUCTOS DEL USUARIO -->
     <androidx.recyclerview.widget.RecyclerView
@@ -100,5 +124,4 @@
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_navigation_menu"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,9 +53,6 @@ class ContentActivity : AppCompatActivity() {
             }
         }
 
-        val exit = findViewById<ImageView>(R.id.exit)
-        exit.setOnClickListener { logout() }
-
         loadContent()
         loadTags()
     }

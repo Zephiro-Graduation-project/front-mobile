@@ -63,6 +63,8 @@
             android:exported="false" />
         <activity android:name=".activities.SurveyLargeActivity"
             android:exported="false" />
+        <activity android:name=".activities.SeguimientoActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -58,7 +58,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun initLottieAnimations() {
-        lottieExit = findViewById(R.id.exit)
+        //lottieExit = findViewById(R.id.exit)
         lottieCard1 = findViewById(R.id.ivCard1)
         lottieCard2 = findViewById(R.id.ivCard2)
         lottieCard3 = findViewById(R.id.ivCard3)
@@ -93,10 +93,10 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        lottieExit.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
+        //lottieExit.setOnClickListener {
+            //startActivity(Intent(this, LoginActivity::class.java))
+            //finish()
+        //}
     }
 
     private fun setupBottomNavigation() {
