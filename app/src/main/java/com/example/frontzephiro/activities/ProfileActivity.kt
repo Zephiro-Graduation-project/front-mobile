@@ -26,11 +26,6 @@ import okhttp3.ResponseBody
 
 class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var lottieExit: LottieAnimationView
-    private lateinit var lottieCard1: LottieAnimationView
-    private lateinit var lottieCard2: LottieAnimationView
-    private lateinit var lottieCard3: LottieAnimationView
-    private lateinit var lottieCard4: LottieAnimationView
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,51 +42,33 @@ class ProfileActivity : AppCompatActivity() {
         val emailPersona = findViewById<TextView>(R.id.correoProfile)
         emailPersona.text = "$userEmail"
 
-        initLottieAnimations()
         setupCardInteractions()
         setupBottomNavigation()
-
-        listOf(lottieCard1, lottieCard2, lottieCard3,lottieCard4).forEach {
-            it.repeatCount = 0
-            it.playAnimation()
-        }
-    }
-
-    private fun initLottieAnimations() {
-        //lottieExit = findViewById(R.id.exit)
-        lottieCard1 = findViewById(R.id.ivCard1)
-        lottieCard2 = findViewById(R.id.ivCard2)
-        lottieCard3 = findViewById(R.id.ivCard3)
-        lottieCard4 = findViewById(R.id.ivCard4)
     }
 
     private fun setupCardInteractions() {
         val card1 = findViewById<androidx.cardview.widget.CardView>(R.id.cardContactos)
         val card2 = findViewById<androidx.cardview.widget.CardView>(R.id.cardMetricas)
         val card3 = findViewById<androidx.cardview.widget.CardView>(R.id.cardEliminar)
-        val card4 = findViewById<androidx.cardview.widget.CardView>(R.id.cardNumerosEmergencia)
 
         card1.setOnClickListener {
-            lottieCard1.playAnimation()
             val intent = Intent(this, EmergencyContactsActivity::class.java)
             startActivity(intent)
         }
 
         card2.setOnClickListener {
-            lottieCard2.playAnimation()
             // startActivity(Intent(this, MetricsActivity::class.java))
         }
 
         card3.setOnClickListener {
-            lottieCard3.playAnimation()
             showDeleteAccountDialog()
         }
 
-        card4.setOnClickListener {
-            lottieCard4.playAnimation()
-            val intent = Intent(this, EmergencyNumbersActivity::class.java)
-            startActivity(intent)
-        }
+        //.setOnClickListener {
+            //lottieCard4.playAnimation()
+            //val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            //startActivity(intent)
+        //}
 
         //lottieExit.setOnClickListener {
             //startActivity(Intent(this, LoginActivity::class.java))
@@ -109,11 +86,10 @@ class ProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
-                /*
                 R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, TrackingActivity::class.java))
+                    startActivity(Intent(this, SeguimientoActivity::class.java))
                     true
-                }*/
+                }
                 R.id.menuJardin -> {
                     startActivity(Intent(this, GardenMain::class.java))
                     true
