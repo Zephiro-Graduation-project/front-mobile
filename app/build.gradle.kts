@@ -64,4 +64,10 @@ dependencies {
     //Implementacion para poder leer token JWT
     implementation ("com.auth0.android:jwtdecode:2.0.1")
     implementation("com.github.bumptech.glide:glide:4.15.1")
+
+    implementation("com.github.prolificinteractive:material-calendarview:1.4.3")
+
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("androidx.core:core:1.10.1")
+
 }

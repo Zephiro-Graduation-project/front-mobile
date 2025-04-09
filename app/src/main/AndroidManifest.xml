@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.TrackerMain"
+            android:exported="false" />
+        <activity
             android:name=".activities.GardenMain"
             android:exported="false" />
         <activity
@@ -55,15 +58,20 @@
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
-        <activity android:name=".activities.EmergencyContactsActivity"
+        <activity
+            android:name=".activities.EmergencyContactsActivity"
             android:exported="false" />
-        <activity android:name=".activities.CreateEmergencyContactActivity"
+        <activity
+            android:name=".activities.CreateEmergencyContactActivity"
             android:exported="false" />
-        <activity android:name=".activities.EmergencyNumbersActivity"
+        <activity
+            android:name=".activities.EmergencyNumbersActivity"
             android:exported="false" />
-        <activity android:name=".activities.SurveyLargeActivity"
+        <activity
+            android:name=".activities.SurveyLargeActivity"
             android:exported="false" />
-        <activity android:name=".activities.SeguimientoActivity"
+        <activity
+            android:name=".activities.SeguimientoActivity"
             android:exported="false" />
     </application>
 
