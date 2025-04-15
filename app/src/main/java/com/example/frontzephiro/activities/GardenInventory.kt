@@ -1,5 +1,6 @@
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.Inventory_ItemAdapter
 import com.example.frontzephiro.models.Inventory_Item
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class GardenInventory : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -32,6 +34,35 @@ class GardenInventory : AppCompatActivity() {
             showProductPopup(product) // Para abrir el popup al hacer clic
         }
         recyclerView.adapter = inventoryItemAdapter
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.menuJardin
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuInicio -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, TrackerMain::class.java))
+                    true
+                }
+                /*
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, GardenMain::class.java))
+                    true
+                } */
+                R.id.menuContenido -> {
+                    startActivity(Intent(this, ContentActivity::class.java))
+                    true
+                }
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     // Función para mostrar el popup del producto

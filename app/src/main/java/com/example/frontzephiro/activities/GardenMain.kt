@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.example.frontzephiro.R
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 
 class GardenMain : AppCompatActivity() {
@@ -99,6 +100,36 @@ class GardenMain : AppCompatActivity() {
             }
             true
         }
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.menuJardin
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuInicio -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, TrackerMain::class.java))
+                    true
+                }
+                /*
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, GardenMain::class.java))
+                    true
+                } */
+                R.id.menuContenido -> {
+                    startActivity(Intent(this, ContentActivity::class.java))
+                    true
+                }
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
     }
 
     // Configuracion de botones de la pantalla principal
