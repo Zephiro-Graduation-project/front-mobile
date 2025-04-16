@@ -67,7 +67,11 @@ class GardenInventory : AppCompatActivity() {
 
     // Función para mostrar el popup del producto
     private fun showProductPopup(inventoryItem: Inventory_Item) {
-        val dialog = Inventory_ItemDetailDialogFragment.newInstance(inventoryItem)
-        dialog.show(supportFragmentManager, "ProductDetailDialog1")
+        val dialog = Inventory_ItemDetailDialogFragment.newInstance(
+            inventoryItem.imageResId,
+            inventoryItem.name,
+            inventoryItem.description
+        )
+        dialog.show(supportFragmentManager, "InventoryComposeDialog")
     }
 }
