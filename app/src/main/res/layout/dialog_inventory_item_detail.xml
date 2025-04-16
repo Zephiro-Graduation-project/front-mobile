@@ -20,6 +20,7 @@
         android:id="@+id/txt_product_name_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/normal"
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -30,12 +31,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/normal"/>
 
     <Button
         android:id="@+id/btn_sembrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sembrar"
+        android:fontFamily="@font/normal"
         android:layout_marginTop="12dp"/>
 </LinearLayout>

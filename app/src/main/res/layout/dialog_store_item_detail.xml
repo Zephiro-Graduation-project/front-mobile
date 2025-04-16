@@ -23,6 +23,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:fontFamily="@font/normal"
         android:layout_marginTop="8dp"/>
 
     <TextView
@@ -30,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:fontFamily="@font/normal"
         android:layout_marginTop="4dp"
         android:gravity="center"/>
 
@@ -38,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
+        android:fontFamily="@font/normal"
         android:layout_marginTop="8dp"/>
 
     <Button
@@ -45,5 +48,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Comprar"
+        android:fontFamily="@font/normal"
         android:layout_marginTop="12dp"/>
 </LinearLayout>

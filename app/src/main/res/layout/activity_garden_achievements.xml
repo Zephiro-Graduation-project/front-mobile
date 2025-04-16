@@ -99,7 +99,8 @@
             android:text="Logros"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/titulos"/>
 
     </LinearLayout>
 
