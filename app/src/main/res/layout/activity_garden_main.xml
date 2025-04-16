@@ -8,7 +8,6 @@
     tools:context=".activities.GardenMain">
 
     <!-- HEADER -->
-    <!-- HEADER -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
@@ -106,7 +105,8 @@
             android:text="Jardín de _____________"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:fontFamily="@font/normal"/>
     </LinearLayout>
 
 
@@ -128,6 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="📦\nAlmacén"
+            android:fontFamily="@font/normal"
             android:textSize="14sp"
             android:paddingHorizontal="12dp"
             android:layout_marginEnd="12dp"
@@ -139,6 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🏪\nTienda"
+            android:fontFamily="@font/normal"
             android:textSize="14sp"
             android:paddingHorizontal="12dp"
             android:layout_marginEnd="12dp"
@@ -150,6 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="⭐\nLogros"
+            android:fontFamily="@font/normal"
             android:textSize="14sp"
             android:paddingHorizontal="12dp"
             android:backgroundTint="@android:color/white"/>

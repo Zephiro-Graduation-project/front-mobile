@@ -63,7 +63,8 @@
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/nombreApp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/titulos"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
@@ -92,7 +93,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/autor"
                     android:layout_marginTop="10dp"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:fontFamily="@font/titulos"/>
 
                 <ScrollView
                     android:layout_width="match_parent"
@@ -103,7 +105,8 @@
                         android:id="@+id/ResumeArticle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/Lorem" />
+                        android:text="@string/Lorem"
+                        android:fontFamily="@font/normal"/>
 
                 </ScrollView>
 
