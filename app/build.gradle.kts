@@ -36,6 +36,20 @@ android {
     buildFeatures{
         viewBinding = true
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+
 }
 
 dependencies {
@@ -69,5 +83,18 @@ dependencies {
 
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation ("androidx.core:core:1.10.1")
+
+    // Jetpack Compose
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
+
+// Solo para desarrollo
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
 
 }
