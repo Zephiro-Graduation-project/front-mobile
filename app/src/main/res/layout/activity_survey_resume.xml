@@ -20,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
     <!-- Header: logo -->
     <ImageView
         android:id="@+id/logoHome"
@@ -94,7 +93,8 @@
             android:layout_height="wrap_content"
             android:text="@string/volver"
             android:textSize="20sp"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/titulos"/>
     </LinearLayout>
 
     <ScrollView
@@ -118,7 +118,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:layout_gravity="center"
-                android:text="@string/tituloEncuestaCorta"/>
+                android:text="@string/tituloEncuestaCorta"
+                android:fontFamily="@font/titulos"/>
 
             <include layout="@layout/item_card_estres"/>
 
@@ -131,7 +132,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:layout_gravity="center"
-                android:text="@string/tituloEncuestaCortaPm"/>
+                android:text="@string/tituloEncuestaCortaPm"
+                android:fontFamily="@font/titulos"/>
 
             <include layout="@layout/item_card_estres"/>
 
@@ -147,6 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Enviar"
+                android:fontFamily="@font/normal"
                 android:layout_gravity="center"/>
 
         </LinearLayout>

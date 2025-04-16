@@ -99,7 +99,8 @@
             android:text="Tienda"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginStart="20dp"/>  <!-- AQUI SE AGREGA LA SEPARACIÓN -->
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/titulos"/>  <!-- AQUI SE AGREGA LA SEPARACIÓN -->
 
         <!-- Contenedor de monedas alineado a la derecha -->
         <LinearLayout
@@ -123,7 +124,8 @@
                 android:layout_height="wrap_content"
                 android:text="200$"
                 android:textSize="16sp"
-                android:layout_marginStart="5dp"/>
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/normal"/>
         </LinearLayout>
     </LinearLayout>
 

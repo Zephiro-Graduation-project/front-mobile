@@ -80,7 +80,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="50dp"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:fontFamily="@font/titulos"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPreguntas"

@@ -9,7 +9,6 @@
     tools:context=".activities.GardenInventory">
 
     <!-- HEADER -->
-    <!-- HEADER -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
@@ -100,7 +99,8 @@
             android:text="Almacén"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/titulos"/>
     </LinearLayout>
 
     <!-- LISTA DE PRODUCTOS DEL USUARIO -->
