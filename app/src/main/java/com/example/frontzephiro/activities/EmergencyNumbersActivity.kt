@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 
 class EmergencyNumbersActivity : AppCompatActivity() {
@@ -33,6 +34,39 @@ class EmergencyNumbersActivity : AppCompatActivity() {
             val url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(webIntent)
+        }
+
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.menuPerfil
+
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuInicio -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, TrackerMain::class.java))
+                    true
+                }
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, GardenMain::class.java))
+                    true
+                }
+                R.id.menuContenido -> {
+                    startActivity(Intent(this, ContentActivity::class.java))
+                    true
+                }
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.menuInicio -> true
 
                 R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, SeguimientoActivity::class.java))
+                    startActivity(Intent(this, TrackerMain::class.java))
                     true
                 }
                 R.id.menuJardin -> {
