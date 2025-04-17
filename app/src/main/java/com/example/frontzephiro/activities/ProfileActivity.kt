@@ -44,6 +44,7 @@ class ProfileActivity : AppCompatActivity() {
 
         setupCardInteractions()
         setupBottomNavigation()
+
     }
 
     private fun setupCardInteractions() {
