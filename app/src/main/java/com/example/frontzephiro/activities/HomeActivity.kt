@@ -3,7 +3,6 @@ package com.example.frontzephiro.activities
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
@@ -25,6 +24,11 @@ class HomeActivity : AppCompatActivity() {
 
         alertAnimation.repeatCount = 0
         alertAnimation.playAnimation()
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
 
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
         val namePersona = findViewById<TextView>(R.id.namePersona)
