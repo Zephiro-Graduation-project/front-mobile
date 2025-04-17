@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class EmergencyContactsActivity : AppCompatActivity() {
@@ -20,5 +21,38 @@ class EmergencyContactsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.menuPerfil
+
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuInicio -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.menuSeguimiento -> {
+                    startActivity(Intent(this, TrackerMain::class.java))
+                    true
+                }
+                R.id.menuJardin -> {
+                    startActivity(Intent(this, GardenMain::class.java))
+                    true
+                }
+                R.id.menuContenido -> {
+                    startActivity(Intent(this, ContentActivity::class.java))
+                    true
+                }
+                /*
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                } */
+                else -> false
+            }
+        }
     }
 }

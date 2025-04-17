@@ -88,7 +88,7 @@ class ProfileActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, SeguimientoActivity::class.java))
+                    startActivity(Intent(this, TrackerMain::class.java))
                     true
                 }
                 R.id.menuJardin -> {
@@ -99,7 +99,11 @@ class ProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, ContentActivity::class.java))
                     true
                 }
-                R.id.menuPerfil -> true
+                /*
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                } */
                 else -> false
             }
         }
