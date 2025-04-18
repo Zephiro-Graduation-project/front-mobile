@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.AchievementAdapter
 import com.example.frontzephiro.models.Achievement
@@ -15,6 +16,24 @@ class GardenAchievements : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_garden_achievements)
+
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_logros)
 

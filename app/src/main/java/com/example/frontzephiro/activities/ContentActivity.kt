@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.ContentAdapter
 import com.example.frontzephiro.api.ContentApiService
@@ -24,6 +25,24 @@ class ContentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_content)
+
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menuContenido

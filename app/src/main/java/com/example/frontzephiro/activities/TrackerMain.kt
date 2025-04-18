@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -22,6 +23,24 @@ class TrackerMain : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracker_main)
+
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
 
         calendarView = findViewById(R.id.calendarView)
 

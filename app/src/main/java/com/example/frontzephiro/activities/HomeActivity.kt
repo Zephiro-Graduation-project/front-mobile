@@ -25,6 +25,11 @@ class HomeActivity : AppCompatActivity() {
         alertAnimation.repeatCount = 0
         alertAnimation.playAnimation()
 
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
         alertAnimation.setOnClickListener {
             val intent = Intent(this, EmergencyNumbersActivity::class.java)
             startActivity(intent)
