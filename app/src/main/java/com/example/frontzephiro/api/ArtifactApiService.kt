@@ -10,5 +10,11 @@ interface ArtifactApiService {
 
     @GET("artifact/nocturno")
     fun getNocturnoArtifact(): Call<Artifact>
+
+    @GET("artifact/pss")
+    fun getPssArtifact(): Call<Artifact>
+
+    @GET("artifact/gad")
+    fun getGadArtifact(): Call<Artifact>
 }
 

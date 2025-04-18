@@ -119,6 +119,8 @@
     <!-- SurveyLargeFragment -->
     <string name="tituloEncuesta">Encuesta diurna</string>
     <string name="tituloEncuestaPm">Encuesta nocturna</string>
+    <string name="tituloEncuestaPSS">Encuesta semanal</string>
+    <string name="tituloEncuestaGAD">Encuesta de estres</string>
     <!-- Fin SurveyLargeFragment -->
 
     <!-- SurveySmallFragment y SurveySmallPm -->
@@ -132,6 +134,11 @@
     <string name="nivelAlimentacion">Escribe que comiste hoy durante el dia</string>
     <string name="ejercicio">Ejercicio</string>
     <string name="nivelEjercicio">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelControl">Activa para indicar que el control que tuviste hoy</string>
+    <string name="nivelCalma">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelPensamientos">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelActividadFisica">Activa para indicar que hoy hiciste ejercicio</string>
+
     <string name="desayuno">Desayuno</string>
     <string name="almuerzo">Almuerzo</string>
     <string name="cena">Cena</string>

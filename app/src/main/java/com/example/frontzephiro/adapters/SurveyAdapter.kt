@@ -3,6 +3,7 @@ package com.example.frontzephiro.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontzephiro.R
 import com.example.frontzephiro.databinding.ItemQuestionCardBinding
 import com.example.frontzephiro.models.Question
 import com.google.android.material.slider.LabelFormatter
@@ -18,18 +19,21 @@ class SurveyAdapter(
             // 1) Título dinámico
             b.preguntaGeneral.text = q.text
 
-            // 2) Subtítulo (opcionalmente dinámico según measure)
-            // Si quieres, podrías hacer algo como:
-            // val measure = q.measures.firstOrNull() ?: ""
-            // b.textoGeneral.text = when (measure) {
-            //   "Stress" -> b.textoGeneral.context.getString(R.string.nivelEstres)
-            //   "Anxiety"-> b.textoGeneral.context.getString(R.string.nivelAnsiedad)
-            //   "Sleep"  -> b.textoGeneral.context.getString(R.string.nivelSueno)
-            //   "Control"-> b.textoGeneral.context.getString(R.string.nivelControl)
-            //   else     -> ""
-            // }
+            // 2) Subtítulo según el primer measure
+            val measure = q.measures.firstOrNull()
+            b.textoGeneral.text = when (measure) {
+                "Stress"           -> b.textoGeneral.context.getString(R.string.nivelEstres)
+                "Anxiety"          -> b.textoGeneral.context.getString(R.string.nivelAnsiedad)
+                "Sleep"            -> b.textoGeneral.context.getString(R.string.nivelSueno)
+                "Control"          -> b.textoGeneral.context.getString(R.string.nivelControl)
+                "Calm"             -> b.textoGeneral.context.getString(R.string.nivelCalma)
+                "Thoughts"         -> b.textoGeneral.context.getString(R.string.nivelPensamientos)
+                "Physical Activity"-> b.textoGeneral.context.getString(R.string.nivelActividadFisica)
+                "Nutrition"        -> b.textoGeneral.context.getString(R.string.nivelAlimentacion)
+                else               -> ""
+            }
 
-            // 3) Configurar Slider con rango y etiquetas de respuestas
+            // 3) Configurar Slider con rango y etiquetas
             val min = q.answers.minOf { it.numericValue }.toFloat()
             val max = q.answers.maxOf { it.numericValue }.toFloat()
             b.rangeSliderGeneral.apply {
@@ -38,8 +42,7 @@ class SurveyAdapter(
                 stepSize  = 1f
                 value     = min
                 setLabelFormatter(LabelFormatter { value ->
-                    q.answers
-                        .firstOrNull { it.numericValue == value.toInt() }
+                    q.answers.firstOrNull { it.numericValue == value.toInt() }
                         ?.text
                         ?: value.toInt().toString()
                 })
@@ -49,9 +52,7 @@ class SurveyAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemQuestionCardBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return ViewHolder(binding)
     }
