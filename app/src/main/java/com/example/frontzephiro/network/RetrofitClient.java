@@ -1,3 +1,4 @@
+// RetrofitClient.java
 package com.example.frontzephiro.network;
 
 import android.content.Context;
@@ -15,14 +16,20 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    //este es el puerto para el auth
+    // tus URLs existentes
     private static final String BASE_URL = "http://10.0.2.2:8090/";
-    //y este es el puerto para content
     private static final String CONTENT_BASE_URL = "http://10.0.2.2:8070/";
+    // nueva URL para artifact
+    private static final String ARTIFACT_BASE_URL = "http://10.0.2.2:8080/";
 
+    // clientes existentes
     private static Retrofit retrofit = null;
     private static Retrofit retrofitContentPublic = null;
     private static Retrofit retrofitContentAuth = null;
+    // Cliente autenticado para artifact
+    private static Retrofit retrofitArtifactAuth = null;
+    // nuevo cliente
+    private static Retrofit retrofitArtifact = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -80,4 +87,49 @@ public class RetrofitClient {
         }
         return retrofitContentAuth;
     }
+
+    /*** NUEVO MÉTODO PARA ARTIFACT ***/
+    public static Retrofit getArtifactClient() {
+        if (retrofitArtifact == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+            retrofitArtifact = new Retrofit.Builder()
+                    .baseUrl(ARTIFACT_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitArtifact;
+    }
+    public static Retrofit getAuthenticatedArtifactClient(final Context context) {
+        if (retrofitArtifactAuth == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request original = chain.request();
+                            String token = TokenUtils.getToken(context);
+                            Request.Builder builder = original.newBuilder();
+                            if (token != null && !token.isEmpty()) {
+                                builder.header("Authorization", "Bearer " + token);
+                            }
+                            Request request = builder.build();
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+            retrofitArtifactAuth = new Retrofit.Builder()
+                    .baseUrl(ARTIFACT_BASE_URL)            // http://10.0.2.2:8080/
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitArtifactAuth;
+    }
+
 }

@@ -117,14 +117,15 @@
     <!-- Fin EmergencyNumbersFragment -->
 
     <!-- SurveyLargeFragment -->
-    <string name="tituloEncuesta">Titulo - Encuesta larga</string>
+    <string name="tituloEncuesta">Encuesta diurna</string>
+    <string name="tituloEncuestaPm">Encuesta nocturna</string>
     <!-- Fin SurveyLargeFragment -->
 
     <!-- SurveySmallFragment y SurveySmallPm -->
     <string name="estres">Estres</string>
     <string name="nivelEstres">Desliza para indicar tu nivel de estrés al empezar el dia</string>
     <string name="ansiedad">Ansiedad</string>
-    <string name="nivelAnsiedad">Desliza para indicar tu nivel de ansiedad al empezar el dia</string>
+    <string name="nivelAnsiedad">Desliza para indicar tu estado</string>
     <string name="sueno">Sueño</string>
     <string name="nivelSueno">Desliza para indicar cuantas horas dormiste la noche anterior</string>
     <string name="alimentacion">Alimentación</string>
