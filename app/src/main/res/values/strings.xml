@@ -103,13 +103,17 @@
     <!-- Fin CreateEmergencyContactFragment -->
 
     <!-- EmergencyNumbersFragment -->
-    <string name="tituloColombia">Colombia</string>
-    <string name="numeroColombia">32011010101</string>
-    <string name="lineaNacional">Linea a nivel nacional</string>
-    <string name="numeroNacional">123</string>
-    <string name="ayudaLinea">Ayuda en linea</string>
-    <string name="url">google.com</string>
-    <string name="avisoImportante">No tenemos afiliación con estos recursos, pero los compartimos como opciones disponibles para quienes requieran apoyo psicológico.</string>
+    <string name="tituloEmergencia">Números de emergencia</string>
+    <string name="numBogota">Línea 106 Bogotá</string>
+    <string name="infoBogota">Apoyo emocional 24/7 para residentes en Bogotá.</string>
+    <string name="numeroBogota">📞 601 106</string>
+    <string name="numNacional">Línea Nacional Salud Mental</string>
+    <string name="infoNacional">Línea gratuita del Ministerio de Salud.</string>
+    <string name="numeroNacional">📞 01 8000 42 47 42</string>
+    <string name="numJaveriana">Bienestar Psicológico Javeriana</string>
+    <string name="infoJaveriana">Orientación psicológica para estudiantes Javerianos.</string>
+    <string name="numeroJaveriana">📞 601 320 83 20 Ext. 2215 – 2235 – 2275</string>
+    <string name="avisoImportante">⚠️ Zephiro no tiene ninguna relación con estas organizaciones. Esta información se proporciona únicamente con fines informativos.</string>
     <!-- Fin EmergencyNumbersFragment -->
 
     <!-- SurveyLargeFragment -->
