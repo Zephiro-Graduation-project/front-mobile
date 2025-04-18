@@ -10,8 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.frontzephiro.R
 import com.example.frontzephiro.activities.GardenMain
 
 @Composable
@@ -22,6 +25,9 @@ fun InventoryItemDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+
+    val titulosFont = FontFamily(Font(R.font.titulos))
+    val normalFont = FontFamily(Font(R.font.normal))
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -48,14 +54,16 @@ fun InventoryItemDialog(
 
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    fontFamily = titulosFont
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = normalFont
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -66,7 +74,11 @@ fun InventoryItemDialog(
                         onDismiss()
                     }
                 ) {
-                    Text("Sembrar")
+                    Text("Sembrar",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontFamily = titulosFont
+                        )
+                    )
                 }
             }
         }

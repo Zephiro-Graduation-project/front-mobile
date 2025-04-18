@@ -11,6 +11,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.example.frontzephiro.R
 
 @Composable
 fun GardenMainDialog(
@@ -19,6 +22,10 @@ fun GardenMainDialog(
     imageResId: Int,
     descripcion: String,
 ) {
+
+    val titulosFont = FontFamily(Font(R.font.titulos))
+    val normalFont = FontFamily(Font(R.font.normal))
+
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -37,14 +44,16 @@ fun GardenMainDialog(
                 Image(
                     painter = painterResource(id = imageResId),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.height(160.dp)
+                    modifier = Modifier
+                        .height(160.dp)
+                        .fillMaxWidth()
                 )
 
                 Text(
                     text = descripcion,
                     modifier = Modifier.padding(top = 8.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = titulosFont
                 )
 
                 Button(
@@ -55,7 +64,11 @@ fun GardenMainDialog(
                         .padding(top = 16.dp)
                         .fillMaxWidth(0.8f)
                 ) {
-                    Text("Guardar")
+                    Text("Guardar",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontFamily = titulosFont
+                        )
+                    )
                 }
             }
         }
