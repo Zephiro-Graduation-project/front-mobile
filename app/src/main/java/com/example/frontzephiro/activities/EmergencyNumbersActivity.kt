@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
@@ -13,6 +14,24 @@ class EmergencyNumbersActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_emergency_numbers)
+
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
 
         findViewById<MaterialCardView>(R.id.cardBogota).setOnClickListener {
             openDialer("601106")

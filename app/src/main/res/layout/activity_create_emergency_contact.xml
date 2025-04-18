@@ -5,7 +5,7 @@
     android:id="@+id/contentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.activity_create_emergency_contact">
+    tools:context=".activities.CreateEmergencyContactActivity">
 
     <ImageView
         android:id="@+id/btnBack"

@@ -32,6 +32,24 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
+
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
