@@ -69,34 +69,43 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Título fuera del ScrollView -->
+    <TextView
+        android:id="@+id/tituloEmergencias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tituloEmergencia"
+        android:textAppearance="?attr/textAppearanceHeadlineLarge"
+        android:textStyle="bold"
+        android:fontFamily="@font/titulos"
+        android:layout_marginTop="8dp"
+        android:textSize="30dp"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <!-- SCROLL CONTAINER -->
     <ScrollView
         android:id="@+id/scroll_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/header_container"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tituloEmergencias"
+        app:layout_constraintBottom_toTopOf="@id/textoImportante"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- CONTENIDO SCROLLEABLE -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:paddingBottom="16dp">
-
-            <!-- Título -->
-            <TextView
-                android:id="@+id/tituloEmergencias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Números de Emergencia"
-                android:textAppearance="?attr/textAppearanceHeadlineLarge"
-                android:textStyle="bold"
-                android:fontFamily="@font/titulos"
-                android:layout_marginBottom="16dp"/>
 
             <!-- Card 1: Bogotá -->
             <com.google.android.material.card.MaterialCardView
@@ -116,7 +125,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Línea 106 Bogotá"
+                        android:text="@string/numBogota"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp"
@@ -125,7 +134,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Apoyo emocional 24/7 para residentes en Bogotá."
+                        android:text="@string/infoBogota"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/normal"
@@ -134,7 +143,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📞 601 106"
+                        android:text="@string/numeroBogota"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:textColor="@android:color/holo_blue_dark"
                         android:fontFamily="@font/titulos"/>
@@ -159,7 +168,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Línea Nacional Salud Mental"
+                        android:text="@string/numNacional"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp"
@@ -168,7 +177,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Línea gratuita del Ministerio de Salud."
+                        android:text="@string/infoNacional"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/normal"/>
@@ -176,7 +185,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📞 01 8000 42 47 42"
+                        android:text="@string/numeroNacional"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:textColor="@android:color/holo_blue_dark"
                         android:fontFamily="@font/titulos"/>
@@ -200,7 +209,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bienestar Psicológico Javeriana"
+                        android:text="@string/numJaveriana"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp"
@@ -209,7 +218,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Orientación psicológica para estudiantes Javerianos."
+                        android:text="@string/infoJaveriana"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/normal"/>
@@ -217,26 +226,30 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📞 601 320 83 20 Ext. 2215 – 2235 – 2275"
+                        android:text="@string/numeroJaveriana"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:textColor="@android:color/holo_blue_dark"
                         android:fontFamily="@font/titulos"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Aviso Legal -->
-            <TextView
-                android:id="@+id/textoImportante"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="⚠️ Zephiro no tiene ninguna relación con estas organizaciones. Esta información se proporciona únicamente con fines informativos."
-                android:padding="12dp"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="@android:color/black"
-                android:fontFamily="@font/titulos"/>
         </LinearLayout>
 
     </ScrollView>
+
+    <TextView
+        android:id="@+id/textoImportante"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/avisoImportante"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/titulos"
+        app:layout_constraintTop_toBottomOf="@id/scroll_container"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- MENÚ INFERIOR -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
