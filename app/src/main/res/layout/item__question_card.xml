@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardEstres"
+    xmlns:app=  "http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="15dp"
-    app:cardCornerRadius="20dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
     <LinearLayout
@@ -15,33 +14,32 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Título -->
         <TextView
-            android:id="@+id/preguntaEstres"
+            android:id="@+id/preguntaGeneral"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/ansiedad"
             android:fontFamily="@font/titulos"
-            android:text="@string/estres"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"/>
 
+        <!-- Subtítulo opcional -->
         <TextView
+            android:id="@+id/textoGeneral"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/nivelEstres"
+            android:text="@string/nivelAnsiedad"
             android:fontFamily="@font/normal"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary"/>
 
         <!-- Slider -->
         <com.google.android.material.slider.Slider
-            android:id="@+id/range_slider_estres"
+            android:id="@+id/range_slider_general"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/slider_desc"
-            app:values="@array/initial_slider_values"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            android:stepSize="25.0"/>
+            android:contentDescription="@string/slider_desc"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

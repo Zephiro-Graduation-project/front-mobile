@@ -49,7 +49,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menuJardin -> {
-                    startActivity(Intent(this, GardenMain::class.java))
+                    startActivity(Intent(this, NocturnaActivity::class.java))
                     true
                 }
                 R.id.menuContenido -> {

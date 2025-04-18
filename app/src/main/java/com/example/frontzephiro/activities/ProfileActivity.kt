@@ -63,6 +63,11 @@ class ProfileActivity : AppCompatActivity() {
         setupCardInteractions()
         setupBottomNavigation()
 
+        val exit = findViewById<ImageView>(R.id.logout)
+        exit.setOnClickListener {
+            logout()
+        }
+
     }
 
     private fun setupCardInteractions() {
@@ -105,14 +110,17 @@ class ProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
+
                 R.id.menuSeguimiento -> {
                     startActivity(Intent(this, TrackerMain::class.java))
                     true
                 }
+
                 R.id.menuJardin -> {
                     startActivity(Intent(this, GardenMain::class.java))
                     true
                 }
+
                 R.id.menuContenido -> {
                     startActivity(Intent(this, ContentActivity::class.java))
                     true
@@ -175,5 +183,17 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Error de conexión", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.remove("USER_ID")
+        editor.remove("USER_NAME")
+        editor.remove("TOKEN")
+        editor.apply()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

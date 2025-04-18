@@ -73,6 +73,12 @@
         <activity
             android:name=".activities.SeguimientoActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.DiurnaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.NocturnaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
