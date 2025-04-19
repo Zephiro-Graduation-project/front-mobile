@@ -22,6 +22,7 @@ fun InventoryItemDialog(
     imageResId: Int,
     name: String,
     description: String,
+    kind: String, // "Plant" o "Background"
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -70,11 +71,18 @@ fun InventoryItemDialog(
 
                 Button(
                     onClick = {
-                        launchGardenActivity(context, imageResId, name)
+                        if (kind == "Plant") {
+                            launchGardenActivity(context, imageResId, name)
+                        } else if (kind == "Background") {
+                            guardarFondoSeleccionado(context, name)
+                            val intent = Intent(context, GardenMain::class.java)
+                            context.startActivity(intent)
+                        }
                         onDismiss()
                     }
-                ) {
-                    Text("Sembrar",
+                ){
+                    Text(
+                        text = if (kind == "Plant") "Sembrar" else "Usar fondo",
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontFamily = titulosFont
                         )
@@ -91,4 +99,9 @@ private fun launchGardenActivity(context: Context, imageResId: Int, name: String
         putExtra("PLANTA_NOMBRE", name)
     }
     context.startActivity(intent)
+}
+
+fun guardarFondoSeleccionado(context: Context, fondoNombre: String) {
+    val prefs = context.getSharedPreferences("zephiro_prefs", Context.MODE_PRIVATE)
+    prefs.edit().putString("fondo_jardin", fondoNombre).apply()
 }

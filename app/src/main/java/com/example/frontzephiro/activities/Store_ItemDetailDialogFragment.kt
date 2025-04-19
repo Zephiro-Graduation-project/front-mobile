@@ -28,8 +28,9 @@ class Store_ItemDetailDialogFragment : DialogFragment() {
         val productPrice = requireArguments().getInt("productPrice", 0)
         val productImage = requireArguments().getInt("productImage", 0)
         val productDescription = requireArguments().getString("productDescription", "")
+        val kind = if (productPrice == 0) "Background" else "Plant"
 
-        val storeItem = Store_Item(productName, productPrice, productImage, productDescription)
+        val storeItem = Store_Item(productName, productPrice, productImage, productDescription, kind)
 
         return ComposeView(requireContext()).apply {
             setContent {

@@ -143,4 +143,22 @@
     <string name="tituloEncuestaCorta">Titulo - Encuesta corta am</string>
     <string name="tituloEncuestaCortaPm">Titulo - Encuesta corta pm</string>
 
+    <!-- Fin SurveySmall -->
+
+    <!-- TrackerMainFragment -->
+    <string name="tituloTracker">Registros diarios a travez del tiempo</string>
+    <!-- Fin TrackerMainFragment -->
+
+    <!-- GardenInventoryFragment -->
+    <string name="tituloAlmacen">Almacén</string>
+    <string name="tituloALmacenPlantas">Tus plantas guardadas</string>
+    <string name="tituloAlmacenFondos">Tus fondos</string>
+    <!-- Fin GardenInventoryFragment -->
+
+    <!-- GardenStoreFragment -->
+    <string name="tituloTienda">Tienda</string>
+    <string name="tituloTiendaPlantas">Plantas para personalizar tu jardin</string>
+    <string name="tituloTIendaFondos">Fondos para ambientar tu jardin</string>
+    <!-- Fin GardenInventoryFragment -->
+
 </resources>

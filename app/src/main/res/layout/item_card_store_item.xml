@@ -35,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20$"
+                android:fontFamily="@font/titulos"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginStart="4dp"/>
@@ -55,8 +56,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Planta A"
+            android:fontFamily="@font/titulos"
             android:textSize="14sp"
-            android:fontFamily="@font/normal"
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

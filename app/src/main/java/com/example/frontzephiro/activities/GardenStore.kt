@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.Store_ItemAdapter
@@ -40,19 +41,42 @@ class GardenStore : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_tienda)
 
         // Lista de productos quemados
-        val storeItemLists = listOf(
-            Store_Item("Planta A", 20, R.drawable.planta_a, "Una hermosa planta decorativa."),
-            Store_Item("Planta B", 35, R.drawable.planta_b, "Una planta con propiedades relajantes."),
-            Store_Item("Planta C", 15, R.drawable.planta_c, "Una planta que purifica el aire."),
-            Store_Item("Planta D", 10, R.drawable.planta_d, "Una planta que atrae la buena suerte."),
+        val itemLists = listOf(
+            Store_Item("Planta A", 20, R.drawable.planta_a, "Una hermosa planta decorativa.", "Plant"),
+            Store_Item("Planta B", 35, R.drawable.planta_b, "Una planta con propiedades relajantes.", "Plant"),
+            Store_Item("Planta C", 15, R.drawable.planta_c, "Una planta que purifica el aire.", "Plant"),
+            Store_Item("Planta D", 10, R.drawable.planta_d, "Una planta que atrae la buena suerte.", "Plant"),
+            Store_Item("japones", 50, R.drawable.japones, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
+            Store_Item("primavera", 0, R.drawable.primavera, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
+            Store_Item("verano", 0, R.drawable.verano, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
+            Store_Item("invierno", 0, R.drawable.invierno, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
+            Store_Item("magic", 0, R.drawable.magic, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
+            Store_Item("otono", 0, R.drawable.otono, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
+            Store_Item("pasto", 0, R.drawable.pasto, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
         )
 
-        // Configurar el RecyclerView con un GridLayoutManager de 3 columnas
-        recyclerView.layoutManager = GridLayoutManager(this, 3)
-        storeItemAdapter = Store_ItemAdapter(storeItemLists) { product ->
+        // Configurar el RecyclerView con un GridLayoutManager de 2 filas
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        storeItemAdapter = Store_ItemAdapter(itemLists) { product ->
             showProductPopup(product) // Abre el popup al hacer clic
         }
         recyclerView.adapter = storeItemAdapter
+
+        val plantas = itemLists.filter { it.kind == "Plant" }
+        val fondos = itemLists.filter { it.kind == "Background" }
+
+        val recyclerPlantas = findViewById<RecyclerView>(R.id.recycler_tienda)
+        val recyclerFondos = findViewById<RecyclerView>(R.id.recycler_back_tienda)
+
+        recyclerPlantas.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+        recyclerFondos.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+
+        recyclerPlantas.adapter = Store_ItemAdapter(plantas) { product ->
+            showProductPopup(product)
+        }
+        recyclerFondos.adapter = Store_ItemAdapter(fondos) { product ->
+            showProductPopup(product)
+        }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menuJardin

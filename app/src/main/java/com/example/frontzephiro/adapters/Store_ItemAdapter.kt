@@ -32,10 +32,7 @@ class Store_ItemAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = storeItemList[position]
 
-        Glide.with(holder.itemView.context)
-            .load(product.imageResId)
-            .override(200, 200)
-            .into(holder.imgProduct)
+        holder.imgProduct.setImageResource(product.imageResId)
 
         holder.txtProductName.text = product.name
         holder.txtPrice.text = "${product.price}$"
