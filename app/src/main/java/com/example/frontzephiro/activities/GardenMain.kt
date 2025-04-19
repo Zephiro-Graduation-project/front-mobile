@@ -1,6 +1,7 @@
 package com.example.frontzephiro.activities
 
 import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -42,6 +43,23 @@ class GardenMain : AppCompatActivity() {
             val intent = Intent(this, EmergencyNumbersActivity::class.java)
             startActivity(intent)
         }
+
+        val backgroundView = findViewById<View>(R.id.background_view)
+        val fondo = obtenerFondoSeleccionado(this)
+
+        val fondoResId = when (fondo) {
+            "primavera" -> R.drawable.primavera
+            "verano" -> R.drawable.verano
+            "invierno" -> R.drawable.invierno
+            "japones" -> R.drawable.japones
+            "magic" -> R.drawable.magic
+            "otono" -> R.drawable.otono
+            "pasto" -> R.drawable.pasto
+            else -> R.drawable.primavera
+        }
+
+        backgroundView.setBackgroundResource(fondoResId)
+
 
         setupCardInteractions()
 
@@ -230,5 +248,11 @@ class GardenMain : AppCompatActivity() {
         val color = if (resaltar) Color.parseColor("#88EEEEEE") else Color.TRANSPARENT
         celdas.forEach { it.setBackgroundColor(color) }
     }
+
+    private fun obtenerFondoSeleccionado(context: Context): String {
+        val prefs = context.getSharedPreferences("zephiro_prefs", Context.MODE_PRIVATE)
+        return prefs.getString("fondo_jardin", "primavera") ?: "primavera" // Valor por defecto
+    }
+
 
 }

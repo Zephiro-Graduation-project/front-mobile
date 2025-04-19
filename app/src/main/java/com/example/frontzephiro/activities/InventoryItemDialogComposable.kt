@@ -10,8 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.frontzephiro.R
 import com.example.frontzephiro.activities.GardenMain
 
 @Composable
@@ -19,9 +22,13 @@ fun InventoryItemDialog(
     imageResId: Int,
     name: String,
     description: String,
+    kind: String, // "Plant" o "Background"
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+
+    val titulosFont = FontFamily(Font(R.font.titulos))
+    val normalFont = FontFamily(Font(R.font.normal))
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -48,25 +55,38 @@ fun InventoryItemDialog(
 
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    fontFamily = titulosFont
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = normalFont
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
-                        launchGardenActivity(context, imageResId, name)
+                        if (kind == "Plant") {
+                            launchGardenActivity(context, imageResId, name)
+                        } else if (kind == "Background") {
+                            guardarFondoSeleccionado(context, name)
+                            val intent = Intent(context, GardenMain::class.java)
+                            context.startActivity(intent)
+                        }
                         onDismiss()
                     }
-                ) {
-                    Text("Sembrar")
+                ){
+                    Text(
+                        text = if (kind == "Plant") "Sembrar" else "Usar fondo",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontFamily = titulosFont
+                        )
+                    )
                 }
             }
         }
@@ -79,4 +99,9 @@ private fun launchGardenActivity(context: Context, imageResId: Int, name: String
         putExtra("PLANTA_NOMBRE", name)
     }
     context.startActivity(intent)
+}
+
+fun guardarFondoSeleccionado(context: Context, fondoNombre: String) {
+    val prefs = context.getSharedPreferences("zephiro_prefs", Context.MODE_PRIVATE)
+    prefs.edit().putString("fondo_jardin", fondoNombre).apply()
 }
