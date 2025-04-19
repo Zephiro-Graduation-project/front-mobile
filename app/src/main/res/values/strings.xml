@@ -41,6 +41,7 @@
     <!-- Specific content -->
     <string name="nombreArticulo">Nombre del articulo</string>
     <string name="Lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor </string>
+    <string name="VolverEspecifico">Contenidos</string>
     <string name="Visto">Visto</string>
     <string name="Enlace">Ir</string>
     <!-- Fin Specific content -->
@@ -58,6 +59,8 @@
     <string name="telefonoContacto">Teléfono del contacto</string>
     <string name="correoContacto">Correo del contacto</string>
     <string name="botonCrearContacto">Crear contacto</string>
+    <string name="VolverContactosEmergencia">Contactos de emergencia</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -150,4 +153,6 @@
     <string name="tituloEncuestaCorta">Titulo - Encuesta corta am</string>
     <string name="tituloEncuestaCortaPm">Titulo - Encuesta corta pm</string>
 
+    <!-- GardenScreens -->
+    <string name="VolverJardin">Jardin</string>
 </resources>
