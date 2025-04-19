@@ -81,26 +81,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Botón de volver -->
-        <ImageView
-            android:id="@+id/topLeftImage"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@drawable/volver"/>
-
-        <!-- Título de la tienda -->
-        <TextView
-            android:id="@+id/txt_tienda"
+        <!-- Nuevo contenedor sólo para back + título -->
+        <LinearLayout
+            android:id="@+id/backContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/tituloTienda"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/titulos"/>  <!-- AQUI SE AGREGA LA SEPARACIÓN -->
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
 
-        <!-- Contenedor de monedas alineado a la derecha -->
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/volver"
+                android:contentDescription="@string/volver" />
+
+            <TextView
+                android:id="@+id/txt_tienda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/VolverJardin"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/titulos"/>
+        </LinearLayout>
+
+        <!-- Este queda independiente y no es clickeable -->
         <LinearLayout
             android:id="@+id/coin_container"
             android:layout_width="wrap_content"

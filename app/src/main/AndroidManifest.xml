@@ -79,6 +79,12 @@
         <activity
             android:name=".activities.NocturnaActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.PssActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GadActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

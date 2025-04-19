@@ -2,6 +2,7 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,11 +23,16 @@ class GardenInventory : AppCompatActivity() {
 
         val callAnimation = findViewById<LottieAnimationView>(R.id.call)
         val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        val backContainer = findViewById<LinearLayout>(R.id.backContainer)
         callAnimation.repeatCount = 0
         callAnimation.playAnimation()
 
         alertAnimation.repeatCount = 0
         alertAnimation.playAnimation()
+
+        backContainer.setOnClickListener {
+            onBackPressed()
+        }
 
         callAnimation.setOnClickListener {
             val intent = Intent(this, EmergencyContactsActivity::class.java)

@@ -41,6 +41,7 @@
     <!-- Specific content -->
     <string name="nombreArticulo">Nombre del articulo</string>
     <string name="Lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor </string>
+    <string name="VolverEspecifico">Contenidos</string>
     <string name="Visto">Visto</string>
     <string name="Enlace">Ir</string>
     <!-- Fin Specific content -->
@@ -58,6 +59,8 @@
     <string name="telefonoContacto">Teléfono del contacto</string>
     <string name="correoContacto">Correo del contacto</string>
     <string name="botonCrearContacto">Crear contacto</string>
+    <string name="VolverContactosEmergencia">Contactos de emergencia</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -119,6 +122,8 @@
     <!-- SurveyLargeFragment -->
     <string name="tituloEncuesta">Encuesta diurna</string>
     <string name="tituloEncuestaPm">Encuesta nocturna</string>
+    <string name="tituloEncuestaPSS">Encuesta semanal</string>
+    <string name="tituloEncuestaGAD">Encuesta de estres</string>
     <!-- Fin SurveyLargeFragment -->
 
     <!-- SurveySmallFragment y SurveySmallPm -->
@@ -132,6 +137,11 @@
     <string name="nivelAlimentacion">Escribe que comiste hoy durante el dia</string>
     <string name="ejercicio">Ejercicio</string>
     <string name="nivelEjercicio">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelControl">Activa para indicar que el control que tuviste hoy</string>
+    <string name="nivelCalma">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelPensamientos">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelActividadFisica">Activa para indicar que hoy hiciste ejercicio</string>
+
     <string name="desayuno">Desayuno</string>
     <string name="almuerzo">Almuerzo</string>
     <string name="cena">Cena</string>
@@ -142,23 +152,22 @@
     <string name="volver">Volver</string>
     <string name="tituloEncuestaCorta">Titulo - Encuesta corta am</string>
     <string name="tituloEncuestaCortaPm">Titulo - Encuesta corta pm</string>
-
     <!-- Fin SurveySmall -->
-
+  
     <!-- TrackerMainFragment -->
     <string name="tituloTracker">Registros diarios a travez del tiempo</string>
     <!-- Fin TrackerMainFragment -->
+    
+    <!-- GardenScreens -->
+    <string name="VolverJardin">Jardin</string>
 
     <!-- GardenInventoryFragment -->
-    <string name="tituloAlmacen">Almacén</string>
     <string name="tituloALmacenPlantas">Tus plantas guardadas</string>
     <string name="tituloAlmacenFondos">Tus fondos</string>
     <!-- Fin GardenInventoryFragment -->
 
     <!-- GardenStoreFragment -->
-    <string name="tituloTienda">Tienda</string>
     <string name="tituloTiendaPlantas">Plantas para personalizar tu jardin</string>
     <string name="tituloTIendaFondos">Fondos para ambientar tu jardin</string>
     <!-- Fin GardenInventoryFragment -->
-
 </resources>
