@@ -85,6 +85,12 @@
         <activity
             android:name=".activities.GadActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.HabitsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.DemographicsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -13,7 +13,6 @@ class SurveyAdapter(
     private var questions: List<Question>
 ) : RecyclerView.Adapter<SurveyAdapter.ViewHolder>() {
 
-    // 1) Lista interna de respuestas, alineada por posición con `questions`
     private val responseItems: MutableList<ResponseItem> = questions
         .map { q ->
             ResponseItem(
@@ -25,10 +24,8 @@ class SurveyAdapter(
         }
         .toMutableList()
 
-    /** Para que la Activity obtenga el payload completo */
     fun getResponses(): List<ResponseItem> = responseItems
 
-    /** Para cambiar preguntas en caliente (p.ej. tras filtro) */
     fun updateQuestions(newQuestions: List<Question>) {
         questions = newQuestions
         responseItems.clear()
@@ -47,7 +44,6 @@ class SurveyAdapter(
         : RecyclerView.ViewHolder(b.root) {
 
         fun bind(q: Question, position: Int) {
-            // Título y subtítulo
             b.preguntaGeneral.text = q.text
             val measure = q.measures.firstOrNull()
             b.textoGeneral.text = when (measure) {
@@ -62,7 +58,6 @@ class SurveyAdapter(
                 else                -> ""
             }
 
-            // Configurar Slider
             val min = q.answers.minOf { it.numericValue }.toFloat()
             val max = q.answers.maxOf { it.numericValue }.toFloat()
             b.rangeSliderGeneral.apply {
@@ -77,7 +72,6 @@ class SurveyAdapter(
                         ?: value.toInt().toString()
                 })
 
-                // 2) Escucha cambios y actualiza responseItems
                 addOnChangeListener { _, value, _ ->
                     val intVal = value.toInt()
                     val textVal = q.answers.first { it.numericValue == intVal }.text

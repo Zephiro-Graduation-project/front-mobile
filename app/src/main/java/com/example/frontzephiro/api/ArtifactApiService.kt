@@ -16,5 +16,11 @@ interface ArtifactApiService {
 
     @GET("artifact/gad")
     fun getGadArtifact(): Call<Artifact>
+
+    @GET("artifact/hábitos")
+    fun getHabitsArtifact(): Call<Artifact>
+
+    @GET("artifact/sociodemográfico")
+    fun getDemographicsArtifact(): Call<Artifact>
 }
 
