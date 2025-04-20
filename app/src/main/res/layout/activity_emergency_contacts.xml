@@ -25,6 +25,7 @@
             android:layout_height="24dp"
             android:src="@drawable/logozephiro_cuadrado"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -36,6 +37,7 @@
             android:layout_height="24dp"
             android:src="@drawable/zephiro_letra"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toEndOf="@id/logoHome"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
