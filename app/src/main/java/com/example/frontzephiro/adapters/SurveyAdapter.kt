@@ -6,34 +6,63 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.databinding.ItemQuestionCardBinding
 import com.example.frontzephiro.models.Question
+import com.example.frontzephiro.models.ResponseItem
 import com.google.android.material.slider.LabelFormatter
 
 class SurveyAdapter(
-    private val questions: List<Question>
+    private var questions: List<Question>
 ) : RecyclerView.Adapter<SurveyAdapter.ViewHolder>() {
+
+    // 1) Lista interna de respuestas, alineada por posición con `questions`
+    private val responseItems: MutableList<ResponseItem> = questions
+        .map { q ->
+            ResponseItem(
+                question       = q.text,
+                selectedAnswer = "",
+                numericalValue = 0,
+                measures       = q.measures
+            )
+        }
+        .toMutableList()
+
+    /** Para que la Activity obtenga el payload completo */
+    fun getResponses(): List<ResponseItem> = responseItems
+
+    /** Para cambiar preguntas en caliente (p.ej. tras filtro) */
+    fun updateQuestions(newQuestions: List<Question>) {
+        questions = newQuestions
+        responseItems.clear()
+        responseItems.addAll(newQuestions.map { q ->
+            ResponseItem(
+                question       = q.text,
+                selectedAnswer = "",
+                numericalValue = 0,
+                measures       = q.measures
+            )
+        })
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(private val b: ItemQuestionCardBinding)
         : RecyclerView.ViewHolder(b.root) {
 
-        fun bind(q: Question) {
-            // 1) Título dinámico
+        fun bind(q: Question, position: Int) {
+            // Título y subtítulo
             b.preguntaGeneral.text = q.text
-
-            // 2) Subtítulo según el primer measure
             val measure = q.measures.firstOrNull()
             b.textoGeneral.text = when (measure) {
-                "Stress"           -> b.textoGeneral.context.getString(R.string.nivelEstres)
-                "Anxiety"          -> b.textoGeneral.context.getString(R.string.nivelAnsiedad)
-                "Sleep"            -> b.textoGeneral.context.getString(R.string.nivelSueno)
-                "Control"          -> b.textoGeneral.context.getString(R.string.nivelControl)
-                "Calm"             -> b.textoGeneral.context.getString(R.string.nivelCalma)
-                "Thoughts"         -> b.textoGeneral.context.getString(R.string.nivelPensamientos)
-                "Physical Activity"-> b.textoGeneral.context.getString(R.string.nivelActividadFisica)
-                "Nutrition"        -> b.textoGeneral.context.getString(R.string.nivelAlimentacion)
-                else               -> ""
+                "Stress"            -> b.textoGeneral.context.getString(R.string.nivelEstres)
+                "Anxiety"           -> b.textoGeneral.context.getString(R.string.nivelAnsiedad)
+                "Sleep"             -> b.textoGeneral.context.getString(R.string.nivelSueno)
+                "Control"           -> b.textoGeneral.context.getString(R.string.nivelControl)
+                "Calm"              -> b.textoGeneral.context.getString(R.string.nivelCalma)
+                "Thoughts"          -> b.textoGeneral.context.getString(R.string.nivelPensamientos)
+                "Physical Activity" -> b.textoGeneral.context.getString(R.string.nivelActividadFisica)
+                "Nutrition"         -> b.textoGeneral.context.getString(R.string.nivelAlimentacion)
+                else                -> ""
             }
 
-            // 3) Configurar Slider con rango y etiquetas
+            // Configurar Slider
             val min = q.answers.minOf { it.numericValue }.toFloat()
             val max = q.answers.maxOf { it.numericValue }.toFloat()
             b.rangeSliderGeneral.apply {
@@ -41,11 +70,22 @@ class SurveyAdapter(
                 valueTo   = max
                 stepSize  = 1f
                 value     = min
+
                 setLabelFormatter(LabelFormatter { value ->
                     q.answers.firstOrNull { it.numericValue == value.toInt() }
                         ?.text
                         ?: value.toInt().toString()
                 })
+
+                // 2) Escucha cambios y actualiza responseItems
+                addOnChangeListener { _, value, _ ->
+                    val intVal = value.toInt()
+                    val textVal = q.answers.first { it.numericValue == intVal }.text
+                    responseItems[position].apply {
+                        selectedAnswer = textVal
+                        numericalValue = intVal
+                    }
+                }
             }
         }
     }
@@ -58,7 +98,7 @@ class SurveyAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(questions[position])
+        holder.bind(questions[position], position)
     }
 
     override fun getItemCount(): Int = questions.size
