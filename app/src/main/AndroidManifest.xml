@@ -91,6 +91,11 @@
         <activity
             android:name=".activities.DemographicsActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.ShowQuestionnariesActivity"
+            android:exported="false" />
+        <activity android:name=".activities.SpecificQuestionnaireActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

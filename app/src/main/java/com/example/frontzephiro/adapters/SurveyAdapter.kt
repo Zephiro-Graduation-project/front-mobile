@@ -1,3 +1,4 @@
+// SurveyAdapter.kt
 package com.example.frontzephiro.adapters
 
 import android.view.LayoutInflater
@@ -10,7 +11,8 @@ import com.example.frontzephiro.models.ResponseItem
 import com.google.android.material.slider.LabelFormatter
 
 class SurveyAdapter(
-    private var questions: List<Question>
+    private var questions: List<Question>,
+    private val readOnly: Boolean = false
 ) : RecyclerView.Adapter<SurveyAdapter.ViewHolder>() {
 
     private val responseItems: MutableList<ResponseItem> = questions
@@ -24,8 +26,10 @@ class SurveyAdapter(
         }
         .toMutableList()
 
+    /** Para Activities: obtener respuestas */
     fun getResponses(): List<ResponseItem> = responseItems
 
+    /** Para recargar preguntas */
     fun updateQuestions(newQuestions: List<Question>) {
         questions = newQuestions
         responseItems.clear()
@@ -39,6 +43,28 @@ class SurveyAdapter(
         })
         notifyDataSetChanged()
     }
+
+    /** Para inyectar respuestas en modo sólo‑lectura */
+    fun setResponses(resps: List<ResponseItem>) {
+        resps.forEach { resp ->
+            val idx = responseItems.indexOfFirst { it.question == resp.question }
+            if (idx >= 0) responseItems[idx] = resp
+        }
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemQuestionCardBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(questions[position], position)
+    }
+
+    override fun getItemCount(): Int = questions.size
 
     inner class ViewHolder(private val b: ItemQuestionCardBinding)
         : RecyclerView.ViewHolder(b.root) {
@@ -64,36 +90,35 @@ class SurveyAdapter(
                 valueFrom = min
                 valueTo   = max
                 stepSize  = 1f
-                value     = min
 
-                setLabelFormatter(LabelFormatter { value ->
-                    q.answers.firstOrNull { it.numericValue == value.toInt() }
-                        ?.text
-                        ?: value.toInt().toString()
+                // Muestra el valor guardado si es sólo‑lectura, o el mínimo
+                value = if (readOnly) {
+                    responseItems[position].numericalValue
+                        .toFloat()
+                        .coerceIn(min, max)
+                } else {
+                    min
+                }
+
+                setLabelFormatter(LabelFormatter { v ->
+                    q.answers.firstOrNull { it.numericValue == v.toInt() }?.text
+                        ?: v.toInt().toString()
                 })
 
-                addOnChangeListener { _, value, _ ->
-                    val intVal = value.toInt()
-                    val textVal = q.answers.first { it.numericValue == intVal }.text
-                    responseItems[position].apply {
-                        selectedAnswer = textVal
-                        numericalValue = intVal
+                // Habilita o no la interacción
+                isEnabled = !readOnly
+
+                if (!readOnly) {
+                    addOnChangeListener { _, v, _ ->
+                        val iv = v.toInt()
+                        val tv = q.answers.first { it.numericValue == iv }.text
+                        responseItems[position] = responseItems[position].copy(
+                            selectedAnswer = tv,
+                            numericalValue = iv
+                        )
                     }
                 }
             }
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemQuestionCardBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        return ViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(questions[position], position)
-    }
-
-    override fun getItemCount(): Int = questions.size
 }
