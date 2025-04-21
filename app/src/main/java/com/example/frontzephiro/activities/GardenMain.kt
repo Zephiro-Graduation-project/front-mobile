@@ -52,7 +52,7 @@ class GardenMain : AppCompatActivity() {
             "verano" -> R.drawable.verano
             "invierno" -> R.drawable.invierno
             "japones" -> R.drawable.japones
-            "magic" -> R.drawable.magic
+            "magic" -> R.drawable.magico
             "otono" -> R.drawable.otono
             "pasto" -> R.drawable.pasto
             else -> R.drawable.primavera

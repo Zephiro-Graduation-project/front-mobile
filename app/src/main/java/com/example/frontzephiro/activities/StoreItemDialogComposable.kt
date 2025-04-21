@@ -15,17 +15,23 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.frontzephiro.R
-import com.example.frontzephiro.models.Store_Item
+import com.example.frontzephiro.models.StoreProduct
 
 @Composable
 fun StoreItemDetailDialog(
-    storeItem: Store_Item,
+    storeProduct: StoreProduct,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
 
     val titulosFont = FontFamily(Font(R.font.titulos))
     val normalFont = FontFamily(Font(R.font.normal))
+
+    val imageResId = context.resources.getIdentifier(
+        storeProduct.imageName.replace(".png", ""), // quita extensión si la tiene
+        "drawable",
+        context.packageName
+    )
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -41,7 +47,7 @@ fun StoreItemDetailDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = storeItem.imageResId),
+                    painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.logo_multimedia),
                     contentDescription = null,
                     modifier = Modifier
                         .height(160.dp)
@@ -51,7 +57,7 @@ fun StoreItemDetailDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = storeItem.name,
+                    text = storeProduct.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = titulosFont
                 )
@@ -59,7 +65,7 @@ fun StoreItemDetailDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "$${storeItem.price}",
+                    text = "$${storeProduct.price}",
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = titulosFont
                 )
@@ -67,7 +73,7 @@ fun StoreItemDetailDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = storeItem.description,
+                    text = storeProduct.description,
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = normalFont
                 )
@@ -76,7 +82,7 @@ fun StoreItemDetailDialog(
 
                 Button(
                     onClick = {
-                        launchGardenActivity(context, storeItem)
+                        launchGardenActivity(context, storeProduct)
                         onDismiss()
                     }
                 ) {
@@ -92,10 +98,10 @@ fun StoreItemDetailDialog(
     }
 }
 
-private fun launchGardenActivity(context: Context, storeItem: Store_Item) {
+private fun launchGardenActivity(context: Context, storeProduct: StoreProduct) {
     val intent = Intent(context, GardenMain::class.java).apply {
-        putExtra("PLANTA_RES_ID", storeItem.imageResId)
-        putExtra("PLANTA_NOMBRE", storeItem.name)
+        putExtra("PLANTA_RES_ID", storeProduct.imageName)
+        putExtra("PLANTA_NOMBRE", storeProduct.name)
     }
     context.startActivity(intent)
 }
