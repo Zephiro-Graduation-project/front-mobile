@@ -17,6 +17,7 @@ import com.example.frontzephiro.models.Flower
 import com.example.frontzephiro.models.StoreProduct
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.Normalizer
 
 class GardenStore : AppCompatActivity() {
     private lateinit var recyclerViewP: RecyclerView
@@ -83,7 +84,7 @@ class GardenStore : AppCompatActivity() {
                 StoreProduct(
                     name = background.title,
                     price = background.price,
-                    imageName = background.title,  // Usamos title para la imagen
+                    imageName = normalizarTexto(background.title),  // Usamos title para la imagen
                     description = background.description,
                     kind = "Background"  // Todos estos elementos son fondos
                 )
@@ -191,6 +192,14 @@ class GardenStore : AppCompatActivity() {
                 Toast.makeText(this@GardenStore, "Error de conexión al cargar fondos", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun normalizarTexto(texto: String): String {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+            .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "") // Quita tildes
+            .replace('ñ', 'n') // Reemplaza ñ minúscula
+            .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
+            .lowercase() // Convierte a minúsculas
     }
 
 }
