@@ -21,6 +21,8 @@ public class RetrofitClient {
     private static final String CONTENT_BASE_URL = "http://10.0.2.2:8070/";
     // nueva URL para artifact
     private static final String ARTIFACT_BASE_URL = "http://10.0.2.2:8080/";
+    // URLs para la tienda del jardin
+    private static final String GAMIFICATION_BASE_URL = "http://10.0.2.2:8060/";
 
     // clientes existentes
     private static Retrofit retrofit = null;
@@ -30,6 +32,10 @@ public class RetrofitClient {
     private static Retrofit retrofitArtifactAuth = null;
     // nuevo cliente
     private static Retrofit retrofitArtifact = null;
+    // Cliente autenticado para gamification
+    private static Retrofit retrofitGamificationAuth = null;
+    // cliente para gamificacion
+    private static Retrofit retrofitGamification = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -130,6 +136,49 @@ public class RetrofitClient {
                     .build();
         }
         return retrofitArtifactAuth;
+    }
+
+    public static Retrofit getGamificationClient() {
+        if (retrofitGamification == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+            retrofitGamification = new Retrofit.Builder()
+                    .baseUrl(GAMIFICATION_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitGamification;
+    }
+    public static Retrofit getAuthenticatedGamificationClient(final Context context) {
+        if (retrofitGamificationAuth == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request original = chain.request();
+                            String token = TokenUtils.getToken(context);
+                            Request.Builder builder = original.newBuilder();
+                            if (token != null && !token.isEmpty()) {
+                                builder.header("Authorization", "Bearer " + token);
+                            }
+                            Request request = builder.build();
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+            retrofitGamificationAuth = new Retrofit.Builder()
+                    .baseUrl(GAMIFICATION_BASE_URL)            // http://10.0.2.2:8060/
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitGamificationAuth;
     }
 
 }

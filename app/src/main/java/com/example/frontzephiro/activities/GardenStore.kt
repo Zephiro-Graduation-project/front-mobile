@@ -2,20 +2,29 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.Store_ItemAdapter
-import com.example.frontzephiro.models.Store_Item
+import com.example.frontzephiro.api.GamificationApiService
+import com.example.frontzephiro.models.Background
+import com.example.frontzephiro.models.Flower
+import com.example.frontzephiro.models.StoreProduct
+import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.Normalizer
 
 class GardenStore : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var storeItemAdapter: Store_ItemAdapter
+    private lateinit var recyclerViewP: RecyclerView
+    private lateinit var recyclerViewB: RecyclerView
+    private lateinit var plantAdapter: Store_ItemAdapter
+    private lateinit var backgroundAdapter: Store_ItemAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,44 +53,50 @@ class GardenStore : AppCompatActivity() {
             startActivity(intent)
         }
 
-        recyclerView = findViewById(R.id.recycler_tienda)
+        recyclerViewP = findViewById(R.id.recycler_tienda)
 
-        // Lista de productos quemados
-        val itemLists = listOf(
-            Store_Item("Planta A", 20, R.drawable.planta_a, "Una hermosa planta decorativa.", "Plant"),
-            Store_Item("Planta B", 35, R.drawable.planta_b, "Una planta con propiedades relajantes.", "Plant"),
-            Store_Item("Planta C", 15, R.drawable.planta_c, "Una planta que purifica el aire.", "Plant"),
-            Store_Item("Planta D", 10, R.drawable.planta_d, "Una planta que atrae la buena suerte.", "Plant"),
-            Store_Item("japones", 50, R.drawable.japones, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Store_Item("primavera", 0, R.drawable.primavera, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Store_Item("verano", 0, R.drawable.verano, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Store_Item("invierno", 0, R.drawable.invierno, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Store_Item("magic", 0, R.drawable.magic, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Store_Item("otono", 0, R.drawable.otono, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Store_Item("pasto", 0, R.drawable.pasto, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-        )
+        loadFlowers { flowers ->
+            // Convertir la lista de flores a una lista de StoreProduct
+            val storePlants = flowers.map { flower ->
+                StoreProduct(
+                    name = flower.name,
+                    price = flower.price,
+                    imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
+                    description = flower.description,
+                    kind = "Plant"  // Todos estos elementos son plantas
+                )
+            }
 
-        // Configurar el RecyclerView con un GridLayoutManager de 2 filas
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
-        storeItemAdapter = Store_ItemAdapter(itemLists) { product ->
-            showProductPopup(product) // Abre el popup al hacer clic
+            // Ahora puedes usar storePlants como desees, por ejemplo:
+            recyclerViewP.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+
+            plantAdapter = Store_ItemAdapter(storePlants) { product ->
+                showProductPopup(product)
+            }
+            recyclerViewP.adapter = plantAdapter
         }
-        recyclerView.adapter = storeItemAdapter
 
-        val plantas = itemLists.filter { it.kind == "Plant" }
-        val fondos = itemLists.filter { it.kind == "Background" }
+        recyclerViewB = findViewById(R.id.recycler_back_tienda)
 
-        val recyclerPlantas = findViewById<RecyclerView>(R.id.recycler_tienda)
-        val recyclerFondos = findViewById<RecyclerView>(R.id.recycler_back_tienda)
+        loadBackgrounds { backgrounds ->
+            // Convertir la lista de fondos a una lista de StoreProduct
+            val storeBackgrounds = backgrounds.map { background ->
+                StoreProduct(
+                    name = background.title,
+                    price = background.price,
+                    imageName = normalizarTexto(background.title),  // Usamos title para la imagen
+                    description = background.description,
+                    kind = "Background"  // Todos estos elementos son fondos
+                )
+            }
 
-        recyclerPlantas.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
-        recyclerFondos.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+            // Ahora puedes usar storeBackgrounds como desees, por ejemplo:
+            recyclerViewB.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
 
-        recyclerPlantas.adapter = Store_ItemAdapter(plantas) { product ->
-            showProductPopup(product)
-        }
-        recyclerFondos.adapter = Store_ItemAdapter(fondos) { product ->
-            showProductPopup(product)
+            backgroundAdapter = Store_ItemAdapter(storeBackgrounds) { product ->
+                showProductPopup(product)
+            }
+            recyclerViewB.adapter = backgroundAdapter
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
@@ -115,8 +130,76 @@ class GardenStore : AppCompatActivity() {
     }
 
     // Función para mostrar el popup del producto
-    private fun showProductPopup(storeItem: Store_Item) {
-        val dialog = Store_ItemDetailDialogFragment.newInstance(storeItem)
+    private fun showProductPopup(storeProduct: StoreProduct) {
+        val dialog = Store_ItemDetailDialogFragment.newInstance(storeProduct)
         dialog.show(supportFragmentManager, "ProductDetailDialog")
     }
+
+
+    private fun loadFlowers(onFlowersLoaded: (List<Flower>) -> Unit) {
+        val flowersApi = RetrofitClient.getAuthenticatedGamificationClient(this).create(GamificationApiService::class.java)
+        val call = flowersApi.getStoreFlowers()
+
+        call.enqueue(object : retrofit2.Callback<List<Flower>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<Flower>>,
+                response: retrofit2.Response<List<Flower>>
+            ) {
+                if (response.isSuccessful) {
+                    val flowers = response.body() ?: emptyList()
+                    Log.d("GardenStore_Activity", "Se recibieron ${flowers.size} flores")
+                    onFlowersLoaded(flowers)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("GardenStore_Activity", "Error al cargar flores: $errorBody")
+                    Log.e("Retrofit", "Error en la respuesta: ${response.code()}")
+                    Log.e("Retrofit", "Error body: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@GardenStore, "Error al cargar flores", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<Flower>>, t: Throwable) {
+                Log.e("GardenStore_Activity", "Fallo de conexión", t)
+                Toast.makeText(this@GardenStore, "Error de conexión al cargar flores", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun loadBackgrounds(onBackgroundsLoaded: (List<Background>) -> Unit) {
+        val backgroundsApi = RetrofitClient.getAuthenticatedGamificationClient(this).create(GamificationApiService::class.java)
+        val call = backgroundsApi.getStoreBackgrounds()
+
+        call.enqueue(object : retrofit2.Callback<List<Background>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<Background>>,
+                response: retrofit2.Response<List<Background>>
+            ) {
+                if (response.isSuccessful) {
+                    val backgrounds = response.body() ?: emptyList()
+                    Log.d("GardenStore_Activity", "Se recibieron ${backgrounds.size} fondos")
+                    onBackgroundsLoaded(backgrounds)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("GardenStore_Activity", "Error al cargar fondos: $errorBody")
+                    Log.e("Retrofit", "Error en la respuesta: ${response.code()}")
+                    Log.e("Retrofit", "Error body: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@GardenStore, "Error al cargar fondos", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<Background>>, t: Throwable) {
+                Log.e("GardenStore_Activity", "Fallo de conexión", t)
+                Toast.makeText(this@GardenStore, "Error de conexión al cargar fondos", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun normalizarTexto(texto: String): String {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+            .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "") // Quita tildes
+            .replace('ñ', 'n') // Reemplaza ñ minúscula
+            .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
+            .lowercase() // Convierte a minúsculas
+    }
+
 }

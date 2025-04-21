@@ -60,7 +60,7 @@ class GardenInventory : AppCompatActivity() {
             Inventory_Item("primavera", R.drawable.primavera, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
             Inventory_Item("verano", R.drawable.verano, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
             Inventory_Item("invierno", R.drawable.invierno, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Inventory_Item("magic", R.drawable.magic, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
+            Inventory_Item("magic", R.drawable.magico, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
             Inventory_Item("otono", R.drawable.otono, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
             Inventory_Item("pasto", R.drawable.pasto, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
 
