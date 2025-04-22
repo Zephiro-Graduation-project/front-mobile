@@ -1,77 +1,133 @@
 package com.example.frontzephiro.activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
+import com.example.frontzephiro.api.ContentApiService
+import com.example.frontzephiro.models.Content
+import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class SpecificContentActivity : AppCompatActivity()  {
+class SpecificContentActivity : AppCompatActivity() {
+
+    private lateinit var callAnimation: LottieAnimationView
+    private lateinit var alertAnimation: LottieAnimationView
+    private lateinit var backContainer: LinearLayout
+    private lateinit var tvTitle: TextView
+    private lateinit var tvAuthorValue: TextView
+    private lateinit var resumeArticle: TextView
+    private lateinit var chipGroupDetail: ChipGroup
+    private lateinit var botonVisto: Button
+    private lateinit var botonEnlace: Button
+    private lateinit var bottomNavigationView: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specific_content)
 
-        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
-        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
-        val backContainer = findViewById<LinearLayout>(R.id.backContainer)
+        callAnimation     = findViewById(R.id.call)
+        alertAnimation    = findViewById(R.id.alert)
+        backContainer     = findViewById(R.id.backContainer)
+        tvTitle           = findViewById(R.id.nameArticulo)
+        tvAuthorValue     = findViewById(R.id.tvAuthorValue)
+        resumeArticle     = findViewById(R.id.ResumeArticle)
+        chipGroupDetail   = findViewById(R.id.chipGroupDetail)
+        botonVisto        = findViewById(R.id.botonuno)
+        botonEnlace       = findViewById(R.id.botondos)
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+
         callAnimation.repeatCount = 0
         callAnimation.playAnimation()
-
         alertAnimation.repeatCount = 0
         alertAnimation.playAnimation()
 
-        backContainer.setOnClickListener {
-            onBackPressed()
-        }
-
+        backContainer.setOnClickListener { onBackPressed() }
         callAnimation.setOnClickListener {
-            val intent = Intent(this, EmergencyContactsActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EmergencyContactsActivity::class.java))
         }
-
         alertAnimation.setOnClickListener {
-            val intent = Intent(this, EmergencyNumbersActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EmergencyNumbersActivity::class.java))
         }
-
-        // Configurar BottomNavigationView
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menuContenido
-
-        bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menuInicio -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    true
-                }
-                R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, TrackerMain::class.java))
-                    true
-                }
-                R.id.menuJardin -> {
-                    startActivity(Intent(this, GardenMain::class.java))
-                    true
-                }
-                /*
-                R.id.menuContenido -> {
-                    startActivity(Intent(this, ContentActivity::class.java))
-                    true
-                }*/
-                R.id.menuPerfil -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    true
-                }
-                else -> false
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menuInicio    -> startActivity(Intent(this, HomeActivity::class.java))
+                R.id.menuSeguimiento -> startActivity(Intent(this, TrackerMain::class.java))
+                R.id.menuJardin     -> startActivity(Intent(this, GardenMain::class.java))
+                R.id.menuPerfil     -> startActivity(Intent(this, ProfileActivity::class.java))
+                else                -> return@setOnItemSelectedListener false
             }
+            true
         }
+
+        val contentId = intent.getStringExtra("CONTENT_ID")
+        if (contentId.isNullOrBlank()) {
+            Toast.makeText(this, "Falta ID de contenido", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        RetrofitClient.getContentClient()
+            .create(ContentApiService::class.java)
+            .getContentById(contentId)
+            .enqueue(object : Callback<Content> {
+                override fun onResponse(call: Call<Content>, resp: Response<Content>) {
+                    if (!resp.isSuccessful || resp.body() == null) {
+                        Toast.makeText(
+                            this@SpecificContentActivity,
+                            "Error ${resp.code()} al cargar artículo",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
+                    populateContent(resp.body()!!)
+                }
+                override fun onFailure(call: Call<Content>, t: Throwable) {
+                    Toast.makeText(
+                        this@SpecificContentActivity,
+                        "Fallo de red: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
     }
 
-    private fun logout() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun populateContent(content: Content) {
+        tvTitle.text       = content.name
+        tvAuthorValue.text = content.author
+
+        resumeArticle.text = content.description
+
+        chipGroupDetail.removeAllViews()
+        content.tags.forEach { tag ->
+            Chip(this).apply {
+                text = tag.name
+                isClickable = false
+                isCheckable = false
+                chipGroupDetail.addView(this)
+            }
+        }
+
+        botonVisto.setOnClickListener {
+            Toast.makeText(this, "Marcado como visto", Toast.LENGTH_SHORT).show()
+        }
+
+        botonEnlace.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(content.url))
+            startActivity(intent)
+        }
     }
 }

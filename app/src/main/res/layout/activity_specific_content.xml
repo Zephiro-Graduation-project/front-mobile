@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
@@ -16,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Logo -->
         <ImageView
             android:id="@+id/logoHome"
             android:layout_width="24dp"
@@ -28,7 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!-- Nombre App -->
         <ImageView
             android:id="@+id/nombreApp"
             android:layout_width="74dp"
@@ -68,6 +66,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Back button + label -->
     <LinearLayout
         android:id="@+id/backContainer"
         android:layout_width="wrap_content"
@@ -101,6 +100,7 @@
 
     </LinearLayout>
 
+    <!-- Título de la pantalla -->
     <TextView
         android:id="@+id/nameArticulo"
         android:layout_width="wrap_content"
@@ -108,11 +108,12 @@
         android:text="@string/nombreArticulo"
         android:layout_marginTop="20dp"
         android:textSize="18sp"
+        android:fontFamily="@font/titulos"
         app:layout_constraintTop_toBottomOf="@id/backContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:fontFamily="@font/titulos"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Tarjeta principal -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
@@ -129,12 +130,14 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
+            <!-- Bloque autor + texto -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="10dp">
 
+                <!-- Etiqueta fija -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -143,6 +146,15 @@
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:fontFamily="@font/titulos"/>
 
+                <!-- Valor dinámico del autor -->
+                <TextView
+                    android:id="@+id/tvAuthorValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/normal"/>
+
+                <!-- Resumen / cuerpo -->
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="194dp"
@@ -152,13 +164,11 @@
                         android:id="@+id/ResumeArticle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/Lorem"
                         android:fontFamily="@font/normal"/>
-
                 </ScrollView>
-
             </LinearLayout>
 
+            <!-- Chips de tags dinámicas -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,45 +178,18 @@
                 android:paddingEnd="16dp">
 
                 <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:singleLine="true"
                     android:paddingTop="5dp">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:text="@string/ejemplo"/>
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:text="@string/ejemplo"/>
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:text="@string/ejemplo"/>
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:text="@string/ejemplo"/>
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:text="@string/ejemplo"/>
+                    <!-- Aquí se añadirán dinámicamente las tags -->
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Botones inferiores -->
     <Button
         android:id="@+id/botonuno"
         android:layout_width="100dp"
@@ -229,11 +212,11 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_navigation_menu"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

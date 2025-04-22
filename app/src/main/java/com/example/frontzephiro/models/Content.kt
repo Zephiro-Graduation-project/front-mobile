@@ -1,7 +1,7 @@
 package com.example.frontzephiro.models
 
 data class Content(
-    val id: Long,
+    val id: String,
     val name: String,
     val description: String,
     val author: String,
