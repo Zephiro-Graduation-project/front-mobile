@@ -2,7 +2,9 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,12 +12,23 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.Inventory_ItemAdapter
-import com.example.frontzephiro.models.Inventory_Item
+import com.example.frontzephiro.adapters.Store_ItemAdapter
+import com.example.frontzephiro.api.GamificationApiService
+import com.example.frontzephiro.models.Background
+import com.example.frontzephiro.models.Flower
+import com.example.frontzephiro.models.InventoryProduct
+import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.Normalizer
 
 class GardenInventory : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var inventoryItemAdapter: Inventory_ItemAdapter
+
+    private lateinit var recyclerViewP: RecyclerView
+    private lateinit var recyclerViewB: RecyclerView
+    private lateinit var plantAdapter: Inventory_ItemAdapter
+    private lateinit var backgroundAdapter: Inventory_ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,52 +57,49 @@ class GardenInventory : AppCompatActivity() {
             startActivity(intent)
         }
 
-        recyclerView = findViewById(R.id.recycler_almacen)
+        recyclerViewP = findViewById(R.id.recycler_almacen)
 
-        // Productos del inventario quemados To do: Ver como se van a recibir los productos
-        val itemLists = listOf(
-            Inventory_Item("Planta A", R.drawable.planta_a, "Una hermosa planta decorativa.", "Plant"),
-            Inventory_Item("Planta B", R.drawable.planta_b, "Una planta con propiedades relajantes.", "Plant"),
-            Inventory_Item("Planta C", R.drawable.planta_c, "Una planta que purifica el aire.", "Plant"),
-            Inventory_Item("Planta D", R.drawable.planta_d, "Una planta que atrae la buena suerte.", "Plant"),
-            Inventory_Item("Planta A", R.drawable.planta_a, "Una hermosa planta decorativa.", "Plant"),
-            Inventory_Item("Planta B", R.drawable.planta_b, "Una planta con propiedades relajantes.", "Plant"),
-            Inventory_Item("Planta C", R.drawable.planta_c, "Una planta que purifica el aire.", "Plant"),
-            Inventory_Item("Planta D", R.drawable.planta_d, "Una planta que atrae la buena suerte.", "Plant"),
-            Inventory_Item("japones", R.drawable.japones, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Inventory_Item("primavera", R.drawable.primavera, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Inventory_Item("verano", R.drawable.verano, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Inventory_Item("invierno", R.drawable.invierno, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Inventory_Item("magic", R.drawable.magico, "Un ambiente al mejor estilo japones para relajarse.", "Background"),
-            Inventory_Item("otono", R.drawable.otono, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
-            Inventory_Item("pasto", R.drawable.pasto, "El ambiente inicial que todos los usuario reciben gratis.", "Background"),
+        loadFlowers { flowers ->
+            // Convertir la lista de flores a una lista de InventoryProduct
+            val inventoryPlants = flowers.map { flower ->
+                InventoryProduct(
+                    name = flower.name,
+                    imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
+                    description = flower.description,
+                    kind = "Plant"  // Todos estos elementos son plantas
+                )
+            }
 
-        )
+            // Ahora puedes usar inventoryPlants como desees, por ejemplo:
+            recyclerViewP.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
 
-        // Configuracion del RecyclerView con un GridLayoutManager de 2 filas
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
-        inventoryItemAdapter = Inventory_ItemAdapter(itemLists) { product ->
-            showProductPopup(product) // Para abrir el popup al hacer clic
-        }
-        recyclerView.adapter = inventoryItemAdapter
-
-
-        val plantas = itemLists.filter { it.kind == "Plant" }
-        val fondos = itemLists.filter { it.kind == "Background" }
-
-        val recyclerPlantas = findViewById<RecyclerView>(R.id.recycler_almacen)
-        val recyclerFondos = findViewById<RecyclerView>(R.id.recycler_back_almacen)
-
-        recyclerPlantas.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
-        recyclerFondos.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
-
-        recyclerPlantas.adapter = Inventory_ItemAdapter(plantas) { product ->
-            showProductPopup(product)
-        }
-        recyclerFondos.adapter = Inventory_ItemAdapter(fondos) { product ->
-            showProductPopup(product)
+            plantAdapter = Inventory_ItemAdapter(inventoryPlants) { product ->
+                showProductPopup(product)
+            }
+            recyclerViewP.adapter = plantAdapter
         }
 
+        recyclerViewB = findViewById(R.id.recycler_back_almacen)
+
+        loadBackgrounds { backgrounds ->
+            // Convertir la lista de fondos a una lista de InventoryProduct
+            val inventoryBackgrounds = backgrounds.map { background ->
+                InventoryProduct(
+                    name = background.title,
+                    imageName = normalizarTexto(background.title),  // Usamos title para la imagen
+                    description = background.description,
+                    kind = "Background"  // Todos estos elementos son fondos
+                )
+            }
+
+            // Ahora puedes usar inventoryBackgrounds como desees, por ejemplo:
+            recyclerViewB.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+
+            backgroundAdapter = Inventory_ItemAdapter(inventoryBackgrounds) { product ->
+                showProductPopup(product)
+            }
+            recyclerViewB.adapter = backgroundAdapter
+        }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menuJardin
@@ -122,13 +132,95 @@ class GardenInventory : AppCompatActivity() {
     }
 
     // Función para mostrar el popup del producto
-    private fun showProductPopup(inventoryItem: Inventory_Item) {
-        val dialog = Inventory_ItemDetailDialogFragment.newInstance(
-            inventoryItem.imageResId,
-            inventoryItem.name,
-            inventoryItem.description,
-            inventoryItem.kind
-        )
+    private fun showProductPopup(inventoryProduct: InventoryProduct) {
+        val dialog = Inventory_ItemDetailDialogFragment.newInstance(inventoryProduct)
         dialog.show(supportFragmentManager, "InventoryComposeDialog")
+    }
+
+    private fun loadFlowers(onFlowersLoaded: (List<Flower>) -> Unit) {
+        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", null)
+
+        if (userId == null) {
+            Log.e("GardenInventory", "USER_ID no encontrado en SharedPreferences")
+            Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.d("GardenInventory", "Cargando flores con USER_ID: $userId")
+
+        val flowersApi = RetrofitClient.getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+        val call = flowersApi.getInventoryFlowers(userId)
+
+        call.enqueue(object : retrofit2.Callback<List<Flower>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<Flower>>,
+                response: retrofit2.Response<List<Flower>>
+            ) {
+                if (response.isSuccessful) {
+                    val flowers = response.body() ?: emptyList()
+                    Log.d("GardenInventory", "Se recibieron ${flowers.size} flores del inventario")
+                    onFlowersLoaded(flowers)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("GardenInventory", "Error al cargar flores: $errorBody")
+                    Toast.makeText(this@GardenInventory, "Error al cargar flores del inventario", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<Flower>>, t: Throwable) {
+                Log.e("GardenInventory", "Fallo de conexión al cargar flores", t)
+                Toast.makeText(this@GardenInventory, "Error de conexión al cargar flores", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun loadBackgrounds(onBackgroundsLoaded: (List<Background>) -> Unit) {
+        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", null)
+
+        if (userId == null) {
+            Log.e("GardenInventory", "USER_ID no encontrado en SharedPreferences")
+            Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.d("GardenInventory", "Cargando fondos con USER_ID: $userId")
+
+        val backgroundsApi = RetrofitClient.getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+        val call = backgroundsApi.getInventoryBackgrounds(userId)
+
+        call.enqueue(object : retrofit2.Callback<List<Background>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<Background>>,
+                response: retrofit2.Response<List<Background>>
+            ) {
+                if (response.isSuccessful) {
+                    val backgrounds = response.body() ?: emptyList()
+                    Log.d("GardenInventory", "Se recibieron ${backgrounds.size} fondos del inventario")
+                    onBackgroundsLoaded(backgrounds)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("GardenInventory", "Error al cargar fondos: $errorBody")
+                    Toast.makeText(this@GardenInventory, "Error al cargar fondos del inventario", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<Background>>, t: Throwable) {
+                Log.e("GardenInventory", "Fallo de conexión al cargar fondos", t)
+                Toast.makeText(this@GardenInventory, "Error de conexión al cargar fondos", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun normalizarTexto(texto: String): String {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+            .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "") // Quita tildes
+            .replace('ñ', 'n') // Reemplaza ñ minúscula
+            .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
+            .lowercase() // Convierte a minúsculas
     }
 }

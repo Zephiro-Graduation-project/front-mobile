@@ -16,19 +16,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.frontzephiro.R
 import com.example.frontzephiro.activities.GardenMain
+import com.example.frontzephiro.models.InventoryProduct
 
 @Composable
 fun InventoryItemDialog(
-    imageResId: Int,
-    name: String,
-    description: String,
-    kind: String, // "Plant" o "Background"
+    inventoryProduct: InventoryProduct,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
 
     val titulosFont = FontFamily(Font(R.font.titulos))
     val normalFont = FontFamily(Font(R.font.normal))
+
+    val imageResId = context.resources.getIdentifier(
+        inventoryProduct.imageName.replace(".png", ""), // quita extensión si la tiene
+        "drawable",
+        context.packageName
+    )
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -44,7 +48,7 @@ fun InventoryItemDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = imageResId),
+                    painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.logo_multimedia),
                     contentDescription = null,
                     modifier = Modifier
                         .height(160.dp)
@@ -54,7 +58,7 @@ fun InventoryItemDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = name,
+                    text = inventoryProduct.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = titulosFont
                 )
@@ -62,7 +66,7 @@ fun InventoryItemDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = description,
+                    text = inventoryProduct.description,
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = normalFont
                 )
@@ -71,10 +75,10 @@ fun InventoryItemDialog(
 
                 Button(
                     onClick = {
-                        if (kind == "Plant") {
-                            launchGardenActivity(context, imageResId, name)
-                        } else if (kind == "Background") {
-                            guardarFondoSeleccionado(context, name)
+                        if (inventoryProduct.kind == "Plant") {
+                            launchGardenActivity(context, imageResId, inventoryProduct.name)
+                        } else if (inventoryProduct.kind == "Background") {
+                            guardarFondoSeleccionado(context, inventoryProduct.name)
                             val intent = Intent(context, GardenMain::class.java)
                             context.startActivity(intent)
                         }
@@ -82,7 +86,7 @@ fun InventoryItemDialog(
                     }
                 ){
                     Text(
-                        text = if (kind == "Plant") "Sembrar" else "Usar fondo",
+                        text = if (inventoryProduct.kind == "Plant") "Sembrar" else "Usar fondo",
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontFamily = titulosFont
                         )

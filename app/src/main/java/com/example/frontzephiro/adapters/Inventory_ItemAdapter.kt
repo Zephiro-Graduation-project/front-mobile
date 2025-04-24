@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
-import com.example.frontzephiro.models.Inventory_Item
+import com.example.frontzephiro.models.InventoryProduct
 
 class Inventory_ItemAdapter(
-    private val inventoryItemList: List<Inventory_Item>,
-    private val onProductClick: (Inventory_Item) -> Unit
+    private val inventoryProductList: List<InventoryProduct>,
+    private val onProductClick: (InventoryProduct) -> Unit
 ) : RecyclerView.Adapter<Inventory_ItemAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,9 +27,24 @@ class Inventory_ItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        val product = inventoryItemList[position]
+        val product = inventoryProductList[position]
 
-        holder.imgProduct.setImageResource(product.imageResId) // To do: Ver como se va a recibir la imagen
+
+
+        // Obtener el ID del recurso drawable usando el nombre de imagen
+        val context = holder.itemView.context
+        val imageResId = context.resources.getIdentifier(
+            product.imageName.replace(".png", ""), // quitar extensión si es necesario
+            "drawable",
+            context.packageName
+        )
+
+        if (imageResId != 0) {
+            holder.imgProduct.setImageResource(imageResId)
+        } else {
+            holder.imgProduct.setImageResource(R.drawable.logo_multimedia) // Imagen por defecto
+        }
+
         holder.txtProductName.text = product.name
 
 
@@ -37,5 +52,5 @@ class Inventory_ItemAdapter(
         holder.itemView.setOnClickListener { onProductClick(product) }
     }
 
-    override fun getItemCount(): Int = inventoryItemList.size
+    override fun getItemCount(): Int = inventoryProductList.size
 }
