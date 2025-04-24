@@ -91,7 +91,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
 
-                // — 1) login automático —
                 val loginService = RetrofitClient.getClient().create(UserApiService::class.java)
                 val loginReq = LoginRequest(mail = email, password = encryptedPassword)
                 loginService.login(loginReq).enqueue(object : Callback<LoginResponse> {
@@ -101,10 +100,8 @@ class RegisterActivity : AppCompatActivity() {
                             return
                         }
                         val lr = resp.body()!!
-                        // guardamos token, nombre, id…
                         saveUserData(lr.token, lr.name, lr.id, email)
 
-                        // — 2) crear inventario —
                         val invService = RetrofitClient
                             .getAuthenticatedArtifactClient(this@RegisterActivity)
                             .create(InventoryApiService::class.java)
@@ -112,26 +109,23 @@ class RegisterActivity : AppCompatActivity() {
                         invService.addInventory(lr.id).enqueue(object : Callback<Void> {
                             override fun onResponse(call: Call<Void>, r: Response<Void>) {
                                 if (r.isSuccessful) {
-                                    // — 3) solo SI inventario OK, crear jardín —
                                     val gardenService = RetrofitClient
                                         .getAuthenticatedArtifactClient(this@RegisterActivity)
                                         .create(GardenApiService::class.java)
                                     gardenService.addGarden(lr.id).enqueue(object : Callback<Void> {
                                         override fun onResponse(c2: Call<Void>, r2: Response<Void>) {
-                                            // ignoramos éxito/fallo; vamos al Home
-                                            goHome()
+                                            goDemographics()
                                         }
                                         override fun onFailure(c2: Call<Void>, t2: Throwable) {
-                                            goHome()
+                                            goDemographics()
                                         }
                                     })
                                 } else {
-                                    // inventario falló → no creamos jardín
-                                    goHome()
+                                    goDemographics()
                                 }
                             }
                             override fun onFailure(call: Call<Void>, t: Throwable) {
-                                goHome()
+                                goDemographics()
                             }
                         })
                     }
@@ -157,8 +151,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun goHome() {
-        startActivity(Intent(this, HomeActivity::class.java))
+    private fun goDemographics() {
+        startActivity(Intent(this, DemographicsActivity::class.java))
         finish()
     }
 }

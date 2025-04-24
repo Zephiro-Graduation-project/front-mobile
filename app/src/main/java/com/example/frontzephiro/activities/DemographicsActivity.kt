@@ -1,5 +1,6 @@
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -88,12 +89,12 @@ class DemographicsActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            Toast.makeText(
-                                this@DemographicsActivity,
-                                if (resp.isSuccessful) "Encuesta enviada"
-                                else "Error ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (resp.isSuccessful) {
+                                Toast.makeText(this@DemographicsActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                                goHabits()
+                            } else {
+                                Toast.makeText(this@DemographicsActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@DemographicsActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
@@ -169,5 +170,10 @@ class DemographicsActivity : AppCompatActivity() {
                     ).show()
                 }
             })
+    }
+
+    private fun goHabits() {
+        startActivity(Intent(this, HabitsActivity::class.java))
+        finish()
     }
 }

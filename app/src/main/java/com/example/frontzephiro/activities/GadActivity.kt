@@ -1,6 +1,7 @@
 // GadActivity.kt
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -77,12 +78,12 @@ class GadActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            Toast.makeText(
-                                this@GadActivity,
-                                if (resp.isSuccessful) "Encuesta GAD‑7 enviada"
-                                else "Error ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (resp.isSuccessful) {
+                                Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                                goHome()
+                            } else {
+                                Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
@@ -124,5 +125,10 @@ class GadActivity : AppCompatActivity() {
                     Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
+    }
+
+    private fun goHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }

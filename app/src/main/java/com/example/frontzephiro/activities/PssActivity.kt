@@ -1,6 +1,7 @@
 // PssActivity.kt
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -76,12 +77,12 @@ class PssActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            Toast.makeText(
-                                this@PssActivity,
-                                if (resp.isSuccessful) "Encuesta PSS‑10 enviada"
-                                else "Error ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (resp.isSuccessful) {
+                                Toast.makeText(this@PssActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                                goGad()
+                            } else {
+                                Toast.makeText(this@PssActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@PssActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
@@ -123,5 +124,10 @@ class PssActivity : AppCompatActivity() {
                     Toast.makeText(this@PssActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
+    }
+
+    private fun goGad() {
+        startActivity(Intent(this, GadActivity::class.java))
+        finish()
     }
 }

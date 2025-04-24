@@ -1,6 +1,7 @@
 // HabitsActivity.kt
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -82,12 +83,12 @@ class HabitsActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            Toast.makeText(
-                                this@HabitsActivity,
-                                if (resp.isSuccessful) "Encuesta de hábitos enviada"
-                                else "Error ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (resp.isSuccessful) {
+                                Toast.makeText(this@HabitsActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                                goPss()
+                            } else {
+                                Toast.makeText(this@HabitsActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@HabitsActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
@@ -110,7 +111,6 @@ class HabitsActivity : AppCompatActivity() {
                     currentArtifact = art
                     surveyAdapter.updateQuestions(art.questions)
 
-                    // Inyectar respuestas si estamos en solo‑lectura
                     if (readOnly && idResponse != null) {
                         questionnaireService.getQuestionnaireDetail(idResponse)
                             .enqueue(object : Callback<QuestionnaireResponseDetail> {
@@ -130,5 +130,10 @@ class HabitsActivity : AppCompatActivity() {
                     Toast.makeText(this@HabitsActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
+    }
+
+    private fun goPss() {
+        startActivity(Intent(this, PssActivity::class.java))
+        finish()
     }
 }
