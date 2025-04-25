@@ -2,6 +2,8 @@ package com.example.frontzephiro.activities
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -15,7 +17,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.frontzephiro.R
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.models.StoreProduct
+import com.example.frontzephiro.network.RetrofitClient
+import kotlinx.coroutines.*
 
 @Composable
 fun StoreItemDetailDialog(
@@ -82,8 +87,78 @@ fun StoreItemDetailDialog(
 
                 Button(
                     onClick = {
-                        launchGardenActivity(context, storeProduct)
-                        onDismiss()
+                        val sharedPreferences = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+                        val userId = sharedPreferences.getString("USER_ID", null)
+
+                        if (userId != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val service = RetrofitClient.getAuthenticatedGamificationClient(context)
+                                        .create(GamificationApiService::class.java)
+
+                                    if(storeProduct.kind == "Plant"){
+                                        // Paso 1: Obtener la flor por ID
+                                        val flower = service.getFlowerById(storeProduct.id)
+
+                                        // Paso 2: Hacer la compra
+                                        val response = service.buyFlower(userId, flower)
+                                        Log.d("CompraDebug", "Flor comprada correctamente: $response")
+
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(
+                                                context,
+                                                "¡Has comprado ${flower.name}!",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            launchGardenActivity(context, storeProduct)
+                                            onDismiss()
+                                        }
+                                    } else if (storeProduct.kind == "Background"){
+                                        // Paso 1: Obtener la flor por ID
+                                        val background = service.getBackgroundById(storeProduct.id)
+
+                                        // Paso 2: Hacer la compra
+                                        val response = service.buyBackground(userId, background)
+                                        Log.d("CompraDebug", "Fondo comprado correctamente: $response")
+
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(
+                                                context,
+                                                "¡Has comprado ${background.title}!",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            launchGardenActivity(context, storeProduct)
+                                            onDismiss()
+                                        }
+                                    }
+
+                                } catch (e: retrofit2.HttpException) {
+                                    val errorCode = e.code()
+                                    val errorBody = e.response()?.errorBody()?.string()
+
+                                    Log.e("CompraError", "HTTP $errorCode\nCuerpo del error: $errorBody", e)
+
+                                    val mensajeError = when {
+                                        errorCode == 404 -> "Fondo no encontrado. Verifica el ID y la URL del backend."
+                                        errorBody?.contains("not have enough coins") == true -> "No tienes suficientes monedas."
+                                        errorBody?.contains("already in the inventory") == true -> "Ya tienes este fondo."
+                                        else -> "Error al realizar la compra. Código $errorCode"
+                                    }
+
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, mensajeError, Toast.LENGTH_LONG).show()
+                                    }
+
+                                } catch (e: Exception) {
+                                    Log.e("CompraError", "Error inesperado al comprar", e)
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, "Error inesperado al comprar", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        } else {
+                            Toast.makeText(context, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 ) {
                     Text(
@@ -93,6 +168,8 @@ fun StoreItemDetailDialog(
                         )
                     )
                 }
+
+
             }
         }
     }

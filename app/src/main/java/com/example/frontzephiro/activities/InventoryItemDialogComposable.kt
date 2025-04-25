@@ -15,8 +15,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.frontzephiro.R
-import com.example.frontzephiro.activities.GardenMain
+import com.example.frontzephiro.api.GamificationApiService
+import com.example.frontzephiro.models.Flower
 import com.example.frontzephiro.models.InventoryProduct
+import com.example.frontzephiro.network.RetrofitClient
+import kotlinx.coroutines.*
+import android.util.Log
+import android.widget.Toast
+import com.example.frontzephiro.models.Background
+import java.text.Normalizer
 
 @Composable
 fun InventoryItemDialog(
@@ -75,12 +82,53 @@ fun InventoryItemDialog(
 
                 Button(
                     onClick = {
-                        if (inventoryProduct.kind == "Plant") {
-                            launchGardenActivity(context, imageResId, inventoryProduct.name)
-                        } else if (inventoryProduct.kind == "Background") {
-                            guardarFondoSeleccionado(context, inventoryProduct.name)
-                            val intent = Intent(context, GardenMain::class.java)
-                            context.startActivity(intent)
+
+                        val sharedPreferences = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+                        val userId = sharedPreferences.getString("USER_ID", null)
+
+                        if (userId != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val service = RetrofitClient.getAuthenticatedGamificationClient(context)
+                                        .create(GamificationApiService::class.java)
+
+                                    if (inventoryProduct.kind == "Plant") {
+                                        val flower = service.getFlowerById(inventoryProduct.id)
+                                        launchGardenActivity(context, flower)
+                                    } else if (inventoryProduct.kind == "Background") {
+                                        val background = service.getBackgroundById(inventoryProduct.id)
+                                        val backTitleOk = normalizarTexto(background.title)
+                                        guardarFondoSeleccionado(context, backTitleOk)
+                                        val intent = Intent(context, GardenMain::class.java)
+                                        context.startActivity(intent)
+                                    }
+
+                                } catch (e: retrofit2.HttpException) {
+                                    val errorCode = e.code()
+                                    val errorBody = e.response()?.errorBody()?.string()
+
+                                    Log.e("Inv_a_Jardin_Error", "HTTP $errorCode\nCuerpo del error: $errorBody", e)
+
+                                    val mensajeError = when {
+                                        errorCode == 404 -> "Fondo no encontrado. Verifica el ID y la URL del backend."
+                                        errorBody?.contains("not have enough coins") == true -> "No tienes suficientes monedas."
+                                        errorBody?.contains("already in the inventory") == true -> "Ya tienes este fondo."
+                                        else -> "Error al realizar la compra. Código $errorCode"
+                                    }
+
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, mensajeError, Toast.LENGTH_LONG).show()
+                                    }
+
+                                } catch (e: Exception) {
+                                    Log.e("CompraError", "Error inesperado al comprar", e)
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, "Error inesperado al comprar", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        } else {
+                        Toast.makeText(context, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
                         }
                         onDismiss()
                     }
@@ -97,15 +145,24 @@ fun InventoryItemDialog(
     }
 }
 
-private fun launchGardenActivity(context: Context, imageResId: Int, name: String) {
+private fun launchGardenActivity(context: Context, flower: Flower) {
     val intent = Intent(context, GardenMain::class.java).apply {
-        putExtra("PLANTA_RES_ID", imageResId)
-        putExtra("PLANTA_NOMBRE", name)
+        putExtra("FLOWER", flower) // Requiere que Flower sea Parcelable
     }
     context.startActivity(intent)
 }
+
 
 fun guardarFondoSeleccionado(context: Context, fondoNombre: String) {
     val prefs = context.getSharedPreferences("zephiro_prefs", Context.MODE_PRIVATE)
     prefs.edit().putString("fondo_jardin", fondoNombre).apply()
 }
+
+private fun normalizarTexto(texto: String): String {
+    return Normalizer.normalize(texto, Normalizer.Form.NFD)
+        .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "") // Quita tildes
+        .replace('ñ', 'n') // Reemplaza ñ minúscula
+        .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
+        .lowercase() // Convierte a minúsculas
+}
+

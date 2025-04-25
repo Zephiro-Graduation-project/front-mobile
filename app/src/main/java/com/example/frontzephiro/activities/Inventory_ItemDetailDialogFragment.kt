@@ -14,6 +14,7 @@ class Inventory_ItemDetailDialogFragment : DialogFragment() {
         fun newInstance(inventoryProduct: InventoryProduct): Inventory_ItemDetailDialogFragment {
             val fragment = Inventory_ItemDetailDialogFragment()
             val args = Bundle()
+            args.putInt("productID", inventoryProduct.id)
             args.putString("productName", inventoryProduct.name)
             args.putString("productImage", inventoryProduct.imageName)
             args.putString("productDescription", inventoryProduct.description)
@@ -24,12 +25,13 @@ class Inventory_ItemDetailDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val productID = requireArguments().getInt("productID", 0)
         val productName = requireArguments().getString("productName", "")
         val productImage = requireArguments().getString("productImage", "")
         val productDescription = requireArguments().getString("productDescription", "")
         val productKind = requireArguments().getString("productKind", "")
 
-        val inventoryProduct = InventoryProduct(productName, productImage, productDescription, productKind)
+        val inventoryProduct = InventoryProduct(productID, productName, productImage, productDescription, productKind)
 
         return ComposeView(requireContext()).apply {
             setContent {

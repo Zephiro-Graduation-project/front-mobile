@@ -65,6 +65,7 @@ class GardenStore : AppCompatActivity() {
             // Convertir la lista de flores a una lista de StoreProduct
             val storePlants = flowers.map { flower ->
                 StoreProduct(
+                    id = flower.id,
                     name = flower.name,
                     price = flower.price,
                     imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
@@ -88,6 +89,7 @@ class GardenStore : AppCompatActivity() {
             // Convertir la lista de fondos a una lista de StoreProduct
             val storeBackgrounds = backgrounds.map { background ->
                 StoreProduct(
+                    id = background.id,
                     name = background.title,
                     price = background.price,
                     imageName = normalizarTexto(background.title),  // Usamos title para la imagen
@@ -240,5 +242,4 @@ class GardenStore : AppCompatActivity() {
             .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
             .lowercase() // Convierte a minúsculas
     }
-
 }

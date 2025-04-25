@@ -63,6 +63,7 @@ class GardenInventory : AppCompatActivity() {
             // Convertir la lista de flores a una lista de InventoryProduct
             val inventoryPlants = flowers.map { flower ->
                 InventoryProduct(
+                    id = flower.id,
                     name = flower.name,
                     imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
                     description = flower.description,
@@ -85,6 +86,7 @@ class GardenInventory : AppCompatActivity() {
             // Convertir la lista de fondos a una lista de InventoryProduct
             val inventoryBackgrounds = backgrounds.map { background ->
                 InventoryProduct(
+                    id = background.id,
                     name = background.title,
                     imageName = normalizarTexto(background.title),  // Usamos title para la imagen
                     description = background.description,
@@ -135,6 +137,7 @@ class GardenInventory : AppCompatActivity() {
     private fun showProductPopup(inventoryProduct: InventoryProduct) {
         val dialog = Inventory_ItemDetailDialogFragment.newInstance(inventoryProduct)
         dialog.show(supportFragmentManager, "InventoryComposeDialog")
+
     }
 
     private fun loadFlowers(onFlowersLoaded: (List<Flower>) -> Unit) {

@@ -1,10 +1,14 @@
 package com.example.frontzephiro.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Flower(
-    val id: Int,
-    val name: String,
+    var id: Int,
+    var name: String,
     val description: String,
-    val price: Int,
-    val healthyAsset: String,
-    val dryAsset: String
-)
+    var price: Int,
+    var healthyAsset: String,
+    var dryAsset: String
+) : Parcelable
