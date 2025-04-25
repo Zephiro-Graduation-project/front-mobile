@@ -8,9 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.DemographicsAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeDemographicsBinding
 import com.example.frontzephiro.models.Artifact
+import com.example.frontzephiro.models.ProfileResponse
 import com.example.frontzephiro.models.QuestionnaireRequest
 import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.models.ResponseItem
@@ -26,6 +28,7 @@ class DemographicsActivity : AppCompatActivity() {
     private lateinit var adapter: DemographicsAdapter
     private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
+    private lateinit var profilingService: ProfilingApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +45,16 @@ class DemographicsActivity : AppCompatActivity() {
             adapter = this@DemographicsActivity.adapter
         }
 
+        // Inicializar servicios Retrofit
         artifactService = RetrofitClient
             .getAuthenticatedArtifactClient(this)
             .create(ArtifactApiService::class.java)
         questionnaireService = RetrofitClient
             .getAuthenticatedArtifactClient(this)
             .create(QuestionnaireApiService::class.java)
+        profilingService = RetrofitClient
+            .getProfileClient()
+            .create(ProfilingApiService::class.java)
 
         if (readOnly) {
             binding.botonEnviar.visibility = View.GONE
@@ -69,35 +76,69 @@ class DemographicsActivity : AppCompatActivity() {
                     Toast.makeText(this, "Completa todas las preguntas", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                val responses = mutableListOf<ResponseItem>(
-                    ResponseItem(
-                        question       = binding.preguntaEdad.text.toString(),
-                        selectedAnswer = edadStr,
-                        numericalValue = edadStr.toIntOrNull() ?: 0,
-                        measures       = listOf("Demographics")
-                    )
-                ).apply { addAll(rest) }
-                val fecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                val request = QuestionnaireRequest(
-                    userId         = userId,
-                    surveyId       = "DEMOG_2025_04",
-                    surveyName     = "Cuestionario Sociodemográfico",
-                    type           = "Demographics",
-                    completionDate = fecha,
-                    responses      = responses
-                )
-                questionnaireService.addQuestionnaire(request)
-                    .enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            if (resp.isSuccessful) {
-                                Toast.makeText(this@DemographicsActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
-                                goHabits()
-                            } else {
-                                Toast.makeText(this@DemographicsActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                profilingService.getProfile(userId)
+                    .enqueue(object: Callback<ProfileResponse> {
+                        override fun onResponse(call: Call<ProfileResponse>, resp: Response<ProfileResponse>) {
+                            if (!resp.isSuccessful || resp.body() == null) {
+                                Toast.makeText(
+                                    this@DemographicsActivity,
+                                    "Error perfil ${resp.code()}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return
                             }
+                            val profile = resp.body()!!
+                            val responses = mutableListOf<ResponseItem>(
+                                ResponseItem(
+                                    question       = binding.preguntaEdad.text.toString(),
+                                    selectedAnswer = edadStr,
+                                    numericalValue = edadStr.toIntOrNull() ?: 0,
+                                    measures       = listOf("Demographics")
+                                )
+                            ).apply { addAll(rest) }
+
+                            val fecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                            val request = QuestionnaireRequest(
+                                userId         = userId,
+                                surveyId       = "DEMOG_2025_04",
+                                surveyName     = "Cuestionario Sociodemográfico",
+                                type           = "Demographics",
+                                completionDate = fecha,
+                                responses      = responses
+                            )
+                            questionnaireService.addQuestionnaire(request)
+                                .enqueue(object : Callback<Void> {
+                                    override fun onResponse(call: Call<Void>, respQ: Response<Void>) {
+                                        if (respQ.isSuccessful) {
+                                            Toast.makeText(
+                                                this@DemographicsActivity,
+                                                "Encuesta enviada",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            goHome()
+                                        } else {
+                                            Toast.makeText(
+                                                this@DemographicsActivity,
+                                                "Error envío ${respQ.code()}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        Toast.makeText(
+                                            this@DemographicsActivity,
+                                            "Fallo envío: ${t.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                })
                         }
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Toast.makeText(this@DemographicsActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
+                        override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                            Toast.makeText(
+                                this@DemographicsActivity,
+                                "Fallo perfil: ${t.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     })
             }
@@ -130,13 +171,13 @@ class DemographicsActivity : AppCompatActivity() {
                             .enqueue(object : Callback<QuestionnaireResponseDetail> {
                                 override fun onResponse(
                                     call: Call<QuestionnaireResponseDetail>,
-                                    resp: Response<QuestionnaireResponseDetail>
+                                    respDetail: Response<QuestionnaireResponseDetail>
                                 ) {
-                                    val detail = resp.body()
-                                    if (!resp.isSuccessful || detail == null) {
+                                    val detail = respDetail.body()
+                                    if (!respDetail.isSuccessful || detail == null) {
                                         Toast.makeText(
                                             this@DemographicsActivity,
-                                            "Error detalle ${resp.code()}",
+                                            "Error detalle ${respDetail.code()}",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         return
@@ -172,8 +213,8 @@ class DemographicsActivity : AppCompatActivity() {
             })
     }
 
-    private fun goHabits() {
-        startActivity(Intent(this, HabitsActivity::class.java))
+    private fun goHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 }

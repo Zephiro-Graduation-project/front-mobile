@@ -36,7 +36,7 @@ fun InventoryItemDialog(
     val normalFont = FontFamily(Font(R.font.normal))
 
     val imageResId = context.resources.getIdentifier(
-        inventoryProduct.imageName.replace(".png", ""), // quita extensión si la tiene
+        inventoryProduct.imageName.replace(".png", ""),
         "drawable",
         context.packageName
     )
@@ -147,7 +147,7 @@ fun InventoryItemDialog(
 
 private fun launchGardenActivity(context: Context, flower: Flower) {
     val intent = Intent(context, GardenMain::class.java).apply {
-        putExtra("FLOWER", flower) // Requiere que Flower sea Parcelable
+        putExtra("FLOWER", flower)
     }
     context.startActivity(intent)
 }
@@ -160,9 +160,9 @@ fun guardarFondoSeleccionado(context: Context, fondoNombre: String) {
 
 private fun normalizarTexto(texto: String): String {
     return Normalizer.normalize(texto, Normalizer.Form.NFD)
-        .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "") // Quita tildes
-        .replace('ñ', 'n') // Reemplaza ñ minúscula
-        .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
-        .lowercase() // Convierte a minúsculas
+        .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
+        .replace('ñ', 'n')
+        .replace('Ñ', 'n')
+        .lowercase()
 }
 

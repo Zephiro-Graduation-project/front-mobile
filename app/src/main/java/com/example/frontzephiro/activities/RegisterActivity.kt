@@ -114,18 +114,18 @@ class RegisterActivity : AppCompatActivity() {
                                         .create(GardenApiService::class.java)
                                     gardenService.addGarden(lr.id).enqueue(object : Callback<Void> {
                                         override fun onResponse(c2: Call<Void>, r2: Response<Void>) {
-                                            goDemographics()
+                                            goHabits()
                                         }
                                         override fun onFailure(c2: Call<Void>, t2: Throwable) {
-                                            goDemographics()
+                                            goHabits()
                                         }
                                     })
                                 } else {
-                                    goDemographics()
+                                    goHabits()
                                 }
                             }
                             override fun onFailure(call: Call<Void>, t: Throwable) {
-                                goDemographics()
+                                goHabits()
                             }
                         })
                     }
@@ -151,8 +151,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun goDemographics() {
-        startActivity(Intent(this, DemographicsActivity::class.java))
+    private fun goHabits() {
+        startActivity(Intent(this, HabitsActivity::class.java))
         finish()
     }
 }

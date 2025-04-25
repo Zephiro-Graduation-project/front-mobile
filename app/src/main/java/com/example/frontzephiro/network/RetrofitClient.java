@@ -23,6 +23,8 @@ public class RetrofitClient {
     private static final String ARTIFACT_BASE_URL = "http://10.0.2.2:8080/";
     // URLs para la tienda del jardin
     private static final String GAMIFICATION_BASE_URL = "http://10.0.2.2:8060/";
+    //url para perfilacion
+    private static final String PROFILE_BASE_URL = "http://10.0.2.2:5032/";
 
     // clientes existentes
     private static Retrofit retrofit = null;
@@ -36,6 +38,8 @@ public class RetrofitClient {
     private static Retrofit retrofitGamificationAuth = null;
     // cliente para gamificacion
     private static Retrofit retrofitGamification = null;
+    //cliente para perfilacion
+    private static Retrofit retrofitProfile = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -179,6 +183,19 @@ public class RetrofitClient {
                     .build();
         }
         return retrofitGamificationAuth;
+    }
+
+    public static Retrofit getProfileClient() {
+        if (retrofitProfile == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+            retrofitProfile = new Retrofit.Builder()
+                    .baseUrl(PROFILE_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitProfile;
     }
 
 }

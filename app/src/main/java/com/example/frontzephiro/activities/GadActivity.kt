@@ -1,6 +1,7 @@
 // GadActivity.kt
 package com.example.frontzephiro.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -23,6 +24,7 @@ import java.util.*
 
 class GadActivity : AppCompatActivity() {
 
+    //val context = LocalContext.current
     private lateinit var binding: ActivitySurveyLargeBinding
     private lateinit var surveyAdapter: SurveyAdapter
     private lateinit var artifactService: ArtifactApiService
@@ -51,6 +53,14 @@ class GadActivity : AppCompatActivity() {
             .getAuthenticatedArtifactClient(this)
             .create(QuestionnaireApiService::class.java)
 
+        //val prefs = getSharedPreferences("zephiro_prefs", Context.MODE_PRIVATE)
+        //val yaSeHizo = prefs.getInt("respuesta_unica", 0) == 1
+
+//        if (!yaSeHizo) {
+//            envioUnico(this, 1)
+//        }
+
+        // Botón de envío si no es solo lectura
         if (readOnly) {
             binding.botonEnviar.visibility = View.GONE
         } else {
@@ -61,11 +71,13 @@ class GadActivity : AppCompatActivity() {
                     Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+
                 val responses = surveyAdapter.getResponses()
                 if (responses.any { it.selectedAnswer.isBlank() }) {
                     Toast.makeText(this, "Por favor, responde todas las preguntas", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 val request = QuestionnaireRequest(
                     userId         = userId,
@@ -75,16 +87,19 @@ class GadActivity : AppCompatActivity() {
                     completionDate = today,
                     responses      = responses
                 )
+
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
                             if (resp.isSuccessful) {
                                 Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
-                                goHome()
+                                //envioUnico(this@GadActivity, 1)
+                                goDemographics()
                             } else {
                                 Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
                             }
                         }
+
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                         }
@@ -94,6 +109,7 @@ class GadActivity : AppCompatActivity() {
 
         loadGadSurvey(readOnly, idResponse)
     }
+
 
     private fun loadGadSurvey(readOnly: Boolean, idResponse: String?) {
         artifactService.getGadArtifact()
@@ -127,8 +143,9 @@ class GadActivity : AppCompatActivity() {
             })
     }
 
-    private fun goHome() {
-        startActivity(Intent(this, HomeActivity::class.java))
+    private fun goDemographics() {
+        startActivity(Intent(this, DemographicsActivity::class.java))
         finish()
     }
+
 }
