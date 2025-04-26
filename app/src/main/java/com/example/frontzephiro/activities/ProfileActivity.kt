@@ -81,7 +81,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         card2.setOnClickListener {
-            // startActivity(Intent(this, MetricsActivity::class.java))
+            startActivity(Intent(this, GraficaActivity::class.java))
         }
 
         card3.setOnClickListener {

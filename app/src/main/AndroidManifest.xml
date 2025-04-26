@@ -96,6 +96,8 @@
             android:exported="false" />
         <activity android:name=".activities.SpecificQuestionnaireActivity"
             android:exported="false" />
+        <activity android:name=".activities.GraficaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

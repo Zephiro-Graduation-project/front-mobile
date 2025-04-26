@@ -36,9 +36,6 @@ android {
     }
     buildFeatures{
         viewBinding = true
-    }
-
-    buildFeatures {
         compose = true
     }
 
@@ -54,6 +51,11 @@ android {
 }
 
 dependencies {
+
+    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.github.tehras:charts:0.2.2-alpha")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

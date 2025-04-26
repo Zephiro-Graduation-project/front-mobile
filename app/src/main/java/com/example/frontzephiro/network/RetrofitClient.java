@@ -14,6 +14,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.example.frontzephiro.api.GraphicApi;
 
 public class RetrofitClient {
     // tus URLs existentes
@@ -40,6 +41,9 @@ public class RetrofitClient {
     private static Retrofit retrofitGamification = null;
     //cliente para perfilacion
     private static Retrofit retrofitProfile = null;
+
+    private static GraphicApi graphicApi = null;
+    private static GraphicApi graphicApiAuth = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -196,6 +200,22 @@ public class RetrofitClient {
                     .build();
         }
         return retrofitProfile;
+    }
+
+    public static GraphicApi getGraphicApi() {
+        if (graphicApi == null) {
+            graphicApi = getArtifactClient()
+                    .create(GraphicApi.class);
+        }
+        return graphicApi;
+    }
+
+    public static GraphicApi getAuthenticatedGraphicApi(final Context context) {
+        if (graphicApiAuth == null) {
+            graphicApiAuth = getAuthenticatedArtifactClient(context)
+                    .create(GraphicApi.class);
+        }
+        return graphicApiAuth;
     }
 
 }
