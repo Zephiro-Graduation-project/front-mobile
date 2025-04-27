@@ -1,114 +1,149 @@
-// GraphicScreen.kt
 package com.example.frontzephiro.activities
 
-import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frontzephiro.viewmodels.GraphicViewModel
-import com.github.tehras.charts.line.LineChart
-import com.github.tehras.charts.line.LineChartData
-import com.github.tehras.charts.line.renderer.line.SolidLineDrawer
-import com.github.tehras.charts.piechart.animation.simpleChartAnimation
-import com.github.tehras.charts.line.renderer.point.FilledCircularPointDrawer
-import com.github.tehras.charts.line.renderer.xaxis.SimpleXAxisDrawer
-import com.github.tehras.charts.line.renderer.yaxis.SimpleYAxisDrawer
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
+import com.example.frontzephiro.R
+import com.example.frontzephiro.models.ScoreEntry
+import com.example.frontzephiro.network.RetrofitClient
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
-class GraficaActivity : ComponentActivity() {
+class GraficaActivity : AppCompatActivity() {
+
+    private lateinit var progressBar: ProgressBar
+    private lateinit var anxietyChart: LineChart
+    private lateinit var stressChart: LineChart
+    private val api by lazy { RetrofitClient.getAuthenticatedGraphicApi(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            GraphicScreen()
+        setContentView(R.layout.activity_grafica)
+
+        progressBar  = findViewById(R.id.progressBar)
+        anxietyChart = findViewById(R.id.anxietyChart)
+        stressChart  = findViewById(R.id.stressChart)
+
+        findViewById<LottieAnimationView>(R.id.call).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@GraficaActivity, EmergencyContactsActivity::class.java))
+            }
+        }
+        findViewById<LottieAnimationView>(R.id.alert).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@GraficaActivity, EmergencyNumbersActivity::class.java))
+            }
+        }
+
+        findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
+            selectedItemId = R.id.menuPerfil
+            setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.menuInicio    -> startActivity(Intent(this@GraficaActivity, HomeActivity::class.java))
+                    R.id.menuContenido -> startActivity(Intent(this@GraficaActivity, ContentActivity::class.java))
+                    R.id.menuSeguimiento -> startActivity(Intent(this@GraficaActivity, SeguimientoActivity::class.java))
+                    R.id.menuJardin    -> startActivity(Intent(this@GraficaActivity, GardenMain::class.java))
+                    R.id.menuPerfil    -> startActivity(Intent(this@GraficaActivity, ProfileActivity::class.java))
+                }
+                true
+            }
+        }
+        loadAndDraw()
+    }
+
+    private fun loadAndDraw() {
+        val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", "") ?: ""
+        if (userId.isBlank()) {
+            Toast.makeText(this, "Usuario no identificado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        progressBar.visibility = View.VISIBLE
+
+        lifecycleScope.launch {
+            try {
+                val scores = api.getScores(userId)
+                if (scores.isEmpty()) {
+                    Toast.makeText(this@GraficaActivity, "No hay datos para mostrar", Toast.LENGTH_SHORT).show()
+                } else {
+                    drawCharts(scores)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@GraficaActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+            } finally {
+                progressBar.visibility = View.GONE
+            }
         }
     }
-}
 
-@Composable
-fun GraphicScreen(
-    viewModel: GraphicViewModel = viewModel(factory =
-    androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
-        LocalContext.current.applicationContext as Application
-    )
-    )
-) {
-    if (viewModel.isLoading) {
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+    private fun drawCharts(scores: List<ScoreEntry>) {
+        val labels = scores.map { it.date }
+
+        val primaryColor   = ContextCompat.getColor(this, R.color.primary)
+        val secondaryColor = ContextCompat.getColor(this, R.color.secondary)
+
+        fun setupChart(chart: LineChart) {
+            chart.apply {
+                description.isEnabled   = false
+                setTouchEnabled(true)
+                legend.isEnabled        = false
+                axisRight.isEnabled     = false
+                axisLeft.axisMinimum    = 0f   // rango mínimo en 0
+                xAxis.apply {
+                    position            = XAxis.XAxisPosition.BOTTOM
+                    granularity         = 1f
+                    setDrawGridLines(false)
+                    labelRotationAngle  = 90f  // fechas en vertical
+                    valueFormatter      = IndexAxisValueFormatter(labels)
+                }
+            }
         }
-        return
-    }
+        setupChart(anxietyChart)
+        setupChart(stressChart)
 
-    if (viewModel.scores.isEmpty()) {
-        Text(
-            "No hay datos para mostrar",
-            modifier = Modifier.padding(16.dp)
-        )
-        return
-    }
+        val anxietyEntries = scores.mapIndexed { i, s ->
+            Entry(i.toFloat(), s.anxietyScore.toFloat())
+        }
+        val stressEntries  = scores.mapIndexed { i, s ->
+            Entry(i.toFloat(), s.stressScore.toFloat())
+        }
 
-    // 1) mapeo
-    val scores = viewModel.scores
-    val labels = scores.map { it.date }
-    val anxietyData = listOf(
-        LineChartData(
-            points = scores.map { LineChartData.Point(it.anxietyScore.toFloat(), it.date) },
-            lineDrawer = SolidLineDrawer()
+        anxietyChart.data = LineData(
+            LineDataSet(anxietyEntries, "Ansiedad").apply {
+                color           = primaryColor
+                setCircleColor(primaryColor)
+                circleRadius    = 4f
+                lineWidth       = 3f
+                setDrawValues(false)
+            }
         )
-    )
-    val stressData = listOf(
-        LineChartData(
-            points = scores.map { LineChartData.Point(it.stressScore.toFloat(), it.date) },
-            lineDrawer = SolidLineDrawer()
-        )
-    )
+        anxietyChart.invalidate()
 
-    // 2) UI
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Ansiedad", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-        LineChart(
-            linesChartData = anxietyData,
-            labels = labels,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            animation = simpleChartAnimation(),
-            pointDrawer = FilledCircularPointDrawer(),
-            xAxisDrawer = SimpleXAxisDrawer(),
-            yAxisDrawer = SimpleYAxisDrawer(),
-            horizontalOffset = 5f
+        stressChart.data = LineData(
+            LineDataSet(stressEntries, "Estrés").apply {
+                color           = secondaryColor
+                setCircleColor(secondaryColor)
+                circleRadius    = 4f
+                lineWidth       = 3f
+                setDrawValues(false)
+            }
         )
-
-        Spacer(Modifier.height(24.dp))
-
-        Text("Estrés", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-        LineChart(
-            linesChartData = stressData,
-            labels = labels,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            animation = simpleChartAnimation(),
-            pointDrawer = FilledCircularPointDrawer(),
-            xAxisDrawer = SimpleXAxisDrawer(),
-            yAxisDrawer = SimpleYAxisDrawer(),
-            horizontalOffset = 5f
-        )
+        stressChart.invalidate()
     }
 }
