@@ -1,10 +1,8 @@
-// RegisterActivity.kt
 package com.example.frontzephiro.activities
 
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
@@ -78,66 +76,86 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(name: String, email: String, password: String, birthdate: Date) {
-        val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
-        val secretKey = "1234567890123456"
-        val encryptedPassword = EncryptionUtils.encryptAES(password, secretKey)
+        val apiService = RetrofitClient.getClient()
+            .create(UserApiService::class.java)
+
+        val encryptedPassword = EncryptionUtils.encryptAES(password, "1234567890123456")
         val user = UserEntity(name, email, encryptedPassword, birthdate)
 
         apiService.register(user).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (!response.isSuccessful) {
-                    Toast.makeText(this@RegisterActivity, "No se pudo registrar. Verifica los datos.", Toast.LENGTH_LONG).show()
+                    showFailure()
                     return
                 }
-                Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
 
-                val loginService = RetrofitClient.getClient().create(UserApiService::class.java)
                 val loginReq = LoginRequest(mail = email, password = encryptedPassword)
-                loginService.login(loginReq).enqueue(object : Callback<LoginResponse> {
-                    override fun onResponse(call: Call<LoginResponse>, resp: Response<LoginResponse>) {
-                        if (!resp.isSuccessful || resp.body() == null) {
-                            Toast.makeText(this@RegisterActivity, "Fallo en login automático", Toast.LENGTH_LONG).show()
-                            return
+                RetrofitClient.getClient()
+                    .create(UserApiService::class.java)
+                    .login(loginReq)
+                    .enqueue(object : Callback<LoginResponse> {
+                        override fun onResponse(call: Call<LoginResponse>, resp: Response<LoginResponse>) {
+                            val lr = resp.body()
+                            if (!resp.isSuccessful || lr == null) {
+                                showFailure()
+                                return
+                            }
+
+                            saveUserData(lr.token, lr.name, lr.id, email)
+
+                            RetrofitClient
+                                .getAuthenticatedGamificationClient(this@RegisterActivity)
+                                .create(InventoryApiService::class.java)
+                                .addInventory(lr.id)
+                                .enqueue(object : Callback<Void> {
+                                    override fun onResponse(call: Call<Void>, r: Response<Void>) {
+                                        if (r.isSuccessful) {
+                                            createGarden(lr.id)
+                                        } else {
+                                            showFailure()
+                                            goHabits()
+                                        }
+                                    }
+
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        showFailure()
+                                        goHabits()
+                                    }
+                                })
                         }
-                        val lr = resp.body()!!
-                        saveUserData(lr.token, lr.name, lr.id, email)
 
-                        val invService = RetrofitClient
-                            .getAuthenticatedArtifactClient(this@RegisterActivity)
-                            .create(InventoryApiService::class.java)
-
-                        invService.addInventory(lr.id).enqueue(object : Callback<Void> {
-                            override fun onResponse(call: Call<Void>, r: Response<Void>) {
-                                if (r.isSuccessful) {
-                                    val gardenService = RetrofitClient
-                                        .getAuthenticatedArtifactClient(this@RegisterActivity)
-                                        .create(GardenApiService::class.java)
-                                    gardenService.addGarden(lr.id).enqueue(object : Callback<Void> {
-                                        override fun onResponse(c2: Call<Void>, r2: Response<Void>) {
-                                            goHabits()
-                                        }
-                                        override fun onFailure(c2: Call<Void>, t2: Throwable) {
-                                            goHabits()
-                                        }
-                                    })
-                                } else {
-                                    goHabits()
-                                }
-                            }
-                            override fun onFailure(call: Call<Void>, t: Throwable) {
-                                goHabits()
-                            }
-                        })
-                    }
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                        Toast.makeText(this@RegisterActivity, "Fallo en login automático", Toast.LENGTH_LONG).show()
-                    }
-                })
+                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                            showFailure()
+                        }
+                    })
             }
+
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(this@RegisterActivity, "Error de conexión. Intenta más tarde.", Toast.LENGTH_LONG).show()
+                showFailure()
             }
         })
+    }
+
+    private fun createGarden(userId: String) {
+        RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GardenApiService::class.java)
+            .addGarden(userId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, r2: Response<Void>) {
+                    if (r2.isSuccessful) {
+                        showSuccess()
+                    } else {
+                        showFailure()
+                    }
+                    goHabits()
+                }
+
+                override fun onFailure(call: Call<Void>, t2: Throwable) {
+                    showFailure()
+                    goHabits()
+                }
+            })
     }
 
     private fun saveUserData(token: String, name: String, id: String, email: String) {
@@ -150,9 +168,17 @@ class RegisterActivity : AppCompatActivity() {
             apply()
         }
     }
-
+//k
     private fun goHabits() {
         startActivity(Intent(this, HabitsActivity::class.java))
         finish()
+    }
+
+    // Solo estos dos Toast:
+    private fun showSuccess() {
+        Toast.makeText(this, "Cuenta creada correctamente", Toast.LENGTH_SHORT).show()
+    }
+    private fun showFailure() {
+        Toast.makeText(this, "Error al crear la cuenta", Toast.LENGTH_LONG).show()
     }
 }
