@@ -2,6 +2,8 @@
 package com.example.frontzephiro.network;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.example.frontzephiro.utils.DateAdapter;
 import com.example.frontzephiro.utils.TokenUtils;
 import com.google.gson.Gson;
@@ -15,6 +17,7 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.example.frontzephiro.api.GraphicApi;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class RetrofitClient {
     // tus URLs existentes
@@ -191,16 +194,34 @@ public class RetrofitClient {
 
     public static Retrofit getProfileClient() {
         if (retrofitProfile == null) {
+            // 1. Configura GSON
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
+
+            // 2. Crea un interceptor de logging que use el tag "HTTP"
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override public void log(String message) {
+                    Log.d("HTTP", message);
+                }
+            });
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            // 3. Usa ese interceptor en tu OkHttpClient
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .build();
+
+            // 4. Crea el Retrofit con ese cliente
             retrofitProfile = new Retrofit.Builder()
-                    .baseUrl(PROFILE_BASE_URL)
+                    .baseUrl(PROFILE_BASE_URL)   // "http://10.0.2.2:5032/"
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofitProfile;
     }
+
 
     public static GraphicApi getGraphicApi() {
         if (graphicApi == null) {

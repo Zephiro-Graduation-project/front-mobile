@@ -20,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.gson.Gson
 
 class PssActivity : AppCompatActivity() {
 
@@ -68,7 +69,7 @@ class PssActivity : AppCompatActivity() {
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 val request = QuestionnaireRequest(
                     userId         = userId,
-                    surveyId       = "PSS10_2025_04",
+                    surveyId       = "680118ce7b11356ba78f4ec8",
                     surveyName     = "Cuestionario de Estrés Percibido (PSS‑10)",
                     type           = "Psychological",
                     completionDate = today,
@@ -79,6 +80,13 @@ class PssActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
                             if (resp.isSuccessful) {
                                 Toast.makeText(this@PssActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+
+                                // ← Aquí guardas el JSON de las respuestas PSS
+                                val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                                prefs.edit()
+                                    .putString("PSS_ANSWERS", Gson().toJson(responses))
+                                    .apply()
+
                                 goGad()
                             } else {
                                 Toast.makeText(this@PssActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()

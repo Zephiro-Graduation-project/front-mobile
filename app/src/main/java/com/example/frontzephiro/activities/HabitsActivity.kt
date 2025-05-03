@@ -20,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.gson.Gson
 
 class HabitsActivity : AppCompatActivity() {
 
@@ -74,7 +75,7 @@ class HabitsActivity : AppCompatActivity() {
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 val request = QuestionnaireRequest(
                     userId         = userId,
-                    surveyId       = artifact.id,
+                    surveyId       = "680513097959660978ff6e8e",
                     surveyName     = artifact.name,
                     type           = "Behavioral",
                     completionDate = today,
@@ -85,6 +86,13 @@ class HabitsActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
                             if (resp.isSuccessful) {
                                 Toast.makeText(this@HabitsActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+
+                                // ← Aquí guardas el JSON de las respuestas de hábitos
+                                val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                                prefs.edit()
+                                    .putString("HABITS_ANSWERS", Gson().toJson(responses))
+                                    .apply()
+
                                 goPss()
                             } else {
                                 Toast.makeText(this@HabitsActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()

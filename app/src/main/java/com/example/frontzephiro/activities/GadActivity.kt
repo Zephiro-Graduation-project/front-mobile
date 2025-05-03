@@ -21,6 +21,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.gson.Gson
 
 class GadActivity : AppCompatActivity() {
 
@@ -81,7 +82,7 @@ class GadActivity : AppCompatActivity() {
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 val request = QuestionnaireRequest(
                     userId         = userId,
-                    surveyId       = "GAD7_2025_04",
+                    surveyId       = "680118d17b11356ba78f4ec9",
                     surveyName     = "Cuestionario de Ansiedad Generalizada (GAD‑7)",
                     type           = "Psychological",
                     completionDate = today,
@@ -93,13 +94,18 @@ class GadActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
                             if (resp.isSuccessful) {
                                 Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
-                                //envioUnico(this@GadActivity, 1)
+
+                                // ← Aquí guardas el JSON de las respuestas GAD
+                                val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                                prefs.edit()
+                                    .putString("GAD_ANSWERS", Gson().toJson(responses))
+                                    .apply()
+
                                 goDemographics()
                             } else {
                                 Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
                             }
                         }
-
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                         }

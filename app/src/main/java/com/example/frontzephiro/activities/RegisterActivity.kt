@@ -168,7 +168,7 @@ class RegisterActivity : AppCompatActivity() {
             apply()
         }
     }
-//k
+
     private fun goHabits() {
         startActivity(Intent(this, HabitsActivity::class.java))
         finish()
