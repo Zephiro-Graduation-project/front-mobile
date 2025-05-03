@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
+import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.models.MailDTO
 import com.example.frontzephiro.network.RetrofitClient
@@ -165,25 +166,71 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun deleteAccount(userId: String, email: String) {
-        val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
+        val userService = RetrofitClient
+            .getClient()
+            .create(UserApiService::class.java)
 
-        apiService.deleteAccount(userId, MailDTO(email)).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "Cuenta eliminada exitosamente", Toast.LENGTH_LONG).show()
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(applicationContext, "Error al eliminar la cuenta", Toast.LENGTH_LONG).show()
+        val profilingService = RetrofitClient
+            .getProfileClient()     // apunta a http://10.0.2.2:5032/
+            .create(ProfilingApiService::class.java)
+
+        userService.deleteAccount(userId, MailDTO(email))
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, resp: Response<ResponseBody>) {
+                    if (resp.isSuccessful) {
+                        profilingService.deleteProfile(userId, "Mongo")
+                            .enqueue(object : Callback<Void> {
+                                override fun onResponse(call: Call<Void>, resp: Response<Void>) {
+                                    if (resp.isSuccessful) {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Cuenta y perfil eliminados",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Cuenta eliminada pero error borrando perfil: ${resp.code()}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    goToLogin()
+                                }
+                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Error de red al borrar perfil",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    goToLogin()
+                                }
+                            })
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Error al eliminar la cuenta: ${resp.code()}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(applicationContext, "Error de conexión", Toast.LENGTH_LONG).show()
-            }
-        })
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(
+                        applicationContext,
+                        "Error de conexión al eliminar cuenta",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
     }
+
+    private fun goToLogin() {
+        sharedPreferences.edit().clear().apply()
+        startActivity(Intent(this, LoginActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        finish()
+    }
+
 
     private fun logout() {
         val editor = sharedPreferences.edit()
