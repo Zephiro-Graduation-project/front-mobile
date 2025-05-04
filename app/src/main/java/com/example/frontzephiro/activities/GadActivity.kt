@@ -1,9 +1,13 @@
 // GadActivity.kt
 package com.example.frontzephiro.activities
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +20,14 @@ import com.example.frontzephiro.models.Artifact
 import com.example.frontzephiro.models.QuestionnaireRequest
 import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.network.RetrofitClient
+import com.example.frontzephiro.receivers.HabitAlarmReceiver
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import com.google.gson.Gson
+import java.util.concurrent.TimeUnit
 
 class GadActivity : AppCompatActivity() {
 
@@ -150,8 +156,50 @@ class GadActivity : AppCompatActivity() {
     }
 
     private fun goDemographics() {
-        startActivity(Intent(this, DemographicsActivity::class.java))
+
+        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val demoDone = prefs.getBoolean("DEMOGRAPHICS_FILLED", false)
+
+        val target = if (demoDone) {
+            HomeActivity::class.java
+        } else {
+            DemographicsActivity::class.java
+        }
+
+        startActivity(Intent(this, target))
+        scheduleReLaunchHabits()
         finish()
+    }
+
+    private fun scheduleReLaunchHabits() {
+        val alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        // En Android 12+ comprueba permiso antes
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmMgr.canScheduleExactAlarms()) {
+            startActivity(
+                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+            )
+            return
+        }
+
+        // Intent para el BroadcastReceiver
+        val intent = Intent(this, HabitAlarmReceiver::class.java)
+        val pending = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Ahora + 15 minutos (o 1 min para pruebas)
+        val triggerAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1)
+
+        alarmMgr.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerAt,
+            pending
+        )
     }
 
 }

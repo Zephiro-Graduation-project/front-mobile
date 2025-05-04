@@ -49,7 +49,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menuJardin -> {
-                    startActivity(Intent(this, DemographicsActivity::class.java))
+                    startActivity(Intent(this, GardenMain::class.java))
                     true
                 }
                 R.id.menuContenido -> {

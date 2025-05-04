@@ -13,7 +13,6 @@ import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeDemographicsBinding
 import com.example.frontzephiro.models.QuestionnaireRequest
-import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.models.ResponseItem
 import com.example.frontzephiro.network.RetrofitClient
 import retrofit2.Call
@@ -21,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class DemographicsActivity : AppCompatActivity() {
     companion object {
@@ -132,6 +132,12 @@ class DemographicsActivity : AppCompatActivity() {
                 if (resp.isSuccessful) {
                     Toast.makeText(this@DemographicsActivity,
                         "Perfil creado correctamente", Toast.LENGTH_SHORT).show()
+
+                    val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                    prefs.edit()
+                        .putBoolean("DEMOGRAPHICS_FILLED", true)
+                        .apply()
+
                     } else {
                     Toast.makeText(this@DemographicsActivity,
                         "Error creando perfil: ${resp.code()}", Toast.LENGTH_LONG).show()
