@@ -7,6 +7,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -23,6 +24,12 @@ interface ProfilingApiService {
         @Path("userId") userId: String,
         @Query("dataSource") dataSource: String = "Mongo"
     ): Call<Void>
+
+    @GET("api/Profile/{userId}")
+    fun getProfile(
+        @Path("userId") userId: String,
+        @Query("dataSource") dataSource: String = "Mongo"
+    ): Call<ProfileResponse>
 }
 
 

@@ -193,7 +193,7 @@ class GadActivity : AppCompatActivity() {
         )
 
         // Ahora + 15 minutos (o 1 min para pruebas)
-        val triggerAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1)
+        val triggerAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15)
 
         alarmMgr.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,

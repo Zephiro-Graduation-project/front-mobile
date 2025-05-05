@@ -5,53 +5,58 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class ProfileResponse(
-    @SerializedName("id") val id: String,
-    @SerializedName("userId") val userId: String,
-    @SerializedName("createdAt") val createdAt: Date,
-    @SerializedName("updatedAt") val updatedAt: Date,
-    @SerializedName("totalStressScore") val totalStressScore: Int,
-    @SerializedName("totalAnxietyScore") val totalAnxietyScore: Int,
-    @SerializedName("stressCategory") val stressCategory: Int,
-    @SerializedName("anxietyCategory") val anxietyCategory: Int,
-    @SerializedName("socioDemographicData") val socioDemographicData: SocioDemographicData,
-    @SerializedName("stressIndicator") val stressIndicator: StressIndicator,
-    @SerializedName("anxietyIndicator") val anxietyIndicator: AnxietyIndicator
+    @SerializedName("id")                val id: String,
+    @SerializedName("userId")            val userId: String,
+    @SerializedName("createdAt")         val createdAt: Date,
+    @SerializedName("updatedAt")         val updatedAt: Date? = null,
+    @SerializedName("totalStressScore")  val totalStressScore: Int? = null,
+    @SerializedName("totalAnxietyScore") val totalAnxietyScore: Int? = null,
+    @SerializedName("stressCategory")    val stressCategory: Int? = null,
+    @SerializedName("anxietyCategory")   val anxietyCategory: Int? = null,
+    @SerializedName("socioDemographicData")
+    val socioDemographicData: SocioDemographicData? = null,
+
+    @SerializedName("stressIndicator")
+    val stressIndicator: StressIndicator,
+
+    @SerializedName("anxietyIndicator")
+    val anxietyIndicator: AnxietyIndicator
 )
 
 data class SocioDemographicData(
-    val age: Int,
-    val gender: String,
-    val socioeconomicLevel: Int,
-    val workCondition: Int,
-    val socialSupport: Int
+    @SerializedName("age")                  val age: Int,
+    @SerializedName("gender")               val gender: String,
+    @SerializedName("socioeconomicLevel")   val socioeconomicLevel: Int,
+    @SerializedName("workCondition")        val workCondition: Int,
+    @SerializedName("socialSupport")        val socialSupport: Int
 )
 
 data class StressIndicator(
-    val pssScore: Int,
-    val generalHabits: GeneralHabits,
-    val totalScore: Int,
-    val category: Int
+    @SerializedName("pssScore")     val pssScore: Int,
+    @SerializedName("stressHabits") val stressHabits: StressHabits,
+    @SerializedName("totalScore")   val totalScore: Int,
+    @SerializedName("category")     val category: String
 )
 
-data class GeneralHabits(
-    val alimentationScore: Int,
-    val sleepScore: Int,
-    val physicalScore: Int,
-    val procrastinationScore: Int,
-    val totalScore: Int
+data class StressHabits(
+    @SerializedName("relaxationScore")      val relaxationScore: Int,
+    @SerializedName("sleepScore")           val sleepScore: Int,
+    @SerializedName("physicalScore")        val physicalScore: Int,
+    @SerializedName("procrastinationScore") val procrastinationScore: Int,
+    @SerializedName("totalScore")           val totalScore: Int
 )
 
 data class AnxietyIndicator(
-    val gad7Score: Int,
-    val anxiousHabits: AnxiousHabits,
-    val totalScore: Int,
-    val category: Int
+    @SerializedName("gad7Score")     val gad7Score: Int,
+    @SerializedName("anxiousHabits") val anxiousHabits: AnxiousHabits,
+    @SerializedName("totalScore")    val totalScore: Int,
+    @SerializedName("category")      val category: String    // ej. "Leve"
 )
 
 data class AnxiousHabits(
-    val deviceUseScore: Int,
-    val ruminationScore: Int,
-    val repetitiveActionsScore: Int,
-    val hypervigilanceScore: Int,
-    val totalScore: Int
+    @SerializedName("fearScore")               val fearScore: Int,
+    @SerializedName("ruminationScore")         val ruminationScore: Int,
+    @SerializedName("repetitiveActionsScore")  val repetitiveActionsScore: Int,
+    @SerializedName("hypervigilanceScore")     val hypervigilanceScore: Int,
+    @SerializedName("totalScore")              val totalScore: Int
 )
