@@ -27,9 +27,11 @@ class HomeActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
+        // Saludo
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
         findViewById<TextView>(R.id.namePersona).text = "Hola, $userName"
 
+        // Lottie buttons
         findViewById<LottieAnimationView>(R.id.call).apply {
             repeatCount = 0; playAnimation()
             setOnClickListener {
@@ -43,6 +45,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        // Bottom nav
         findViewById<BottomNavigationView>(R.id.bottom_navigation)
             .setOnNavigationItemSelectedListener { item ->
                 when (item.itemId) {
@@ -54,7 +57,11 @@ class HomeActivity : AppCompatActivity() {
                     else                 -> false
                 }
             }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        // Cada vez que la pantalla se muestre, recarga perfil y monedas
         loadProfileAndPopulate()
         loadCoinsAndPopulate()
     }
