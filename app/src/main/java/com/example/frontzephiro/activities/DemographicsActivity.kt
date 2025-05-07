@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.DemographicsAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeDemographicsBinding
@@ -33,8 +34,14 @@ class DemographicsActivity : AppCompatActivity() {
     private lateinit var questionnaireService: QuestionnaireApiService
     private lateinit var profilingService: ProfilingApiService
     private lateinit var prefs: SharedPreferences
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySurveyLargeDemographicsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -123,34 +130,82 @@ class DemographicsActivity : AppCompatActivity() {
             })
     }
 
-    private fun createProfile(userId:String) {
+    private fun createProfile(userId: String) {
         Log.d(TAG,"Creando perfil userId=$userId")
         profilingService
             .createProfileFromDatabase(userId, "Mongo")
             .enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                if (resp.isSuccessful) {
-                    Toast.makeText(this@DemographicsActivity,
-                        "Perfil creado correctamente", Toast.LENGTH_SHORT).show()
-
-                    val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                    prefs.edit()
-                        .putBoolean("DEMOGRAPHICS_FILLED", true)
-                        .apply()
-
+                override fun onResponse(call: Call<Void>, resp: Response<Void>) {
+                    if (resp.isSuccessful) {
+                        Toast.makeText(
+                            this@DemographicsActivity,
+                            "Perfil creado correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        prefs.edit()
+                            .putBoolean("DEMOGRAPHICS_FILLED", true)
+                            .apply()
                     } else {
-                    Toast.makeText(this@DemographicsActivity,
-                        "Error creando perfil: ${resp.code()}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this@DemographicsActivity,
+                            "Error creando perfil: ${resp.code()}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                goHome()
+
+                    // → Aquí recompensamos al completar Demographics
+                    gamificationService
+                        .rewardSurvey(userId)
+                        .enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                if (rewardResp.isSuccessful) {
+                                    Toast.makeText(
+                                        this@DemographicsActivity,
+                                        "¡Recompensa aplicada!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        this@DemographicsActivity,
+                                        "Error recompensa: ${rewardResp.code()}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                goHome()
+                            }
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(
+                                    this@DemographicsActivity,
+                                    "Fallo recompensa: ${t.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                goHome()
+                            }
+                        })
                 }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@DemographicsActivity,
-                    "Fallo al crear perfil: ${t.message}", Toast.LENGTH_LONG).show()
-                goHome()
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(
+                        this@DemographicsActivity,
+                        "Fallo al crear perfil: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    // Aunque falle el perfil, aún intentamos dar la recompensa
+                    gamificationService
+                        .rewardSurvey(userId)
+                        .enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                goHome()
+                            }
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                goHome()
+                            }
+                        })
                 }
             })
     }
+
 
     private fun loadDemographics() {
         Log.d(TAG,"Cargando DEMOG preguntas")

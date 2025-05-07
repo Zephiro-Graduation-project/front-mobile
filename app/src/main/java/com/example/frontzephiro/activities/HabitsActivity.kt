@@ -3,15 +3,19 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.GamificationApiService
+import com.example.frontzephiro.api.GardenApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeBinding
 import com.example.frontzephiro.models.Artifact
+import com.example.frontzephiro.models.LoginResponse
 import com.example.frontzephiro.models.QuestionnaireRequest
 import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.network.RetrofitClient
@@ -29,8 +33,14 @@ class HabitsActivity : AppCompatActivity() {
     private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
     private var currentArtifact: Artifact? = null
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -93,7 +103,34 @@ class HabitsActivity : AppCompatActivity() {
                                     .putString("HABITS_ANSWERS", Gson().toJson(responses))
                                     .apply()
 
-                                goPss()
+                                gamificationService.rewardSurvey(userId)
+                                    .enqueue(object : Callback<Void> {
+                                        override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                            if (rewardResp.isSuccessful) {
+                                                Toast.makeText(
+                                                    this@HabitsActivity,
+                                                    "Recompensa aplicada exitosamente",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    this@HabitsActivity,
+                                                    "Error recompensa: ${rewardResp.code()}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            goPss()
+                                        }
+                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                            Toast.makeText(
+                                                this@HabitsActivity,
+                                                "Fallo recompensa: ${t.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            goPss()
+                                        }
+                                    })
+
                             } else {
                                 Toast.makeText(this@HabitsActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
                             }

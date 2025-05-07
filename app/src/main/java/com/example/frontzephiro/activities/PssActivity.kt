@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeBinding
 import com.example.frontzephiro.models.Artifact
@@ -28,8 +29,14 @@ class PssActivity : AppCompatActivity() {
     private lateinit var surveyAdapter: SurveyAdapter
     private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -87,7 +94,34 @@ class PssActivity : AppCompatActivity() {
                                     .putString("PSS_ANSWERS", Gson().toJson(responses))
                                     .apply()
 
-                                goGad()
+                                gamificationService.rewardSurvey(userId)
+                                    .enqueue(object : Callback<Void> {
+                                        override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                            if (rewardResp.isSuccessful) {
+                                                Toast.makeText(
+                                                    this@PssActivity,
+                                                    "Recompensa aplicada exitosamente",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    this@PssActivity,
+                                                    "Error recompensa: ${rewardResp.code()}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            goGad()
+                                        }
+                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                            Toast.makeText(
+                                                this@PssActivity,
+                                                "Fallo recompensa: ${t.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            goGad()
+                                        }
+                                    })
+
                             } else {
                                 Toast.makeText(this@PssActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
                             }

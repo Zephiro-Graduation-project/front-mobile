@@ -16,6 +16,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeBinding
@@ -43,8 +44,14 @@ class GadActivity : AppCompatActivity() {
     private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
     private lateinit var profilingService: ProfilingApiService
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -97,35 +104,64 @@ class GadActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            if (resp.isSuccessful) {
-                                Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
-                                prefs.edit()
-                                    .putString("GAD_ANSWERS", Gson().toJson(responses))
-                                    .apply()
-
-                                // → aquí lanzas el POST a /api/profile/{userId}?DataSource=Mongo
-                                Log.d(TAG, "Lanzando createProfileFromDatabase para userId=$userId")
-                                profilingService.createProfileFromDatabase(userId)
-                                    .enqueue(object : Callback<Void> {
-                                        override fun onResponse(call: Call<Void>, r: Response<Void>) {
-                                            if (r.isSuccessful) {
-                                                Log.d(TAG, "PUT profile exitoso (code ${r.code()})")
-                                            } else {
-                                                Log.e(TAG, "Error en PUT profile: ${r.code()} – ${r.errorBody()?.string()}")
-                                            }
-                                            goDemographics()
-                                        }
-                                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                                            Log.e(TAG, "Fallo red PUT profile", t)
-                                            goDemographics()
-                                        }
-                                    })
-
-                            } else {
+                            if (!resp.isSuccessful) {
                                 Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
                                 Log.e(TAG, "Error en POST encuesta: ${resp.code()} – ${resp.errorBody()?.string()}")
+                                return
                             }
+
+                            // 1) Éxito al enviar encuesta
+                            Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            prefs.edit()
+                                .putString("GAD_ANSWERS", Gson().toJson(surveyAdapter.getResponses()))
+                                .apply()
+
+                            // 2) Actualizar perfil
+                            profilingService.createProfileFromDatabase(userId)
+                                .enqueue(object : Callback<Void> {
+                                    override fun onResponse(call: Call<Void>, r: Response<Void>) {
+                                        if (r.isSuccessful) {
+                                            Log.d(TAG, "PUT profile exitoso (code ${r.code()})")
+                                        } else {
+                                            Log.e(TAG, "Error en PUT profile: ${r.code()} – ${r.errorBody()?.string()}")
+                                        }
+
+                                        // 3) Recompensa por completar GAD-7
+                                        gamificationService.rewardSurvey(userId)
+                                            .enqueue(object : Callback<Void> {
+                                                override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                                    if (rewardResp.isSuccessful) {
+                                                        Log.d(TAG, "Recompensa GAD exitosa")
+                                                    } else {
+                                                        Log.e(TAG, "Error recompensa GAD: ${rewardResp.code()}")
+                                                    }
+                                                    goDemographics()
+                                                }
+                                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                    Log.e(TAG, "Fallo recompensa GAD: ${t.message}", t)
+                                                    goDemographics()
+                                                }
+                                            })
+                                    }
+
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        Log.e(TAG, "Fallo red PUT profile", t)
+
+                                        // Aunque falle el perfil, intentamos igualmente dar la recompensa
+                                        gamificationService.rewardSurvey(userId)
+                                            .enqueue(object : Callback<Void> {
+                                                override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                                    goDemographics()
+                                                }
+                                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                    goDemographics()
+                                                }
+                                            })
+                                    }
+                                })
                         }
+
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                             Log.e(TAG, "Fallo red POST encuesta", t)

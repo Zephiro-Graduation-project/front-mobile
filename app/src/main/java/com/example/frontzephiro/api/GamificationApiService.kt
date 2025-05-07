@@ -8,6 +8,7 @@ import com.example.frontzephiro.models.GardenResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -53,5 +54,8 @@ interface GamificationApiService {
         @Path("userId") userId: String,
         @Body gardenRequest: GardenRequest
     ): Call<Void>
+
+    @PUT("inventory/{userId}/rewardSurvey")
+    fun rewardSurvey(@Path("userId") userId: String): Call<Void>
 
 }
