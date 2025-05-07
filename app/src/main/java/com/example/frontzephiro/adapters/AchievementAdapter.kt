@@ -28,7 +28,7 @@ class AchievementAdapter(private val achievementList: List<Achievement>) :
     override fun onBindViewHolder(holder: AchievementViewHolder, position: Int) {
         val achievement = achievementList[position]
         holder.rewardText.text = achievement.reward
-        holder.streakText.text = achievement.streakDays
+        holder.streakText.text = achievement.title
         holder.descriptionText.text = achievement.description
         holder.coinLottie.playAnimation()
     }

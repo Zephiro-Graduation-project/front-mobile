@@ -3,7 +3,7 @@ package com.example.frontzephiro.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,124 +19,173 @@ import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ContentActivity : AppCompatActivity() {
+
+    private lateinit var chipGroup: ChipGroup
+    private lateinit var rvContent: RecyclerView
+    private lateinit var tvCategoryName: TextView
+    private lateinit var contentAdapter: ContentAdapter
+
+    private var selectedTagId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_content)
 
-        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
-        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
-        callAnimation.repeatCount = 0
-        callAnimation.playAnimation()
-
-        alertAnimation.repeatCount = 0
-        alertAnimation.playAnimation()
-
-        callAnimation.setOnClickListener {
-            val intent = Intent(this, EmergencyContactsActivity::class.java)
-            startActivity(intent)
+        // Lottie buttons
+        findViewById<LottieAnimationView>(R.id.call).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@ContentActivity, EmergencyContactsActivity::class.java))
+            }
         }
-
-        alertAnimation.setOnClickListener {
-            val intent = Intent(this, EmergencyNumbersActivity::class.java)
-            startActivity(intent)
-        }
-
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.selectedItemId = R.id.menuContenido
-        bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menuInicio -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    true
-                }
-                R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, TrackerMain::class.java))
-                    true
-                }
-                R.id.menuJardin -> {
-                    startActivity(Intent(this, GardenMain::class.java))
-                    true
-                }
-                /*
-                R.id.menuContenido -> {
-                    true
-                } */
-                R.id.menuPerfil -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    true
-                }
-                else -> false
+        findViewById<LottieAnimationView>(R.id.alert).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@ContentActivity, EmergencyNumbersActivity::class.java))
             }
         }
 
-        loadContent()
+        // Bottom nav
+        findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
+            selectedItemId = R.id.menuContenido
+            setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.menuInicio    -> startActivity(Intent(this@ContentActivity, HomeActivity::class.java))
+                    R.id.menuSeguimiento-> startActivity(Intent(this@ContentActivity, TrackerMain::class.java))
+                    R.id.menuJardin    -> startActivity(Intent(this@ContentActivity, GardenMain::class.java))
+                    R.id.menuPerfil    -> startActivity(Intent(this@ContentActivity, ProfileActivity::class.java))
+                    else               -> return@setOnItemSelectedListener false
+                }
+                true
+            }
+        }
+
+        // UI refs
+        chipGroup       = findViewById(R.id.chipGroup)
+        rvContent       = findViewById(R.id.rvContent)
+        tvCategoryName  = findViewById(R.id.namePersona)
+
+        // Configuramos singleSelection correctamente:
+        chipGroup.isSingleSelection = true
+
+        // Recycler + Adapter, ahora con callback al click:
+        contentAdapter = ContentAdapter(emptyList()) { content ->
+            // Al tocar una card lanzamos SpecificContentActivity con el ID
+            startActivity(
+                Intent(this@ContentActivity, SpecificContentActivity::class.java)
+                    .putExtra("CONTENT_ID", content.id)
+            )
+        }
+        rvContent.apply {
+            layoutManager = LinearLayoutManager(this@ContentActivity)
+            setHasFixedSize(true)
+            adapter = contentAdapter
+        }
+
         loadTags()
-    }
-
-    private fun logout() {
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
-
-    private fun loadContent() {
-        val contentApi = RetrofitClient.getAuthenticatedContentClient(this)
-            .create(ContentApiService::class.java)
-        val call = contentApi.getAllContent()
-        call.enqueue(object : retrofit2.Callback<List<Content>> {
-            override fun onResponse(
-                call: retrofit2.Call<List<Content>>,
-                response: retrofit2.Response<List<Content>>
-            ) {
-                if (response.isSuccessful) {
-                    val contentList = response.body() ?: emptyList()
-                    Log.d("ContentActivity", "Se recibió contenido: ${contentList.size} items")
-                    val recyclerView = findViewById<RecyclerView>(R.id.rvContent)
-                    recyclerView.layoutManager = LinearLayoutManager(this@ContentActivity)
-                    recyclerView.adapter = ContentAdapter(contentList)
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("ContentActivity", "Error al cargar contenido: $errorBody")
-                    Toast.makeText(this@ContentActivity, "Error al cargar contenido", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onFailure(call: retrofit2.Call<List<Content>>, t: Throwable) {
-                Toast.makeText(this@ContentActivity, "Error de conexión al cargar contenido", Toast.LENGTH_SHORT).show()
-            }
-        })
+        loadContent()
     }
 
     private fun loadTags() {
-        val tagsApi = RetrofitClient.getContentClient().create(TagsApiService::class.java)
-        val call = tagsApi.getAllTags()
-        call.enqueue(object : retrofit2.Callback<List<Tag>> {
-            override fun onResponse(
-                call: retrofit2.Call<List<Tag>>,
-                response: retrofit2.Response<List<Tag>>
-            ) {
-                if (response.isSuccessful) {
-                    val tags = response.body()
-                    Log.d("ContentActivity", "Se recibieron ${tags?.size ?: 0} tags")
-                    val chipGroup = findViewById<ChipGroup>(R.id.chipGroup)
-                    chipGroup.removeAllViews()
-                    tags?.forEach { tag ->
-                        val chip = Chip(this@ContentActivity)
-                        chip.text = tag.name
-                        chip.isClickable = true
-                        chip.isCheckable = false
-                        chipGroup.addView(chip)
+        RetrofitClient
+            .getContentClient()
+            .create(TagsApiService::class.java)
+            .getAllTags()
+            .enqueue(object : Callback<List<Tag>> {
+                override fun onResponse(call: Call<List<Tag>>, resp: Response<List<Tag>>) {
+                    if (!resp.isSuccessful) {
+                        Log.e("ContentActivity", "Error ${resp.code()} al cargar tags")
+                        return
                     }
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("ContentActivity", "Error al cargar tags: $errorBody")
-                    Toast.makeText(this@ContentActivity, "Error al cargar tags", Toast.LENGTH_SHORT).show()
+                    chipGroup.removeAllViews()
+                    resp.body().orEmpty().forEach { tag ->
+                        Chip(this@ContentActivity).apply {
+                            text        = tag.name
+                            isCheckable = true
+                            setOnClickListener {
+                                if (selectedTagId == tag.id) {
+                                    // misma etiqueta: deseleccionamos y volvemos a todo
+                                    selectedTagId = null
+                                    chipGroup.clearCheck()
+                                    tvCategoryName.text = getString(R.string.nombreCategoria)
+                                    loadContent()
+                                } else {
+                                    // nueva etiqueta: filtramos
+                                    selectedTagId = tag.id
+                                    tvCategoryName.text = tag.name
+                                    loadContentByTag(tag.id)
+                                }
+                            }
+                            chipGroup.addView(this)
+                        }
+                    }
                 }
-            }
-            override fun onFailure(call: retrofit2.Call<List<Tag>>, t: Throwable) {
-                Toast.makeText(this@ContentActivity, "Error de conexión al cargar tags", Toast.LENGTH_SHORT).show()
-            }
-        })
+
+                override fun onFailure(call: Call<List<Tag>>, t: Throwable) {
+                    Log.e("ContentActivity", "Fallo conexión tags", t)
+                }
+            })
+    }
+
+    private fun loadContent() {
+        tvCategoryName.text = getString(R.string.nombreCategoria)
+        RetrofitClient
+            .getContentClient()
+            .create(ContentApiService::class.java)
+            .getAllContent()
+            .enqueue(object : Callback<List<Content>> {
+                override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
+                    if (!resp.isSuccessful) {
+                        Toast.makeText(
+                            this@ContentActivity,
+                            "Error al cargar contenido",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
+                    contentAdapter.updateItems(resp.body().orEmpty())
+                }
+
+                override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Toast.makeText(
+                        this@ContentActivity,
+                        "Error de conexión al cargar contenido",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+    }
+
+    private fun loadContentByTag(tagId: String) {
+        RetrofitClient
+            .getContentClient()
+            .create(ContentApiService::class.java)
+            .getContentByTag(tagId)
+            .enqueue(object : Callback<List<Content>> {
+                override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
+                    if (!resp.isSuccessful) {
+                        Toast.makeText(
+                            this@ContentActivity,
+                            "Error al filtrar contenido",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
+                    contentAdapter.updateItems(resp.body().orEmpty())
+                }
+
+                override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Toast.makeText(
+                        this@ContentActivity,
+                        "Fallo al filtrar contenido",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
     }
 }

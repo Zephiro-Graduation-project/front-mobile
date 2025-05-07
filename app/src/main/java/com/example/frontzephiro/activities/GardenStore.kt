@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,9 @@ import com.example.frontzephiro.models.StoreProduct
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.Normalizer
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
 
 class GardenStore : AppCompatActivity() {
     private lateinit var recyclerViewP: RecyclerView
@@ -53,12 +57,15 @@ class GardenStore : AppCompatActivity() {
             startActivity(intent)
         }
 
+        loadCoins()
+
         recyclerViewP = findViewById(R.id.recycler_tienda)
 
         loadFlowers { flowers ->
             // Convertir la lista de flores a una lista de StoreProduct
             val storePlants = flowers.map { flower ->
                 StoreProduct(
+                    id = flower.id,
                     name = flower.name,
                     price = flower.price,
                     imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
@@ -82,6 +89,7 @@ class GardenStore : AppCompatActivity() {
             // Convertir la lista de fondos a una lista de StoreProduct
             val storeBackgrounds = backgrounds.map { background ->
                 StoreProduct(
+                    id = background.id,
                     name = background.title,
                     price = background.price,
                     imageName = normalizarTexto(background.title),  // Usamos title para la imagen
@@ -135,6 +143,39 @@ class GardenStore : AppCompatActivity() {
         dialog.show(supportFragmentManager, "ProductDetailDialog")
     }
 
+    private fun loadCoins() {
+        val txtCoins = findViewById<TextView>(R.id.txt_coins)
+        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", null)
+
+        if (userId == null) {
+            txtCoins.text = "0"
+            Log.e("Coins", "USER_ID no encontrado en SharedPreferences")
+            return
+        }
+
+        // Agregado: mostrar el userId que se encontró
+        Log.d("Coins", "USER_ID encontrado: $userId")
+
+        val service = RetrofitClient.getAuthenticatedGamificationClient(this).create(GamificationApiService::class.java)
+
+        service.getCoins(userId).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                if (response.isSuccessful) {
+                    val coins = response.body() ?: 0
+                    txtCoins.text = coins.toString()
+                } else {
+                    txtCoins.text = "0"
+                    Log.e("Coins", "Error al obtener monedas: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Int>, t: Throwable) {
+                txtCoins.text = "0"
+                Log.e("Coins", "Fallo en la conexión", t)
+            }
+        })
+    }
 
     private fun loadFlowers(onFlowersLoaded: (List<Flower>) -> Unit) {
         val flowersApi = RetrofitClient.getAuthenticatedGamificationClient(this).create(GamificationApiService::class.java)
@@ -201,5 +242,4 @@ class GardenStore : AppCompatActivity() {
             .replace('Ñ', 'n') // Reemplaza Ñ mayúscula también por minúscula n
             .lowercase() // Convierte a minúsculas
     }
-
 }

@@ -1,35 +1,68 @@
-// GadActivity.kt
 package com.example.frontzephiro.activities
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieAnimationView
+import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
+import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeBinding
 import com.example.frontzephiro.models.Artifact
 import com.example.frontzephiro.models.QuestionnaireRequest
+import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.network.RetrofitClient
+import com.example.frontzephiro.receivers.HabitAlarmReceiver
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class GadActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "GadActivity"
+    }
+
     private lateinit var binding: ActivitySurveyLargeBinding
     private lateinit var surveyAdapter: SurveyAdapter
+    private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
+    private lateinit var profilingService: ProfilingApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        surveyAdapter = SurveyAdapter(emptyList())
+        artifactService = RetrofitClient
+            .getAuthenticatedArtifactClient(this)
+            .create(ArtifactApiService::class.java)
+        questionnaireService = RetrofitClient
+            .getAuthenticatedArtifactClient(this)
+            .create(QuestionnaireApiService::class.java)
+        profilingService = RetrofitClient
+            .getProfileClient()
+            .create(ProfilingApiService::class.java)
+
+        val readOnly   = intent.getBooleanExtra("READ_ONLY", false)
+        val idResponse = intent.getStringExtra("ID_RESPONSE")
+
+        surveyAdapter = SurveyAdapter(emptyList(), readOnly)
         binding.rvPreguntas.apply {
             layoutManager = LinearLayoutManager(this@GadActivity)
             setHasFixedSize(false)
@@ -37,69 +70,135 @@ class GadActivity : AppCompatActivity() {
             adapter = surveyAdapter
         }
 
-        questionnaireService = RetrofitClient
-            .getAuthenticatedArtifactClient(this)
-            .create(QuestionnaireApiService::class.java)
+        if (!readOnly) {
+            binding.botonEnviar.setOnClickListener {
+                val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                val userId = prefs.getString("USER_ID", "") ?: ""
+                if (userId.isBlank()) {
+                    Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val responses = surveyAdapter.getResponses()
+                if (responses.any { it.selectedAnswer.isBlank() }) {
+                    Toast.makeText(this, "Por favor, responde todas las preguntas", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
 
-        binding.botonEnviar.setOnClickListener {
-            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-            val userId = prefs.getString("USER_ID", "") ?: ""
-            if (userId.isBlank()) {
-                Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                val request = QuestionnaireRequest(
+                    userId         = userId,
+                    surveyId       = "680118d17b11356ba78f4ec9",
+                    surveyName     = "Cuestionario de Ansiedad Generalizada (GAD-7)",
+                    type           = "Psychological",
+                    completionDate = today,
+                    responses      = responses
+                )
 
-            val responses = surveyAdapter.getResponses()
-            if (responses.any { it.selectedAnswer.isBlank() }) {
-                Toast.makeText(this, "Por favor, responde todas las preguntas", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                questionnaireService.addQuestionnaire(request)
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, resp: Response<Void>) {
+                            if (resp.isSuccessful) {
+                                Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                                prefs.edit()
+                                    .putString("GAD_ANSWERS", Gson().toJson(responses))
+                                    .apply()
 
-            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            val request = QuestionnaireRequest(
-                userId         = userId,
-                surveyId       = "GAD7_2025_04",
-                surveyName     = "Cuestionario de Ansiedad Generalizada (GAD‑7)",
-                type           = "Psychological",
-                completionDate = today,
-                responses      = responses
-            )
+                                // → aquí lanzas el POST a /api/profile/{userId}?DataSource=Mongo
+                                Log.d(TAG, "Lanzando createProfileFromDatabase para userId=$userId")
+                                profilingService.createProfileFromDatabase(userId)
+                                    .enqueue(object : Callback<Void> {
+                                        override fun onResponse(call: Call<Void>, r: Response<Void>) {
+                                            if (r.isSuccessful) {
+                                                Log.d(TAG, "PUT profile exitoso (code ${r.code()})")
+                                            } else {
+                                                Log.e(TAG, "Error en PUT profile: ${r.code()} – ${r.errorBody()?.string()}")
+                                            }
+                                            goDemographics()
+                                        }
+                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                            Log.e(TAG, "Fallo red PUT profile", t)
+                                            goDemographics()
+                                        }
+                                    })
 
-            questionnaireService.addQuestionnaire(request)
-                .enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                        if (resp.isSuccessful) {
-                            Toast.makeText(this@GadActivity, "Encuesta GAD‑7 enviada", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                                Log.e(TAG, "Error en POST encuesta: ${resp.code()} – ${resp.errorBody()?.string()}")
+                            }
                         }
-                    }
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
-                    }
-                })
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
+                            Log.e(TAG, "Fallo red POST encuesta", t)
+                        }
+                    })
+            }
+        } else {
+            binding.botonEnviar.visibility = View.GONE
         }
 
-        loadGadSurvey()
+        loadGadSurvey(readOnly, idResponse)
     }
 
-    private fun loadGadSurvey() {
-        RetrofitClient
-            .getAuthenticatedArtifactClient(this)
-            .create(ArtifactApiService::class.java)
-            .getGadArtifact()
+    private fun loadGadSurvey(readOnly: Boolean, idResponse: String?) {
+        artifactService.getGadArtifact()
             .enqueue(object : Callback<Artifact> {
-                override fun onResponse(call: Call<Artifact>, response: Response<Artifact>) {
-                    val art = response.body()
-                    if (!response.isSuccessful || art == null) {
-                        Toast.makeText(this@GadActivity, "Error ${response.code()}", Toast.LENGTH_SHORT).show()
+                override fun onResponse(call: Call<Artifact>, resp: Response<Artifact>) {
+                    val art = resp.body()
+                    if (!resp.isSuccessful || art == null) {
+                        Toast.makeText(this@GadActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                        Log.e(TAG, "Error cargando GAD artifact: ${resp.code()} – ${resp.errorBody()?.string()}")
                         return
                     }
                     surveyAdapter.updateQuestions(art.questions)
+                    if (readOnly && idResponse != null) {
+                        questionnaireService.getQuestionnaireDetail(idResponse)
+                            .enqueue(object : Callback<QuestionnaireResponseDetail> {
+                                override fun onResponse(
+                                    call: Call<QuestionnaireResponseDetail>,
+                                    r: Response<QuestionnaireResponseDetail>
+                                ) {
+                                    r.body()?.responses?.let { surveyAdapter.setResponses(it) }
+                                }
+                                override fun onFailure(call: Call<QuestionnaireResponseDetail>, t: Throwable) {
+                                    Toast.makeText(this@GadActivity, "Fallo detalle: ${t.message}", Toast.LENGTH_LONG).show()
+                                    Log.e(TAG, "Fallo red detalle GAD", t)
+                                }
+                            })
+                    }
                 }
                 override fun onFailure(call: Call<Artifact>, t: Throwable) {
                     Toast.makeText(this@GadActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
+                    Log.e(TAG, "Fallo red GAD artifact", t)
                 }
             })
+    }
+
+    private fun goDemographics() {
+        val prefs    = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val demoDone = prefs.getBoolean("DEMOGRAPHICS_FILLED", false)
+        val target   = if (demoDone) HomeActivity::class.java else DemographicsActivity::class.java
+        startActivity(Intent(this, target))
+        scheduleReLaunchHabits()
+        finish()
+    }
+
+    private fun scheduleReLaunchHabits() {
+        val alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmMgr.canScheduleExactAlarms()) {
+            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+            return
+        }
+        val intent = Intent(this, HabitAlarmReceiver::class.java)
+        val pending = PendingIntent.getBroadcast(
+            this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val triggerAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2)
+        alarmMgr.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerAt,
+            pending
+        )
     }
 }

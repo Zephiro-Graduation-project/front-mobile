@@ -2,17 +2,24 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.AchievementAdapter
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.models.Achievement
+import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class GardenAchievements : AppCompatActivity() {
+
+    private lateinit var recyclerViewLogros: RecyclerView
+    private lateinit var achievementAdapter: AchievementAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +48,15 @@ class GardenAchievements : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_logros)
+        recyclerViewLogros = findViewById(R.id.recycler_logros)
 
-        val dummyAchievements = listOf(
-            Achievement("5$ de recompensa", "3 días de racha", "Haz registros diarios durante 3 días seguidos para obtener esta recompensa."),
-            Achievement("10$ de recompensa", "7 días de racha", "Sigue registrando durante una semana completa."),
-            Achievement("20$ de recompensa", "15 días de racha", "¡Ya casi llegas al mes! Sigue así."),
-            Achievement("50$ de recompensa", "30 días de racha", "¡Un mes completo de constancia! Bien hecho.")
-        )
+        loadAchievements { achievements ->
+            recyclerViewLogros.layoutManager = LinearLayoutManager(this)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = AchievementAdapter(dummyAchievements)
-        recyclerView.setHasFixedSize(true)
+            achievementAdapter = AchievementAdapter(achievements)
+
+            recyclerViewLogros.adapter = achievementAdapter
+        }
 
 
 
@@ -85,4 +89,36 @@ class GardenAchievements : AppCompatActivity() {
             }
         }
     }
+
+    private fun loadAchievements(onAchievementsLoaded: (List<Achievement>) -> Unit) {
+        val achievementsApi = RetrofitClient.getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+        val call = achievementsApi.getAchievements() // Asegúrate de tener este método en tu API
+
+        call.enqueue(object : retrofit2.Callback<List<Achievement>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<Achievement>>,
+                response: retrofit2.Response<List<Achievement>>
+            ) {
+                if (response.isSuccessful) {
+                    val achievements = response.body() ?: emptyList()
+                    Log.d("AchievementsActivity", "Se recibieron ${achievements.size} logros")
+                    onAchievementsLoaded(achievements)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("AchievementsActivity", "Error al cargar logros: $errorBody")
+                    Log.e("Retrofit", "Error en la respuesta: ${response.code()}")
+                    Log.e("Retrofit", "Error body: $errorBody")
+                    Toast.makeText(this@GardenAchievements, "Error al cargar logros", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<Achievement>>, t: Throwable) {
+                Log.e("AchievementsActivity", "Fallo de conexión", t)
+                Toast.makeText(this@GardenAchievements, "Error de conexión al cargar logros", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
 }

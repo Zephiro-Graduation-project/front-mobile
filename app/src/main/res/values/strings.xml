@@ -170,4 +170,7 @@
     <string name="tituloTiendaPlantas">Plantas para personalizar tu jardin</string>
     <string name="tituloTIendaFondos">Fondos para ambientar tu jardin</string>
     <!-- Fin GardenInventoryFragment -->
+
+    <!-- Grafica -->
+    <string name="tituloGrafica">Graficas a tener en cuenta</string>
 </resources>

@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.models.StoreProduct
 
@@ -19,7 +18,6 @@ class Store_ItemAdapter(
         val imgProduct: ImageView = itemView.findViewById(R.id.img_product)
         val txtProductName: TextView = itemView.findViewById(R.id.txt_product_name)
         val txtPrice: TextView = itemView.findViewById(R.id.txt_price)
-        val lottieCoin: LottieAnimationView = itemView.findViewById(R.id.lottie_coin)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {

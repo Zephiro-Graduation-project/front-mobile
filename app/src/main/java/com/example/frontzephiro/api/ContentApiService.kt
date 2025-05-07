@@ -1,3 +1,4 @@
+// ContentApiService.kt
 package com.example.frontzephiro.api
 
 import com.example.frontzephiro.models.Content
@@ -10,8 +11,8 @@ interface ContentApiService {
     fun getAllContent(): Call<List<Content>>
 
     @GET("content/user/{id}")
-    fun getContentById(@Path("id") id: Long): Call<Content>
+    fun getContentById(@Path("id") id: String): Call<Content>
 
     @GET("content/user/bytag/{tag_id}")
-    fun getContentByTag(@Path("tag_id") tagId: Long): Call<List<Content>>
+    fun getContentByTag(@Path("tag_id") tagId: String): Call<List<Content>>
 }

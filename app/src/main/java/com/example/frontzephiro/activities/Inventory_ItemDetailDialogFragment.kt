@@ -6,40 +6,37 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.DialogFragment
+import com.example.frontzephiro.models.InventoryProduct
 
 class Inventory_ItemDetailDialogFragment : DialogFragment() {
 
     companion object {
-        fun newInstance(imageResId: Int, name: String, description: String, kind: String): Inventory_ItemDetailDialogFragment {
-            val args = Bundle().apply {
-                putInt("imageResId", imageResId)
-                putString("name", name)
-                putString("description", description)
-                putString("kind", kind)
-            }
+        fun newInstance(inventoryProduct: InventoryProduct): Inventory_ItemDetailDialogFragment {
             val fragment = Inventory_ItemDetailDialogFragment()
+            val args = Bundle()
+            args.putInt("productID", inventoryProduct.id)
+            args.putString("productName", inventoryProduct.name)
+            args.putString("productImage", inventoryProduct.imageName)
+            args.putString("productDescription", inventoryProduct.description)
+            args.putString("productKind", inventoryProduct.kind)
             fragment.arguments = args
             return fragment
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val imageResId = arguments?.getInt("imageResId") ?: 0
-        val name = arguments?.getString("name") ?: ""
-        val description = arguments?.getString("description") ?: ""
-        val kind = arguments?.getString("kind") ?: "Plant" // Valor por defecto
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val productID = requireArguments().getInt("productID", 0)
+        val productName = requireArguments().getString("productName", "")
+        val productImage = requireArguments().getString("productImage", "")
+        val productDescription = requireArguments().getString("productDescription", "")
+        val productKind = requireArguments().getString("productKind", "")
+
+        val inventoryProduct = InventoryProduct(productID, productName, productImage, productDescription, productKind)
 
         return ComposeView(requireContext()).apply {
             setContent {
                 InventoryItemDialog(
-                    imageResId = imageResId,
-                    name = name,
-                    description = description,
-                    kind = kind,
+                    inventoryProduct = inventoryProduct,
                     onDismiss = { dismiss() }
                 )
             }
