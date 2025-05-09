@@ -15,4 +15,10 @@ interface ContentApiService {
 
     @GET("content/user/bytag/{tag_id}")
     fun getContentByTag(@Path("tag_id") tagId: String): Call<List<Content>>
+
+    @GET("content/user/suggested/{stress}/{anxiety}")
+    fun getSuggestedContent(
+        @Path("stress") stress: Int,
+        @Path("anxiety") anxiety: Int
+    ): Call<List<Content>>
 }

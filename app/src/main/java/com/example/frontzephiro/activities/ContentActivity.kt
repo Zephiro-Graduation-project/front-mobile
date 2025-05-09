@@ -1,3 +1,4 @@
+// ContentActivity.kt
 package com.example.frontzephiro.activities
 
 import android.content.Intent
@@ -12,9 +13,10 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.ContentAdapter
 import com.example.frontzephiro.api.ContentApiService
+import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.TagsApiService
 import com.example.frontzephiro.models.Content
-import com.example.frontzephiro.models.Tag
+import com.example.frontzephiro.models.ProfileResponse
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
@@ -32,11 +34,21 @@ class ContentActivity : AppCompatActivity() {
 
     private var selectedTagId: String? = null
 
+    // vendrán del back
+    private var stressScore: Int = 0
+    private var anxietyScore: Int = 0
+
+    private val profilingService by lazy {
+        RetrofitClient
+            .getProfileClient()
+            .create(ProfilingApiService::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_content)
 
-        // Lottie buttons
+        // Lottie botones
         findViewById<LottieAnimationView>(R.id.call).apply {
             repeatCount = 0; playAnimation()
             setOnClickListener {
@@ -55,27 +67,23 @@ class ContentActivity : AppCompatActivity() {
             selectedItemId = R.id.menuContenido
             setOnItemSelectedListener { item ->
                 when (item.itemId) {
-                    R.id.menuInicio    -> startActivity(Intent(this@ContentActivity, HomeActivity::class.java))
+                    R.id.menuInicio     -> startActivity(Intent(this@ContentActivity, HomeActivity::class.java))
                     R.id.menuSeguimiento-> startActivity(Intent(this@ContentActivity, TrackerMain::class.java))
-                    R.id.menuJardin    -> startActivity(Intent(this@ContentActivity, GardenMain::class.java))
-                    R.id.menuPerfil    -> startActivity(Intent(this@ContentActivity, ProfileActivity::class.java))
-                    else               -> return@setOnItemSelectedListener false
+                    R.id.menuJardin     -> startActivity(Intent(this@ContentActivity, GardenMain::class.java))
+                    R.id.menuPerfil     -> startActivity(Intent(this@ContentActivity, ProfileActivity::class.java))
+                    else                -> return@setOnItemSelectedListener false
                 }
                 true
             }
         }
 
         // UI refs
-        chipGroup       = findViewById(R.id.chipGroup)
-        rvContent       = findViewById(R.id.rvContent)
-        tvCategoryName  = findViewById(R.id.namePersona)
+        chipGroup      = findViewById(R.id.chipGroup)
+        rvContent      = findViewById(R.id.rvContent)
+        tvCategoryName = findViewById(R.id.namePersona)
 
-        // Configuramos singleSelection correctamente:
-        chipGroup.isSingleSelection = true
-
-        // Recycler + Adapter, ahora con callback al click:
+        // Recycler + Adapter
         contentAdapter = ContentAdapter(emptyList()) { content ->
-            // Al tocar una card lanzamos SpecificContentActivity con el ID
             startActivity(
                 Intent(this@ContentActivity, SpecificContentActivity::class.java)
                     .putExtra("CONTENT_ID", content.id)
@@ -87,19 +95,59 @@ class ContentActivity : AppCompatActivity() {
             adapter = contentAdapter
         }
 
-        loadTags()
-        loadContent()
+        // 1) Recuperar perfil (stress/anxiety) del back
+        val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            .getString("USER_ID", "")
+            .orEmpty()
+
+        if (userId.isBlank()) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            loadTags()
+            loadContent()
+            return
+        }
+
+        profilingService.getProfile(userId)
+            .enqueue(object : Callback<ProfileResponse> {
+                override fun onResponse(call: Call<ProfileResponse>, resp: Response<ProfileResponse>) {
+                    if (resp.isSuccessful && resp.body() != null) {
+                        val profile = resp.body()!!
+                        stressScore = profile.totalStressScore
+                            ?: profile.stressIndicator.totalScore
+                        anxietyScore = profile.totalAnxietyScore
+                            ?: profile.anxietyIndicator.totalScore
+                        Log.d("ContentActivity", "Perfil: stress=$stressScore, anxiety=$anxietyScore")
+                    } else {
+                        Log.e("ContentActivity", "Error perfil: ${resp.code()}")
+                    }
+                    loadTags()
+                    if (stressScore > 0 || anxietyScore > 0) {
+                        loadSuggestedContent(stressScore, anxietyScore)
+                    } else {
+                        loadContent()
+                    }
+                }
+                override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                    Log.e("ContentActivity", "Fallo red perfil", t)
+                    loadTags()
+                    loadContent()
+                }
+            })
     }
 
     private fun loadTags() {
+        chipGroup.isSingleSelection = true
         RetrofitClient
             .getContentClient()
             .create(TagsApiService::class.java)
             .getAllTags()
-            .enqueue(object : Callback<List<Tag>> {
-                override fun onResponse(call: Call<List<Tag>>, resp: Response<List<Tag>>) {
+            .enqueue(object : Callback<List<com.example.frontzephiro.models.Tag>> {
+                override fun onResponse(
+                    call: Call<List<com.example.frontzephiro.models.Tag>>,
+                    resp: Response<List<com.example.frontzephiro.models.Tag>>
+                ) {
                     if (!resp.isSuccessful) {
-                        Log.e("ContentActivity", "Error ${resp.code()} al cargar tags")
+                        Toast.makeText(this@ContentActivity, "Error ${resp.code()} al cargar tags", Toast.LENGTH_SHORT).show()
                         return
                     }
                     chipGroup.removeAllViews()
@@ -109,13 +157,15 @@ class ContentActivity : AppCompatActivity() {
                             isCheckable = true
                             setOnClickListener {
                                 if (selectedTagId == tag.id) {
-                                    // misma etiqueta: deseleccionamos y volvemos a todo
                                     selectedTagId = null
                                     chipGroup.clearCheck()
                                     tvCategoryName.text = getString(R.string.nombreCategoria)
-                                    loadContent()
+                                    if (stressScore > 0 || anxietyScore > 0) {
+                                        loadSuggestedContent(stressScore, anxietyScore)
+                                    } else {
+                                        loadContent()
+                                    }
                                 } else {
-                                    // nueva etiqueta: filtramos
                                     selectedTagId = tag.id
                                     tvCategoryName.text = tag.name
                                     loadContentByTag(tag.id)
@@ -125,9 +175,8 @@ class ContentActivity : AppCompatActivity() {
                         }
                     }
                 }
-
-                override fun onFailure(call: Call<List<Tag>>, t: Throwable) {
-                    Log.e("ContentActivity", "Fallo conexión tags", t)
+                override fun onFailure(call: Call<List<com.example.frontzephiro.models.Tag>>, t: Throwable) {
+                    Toast.makeText(this@ContentActivity, "Fallo conexión tags", Toast.LENGTH_SHORT).show()
                 }
             })
     }
@@ -141,22 +190,33 @@ class ContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<Content>> {
                 override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
                     if (!resp.isSuccessful) {
-                        Toast.makeText(
-                            this@ContentActivity,
-                            "Error al cargar contenido",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@ContentActivity, "Error al cargar contenido", Toast.LENGTH_SHORT).show()
                         return
                     }
                     contentAdapter.updateItems(resp.body().orEmpty())
                 }
-
                 override fun onFailure(call: Call<List<Content>>, t: Throwable) {
-                    Toast.makeText(
-                        this@ContentActivity,
-                        "Error de conexión al cargar contenido",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@ContentActivity, "Error de conexión al cargar contenido", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun loadSuggestedContent(stress: Int, anxiety: Int) {
+        tvCategoryName.text = "Recomendado para ti"
+        RetrofitClient
+            .getContentClient()
+            .create(ContentApiService::class.java)
+            .getSuggestedContent(stress, anxiety)
+            .enqueue(object : Callback<List<Content>> {
+                override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
+                    if (!resp.isSuccessful) {
+                        Toast.makeText(this@ContentActivity, "Error ${resp.code()} al cargar recomendaciones", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    contentAdapter.updateItems(resp.body().orEmpty())
+                }
+                override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Toast.makeText(this@ContentActivity, "Fallo de red al cargar recomendaciones", Toast.LENGTH_SHORT).show()
                 }
             })
     }
@@ -169,22 +229,13 @@ class ContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<Content>> {
                 override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
                     if (!resp.isSuccessful) {
-                        Toast.makeText(
-                            this@ContentActivity,
-                            "Error al filtrar contenido",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@ContentActivity, "Error al filtrar contenido", Toast.LENGTH_SHORT).show()
                         return
                     }
                     contentAdapter.updateItems(resp.body().orEmpty())
                 }
-
                 override fun onFailure(call: Call<List<Content>>, t: Throwable) {
-                    Toast.makeText(
-                        this@ContentActivity,
-                        "Fallo al filtrar contenido",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@ContentActivity, "Fallo al filtrar contenido", Toast.LENGTH_SHORT).show()
                 }
             })
     }
