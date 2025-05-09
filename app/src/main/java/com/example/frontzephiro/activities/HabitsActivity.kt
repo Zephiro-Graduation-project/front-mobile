@@ -3,7 +3,6 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
 import com.example.frontzephiro.api.GamificationApiService
-import com.example.frontzephiro.api.GardenApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveyLargeBinding
 import com.example.frontzephiro.models.Artifact
-import com.example.frontzephiro.models.LoginResponse
 import com.example.frontzephiro.models.QuestionnaireRequest
 import com.example.frontzephiro.models.QuestionnaireResponseDetail
 import com.example.frontzephiro.network.RetrofitClient

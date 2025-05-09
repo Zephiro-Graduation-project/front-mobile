@@ -1,6 +1,6 @@
-// DiurnaActivity.kt
 package com.example.frontzephiro.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.frontzephiro.adapters.SurveyAdapter
 import com.example.frontzephiro.api.ArtifactApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivitySurveySmallBinding
 import com.example.frontzephiro.models.Artifact
@@ -25,8 +26,14 @@ class DiurnaActivity : AppCompatActivity() {
     private lateinit var surveyAdapter: SurveyAdapter
     private lateinit var artifactService: ArtifactApiService
     private lateinit var questionnaireService: QuestionnaireApiService
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySurveySmallBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -52,8 +59,8 @@ class DiurnaActivity : AppCompatActivity() {
             binding.botonEnviar.visibility = View.GONE
         } else {
             binding.botonEnviar.setOnClickListener {
-                val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                    .getString("USER_ID", "") ?: ""
+                val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                val userId = prefs.getString("USER_ID", "") ?: ""
                 if (userId.isBlank()) {
                     Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -63,6 +70,7 @@ class DiurnaActivity : AppCompatActivity() {
                     Toast.makeText(this, "Por favor, responde todas las preguntas", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+
                 val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                 val request = QuestionnaireRequest(
                     userId         = userId,
@@ -75,11 +83,44 @@ class DiurnaActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            Toast.makeText(
-                                this@DiurnaActivity,
-                                if (resp.isSuccessful) "¡Encuesta enviada!" else "Error ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (resp.isSuccessful) {
+                                // guardo fecha de completado
+                                prefs.edit()
+                                    .putString("DIURNO_SURVEY_DATE", today)
+                                    .apply()
+                                Toast.makeText(this@DiurnaActivity, "¡Encuesta enviada!", Toast.LENGTH_SHORT).show()
+
+                                gamificationService.rewardSurvey(userId)
+                                    .enqueue(object : Callback<Void> {
+                                        override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                            if (rewardResp.isSuccessful) {
+                                                Toast.makeText(
+                                                    this@DiurnaActivity,
+                                                    "Recompensa aplicada exitosamente",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    this@DiurnaActivity,
+                                                    "Error recompensa: ${rewardResp.code()}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            goHome()
+                                        }
+                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                            Toast.makeText(
+                                                this@DiurnaActivity,
+                                                "Fallo recompensa: ${t.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            goHome()
+                                        }
+                                    })
+
+                            } else {
+                                Toast.makeText(this@DiurnaActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@DiurnaActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
@@ -123,5 +164,10 @@ class DiurnaActivity : AppCompatActivity() {
                     Toast.makeText(this@DiurnaActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
+    }
+
+    private fun goHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }
