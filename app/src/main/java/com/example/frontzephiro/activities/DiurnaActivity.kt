@@ -83,49 +83,111 @@ class DiurnaActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            if (resp.isSuccessful) {
-                                // guardo fecha de completado
-                                prefs.edit()
-                                    .putString("DIURNO_SURVEY_DATE", today)
-                                    .apply()
-                                Toast.makeText(this@DiurnaActivity, "¡Encuesta enviada!", Toast.LENGTH_SHORT).show()
+                            if (!resp.isSuccessful) {
+                                Toast.makeText(this@DiurnaActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                                return
+                            }
 
-                                gamificationService.rewardSurvey(userId)
-                                    .enqueue(object : Callback<Void> {
-                                        override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
-                                            if (rewardResp.isSuccessful) {
-                                                Toast.makeText(
-                                                    this@DiurnaActivity,
-                                                    "Recompensa aplicada exitosamente",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                Toast.makeText(
-                                                    this@DiurnaActivity,
-                                                    "Error recompensa: ${rewardResp.code()}",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            goHome()
-                                        }
-                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            // Guarda la fecha y avisa éxito encuesta
+                            prefs.edit()
+                                .putString("DIURNO_SURVEY_DATE", today)
+                                .apply()
+                            Toast.makeText(this@DiurnaActivity, "¡Encuesta enviada!", Toast.LENGTH_SHORT).show()
+
+                            // Premia por completar encuesta
+                            gamificationService.rewardSurvey(userId)
+                                .enqueue(object : Callback<Void> {
+                                    override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                        if (rewardResp.isSuccessful) {
                                             Toast.makeText(
                                                 this@DiurnaActivity,
-                                                "Fallo recompensa: ${t.message}",
-                                                Toast.LENGTH_LONG
+                                                "Recompensa por encuesta aplicada",
+                                                Toast.LENGTH_SHORT
                                             ).show()
-                                            goHome()
+                                        } else {
+                                            Toast.makeText(
+                                                this@DiurnaActivity,
+                                                "Error recompensa encuesta: ${rewardResp.code()}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    })
 
-                            } else {
-                                Toast.makeText(this@DiurnaActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
-                            }
+                                        // Obtener la racha
+                                        questionnaireService.getStreak(userId)
+                                            .enqueue(object : Callback<Int> {
+                                                override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                                    if (streakResp.isSuccessful) {
+                                                        val streak = streakResp.body() ?: 0
+
+                                                        // Premiar la racha
+                                                        gamificationService.rewardStreak(userId, streak)
+                                                            .enqueue(object : Callback<Void> {
+                                                                override fun onResponse(
+                                                                    call: Call<Void>,
+                                                                    rewardStreakResp: Response<Void>
+                                                                ) {
+                                                                    if (rewardStreakResp.isSuccessful) {
+                                                                        Toast.makeText(
+                                                                            this@DiurnaActivity,
+                                                                            "Recompensa de racha aplicada: $streak días",
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+                                                                    } else {
+                                                                        Toast.makeText(
+                                                                            this@DiurnaActivity,
+                                                                            "Error recompensa racha: ${rewardStreakResp.code()}",
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+                                                                    }
+                                                                    goHome()
+                                                                }
+                                                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                                    Toast.makeText(
+                                                                        this@DiurnaActivity,
+                                                                        "Fallo recompensa racha: ${t.message}",
+                                                                        Toast.LENGTH_LONG
+                                                                    ).show()
+                                                                    goHome()
+                                                                }
+                                                            })
+
+                                                    } else {
+                                                        Toast.makeText(
+                                                            this@DiurnaActivity,
+                                                            "Error al obtener racha: ${streakResp.code()}",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        goHome()
+                                                    }
+                                                }
+                                                override fun onFailure(call: Call<Int>, t: Throwable) {
+                                                    Toast.makeText(
+                                                        this@DiurnaActivity,
+                                                        "Fallo petición racha: ${t.message}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    goHome()
+                                                }
+                                            })
+                                    }
+
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        Toast.makeText(
+                                            this@DiurnaActivity,
+                                            "Fallo recompensa encuesta: ${t.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        // intentamos racha igual o podrías irte a casa directamente
+                                        goHome()
+                                    }
+                                })
                         }
+
                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Toast.makeText(this@DiurnaActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@DiurnaActivity, "Fallo envío encuesta: ${t.message}", Toast.LENGTH_LONG).show()
                         }
                     })
+
             }
         }
 

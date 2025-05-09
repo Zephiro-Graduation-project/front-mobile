@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.DragEvent
@@ -12,6 +13,7 @@ import android.view.View.DragShadowBuilder
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
@@ -30,6 +32,7 @@ import com.example.frontzephiro.network.RetrofitClient
 import com.example.frontzephiro.models.GardenResponse
 
 class GardenMain : AppCompatActivity() {
+    private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var gridJardin: GridLayout
     private val celdas = mutableListOf<FrameLayout>()
@@ -37,6 +40,11 @@ class GardenMain : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_garden_main)
+
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+
+        val userName = sharedPreferences.getString("USER_NAME", "Usuario")
+        findViewById<TextView>(R.id.tvNombreJardin).text = "Jardín de: $userName"
 
         val callAnimation = findViewById<LottieAnimationView>(R.id.call)
         val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)

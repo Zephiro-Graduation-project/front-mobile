@@ -118,7 +118,7 @@ class GadActivity : AppCompatActivity() {
                                             Log.e(TAG, "Error en PUT profile: ${r.code()} – ${r.errorBody()?.string()}")
                                         }
 
-                                        // 3) Recompensa por completar GAD-7
+                                        // 1) Recompensa por completar GAD-7
                                         gamificationService.rewardSurvey(userId)
                                             .enqueue(object : Callback<Void> {
                                                 override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
@@ -127,10 +127,68 @@ class GadActivity : AppCompatActivity() {
                                                     } else {
                                                         Log.e(TAG, "Error recompensa GAD: ${rewardResp.code()}")
                                                     }
-                                                    goDemographics()
+
+                                                    // 2) Obtener la racha actual
+                                                    questionnaireService.getStreak(userId)
+                                                        .enqueue(object : Callback<Int> {
+                                                            override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                                                if (streakResp.isSuccessful) {
+                                                                    val streak = streakResp.body() ?: 0
+
+                                                                    // 3) Recompensa de racha
+                                                                    gamificationService.rewardStreak(userId, streak)
+                                                                        .enqueue(object : Callback<Void> {
+                                                                            override fun onResponse(
+                                                                                call: Call<Void>,
+                                                                                rewardStreakResp: Response<Void>
+                                                                            ) {
+                                                                                if (rewardStreakResp.isSuccessful) {
+                                                                                    Log.d(
+                                                                                        TAG,
+                                                                                        "Recompensa racha GAD aplicada: $streak días"
+                                                                                    )
+                                                                                } else {
+                                                                                    Log.e(
+                                                                                        TAG,
+                                                                                        "Error recompensa racha GAD: ${rewardStreakResp.code()}"
+                                                                                    )
+                                                                                }
+                                                                                goDemographics()
+                                                                            }
+
+                                                                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                                                Log.e(
+                                                                                    TAG,
+                                                                                    "Fallo recompensa racha GAD: ${t.message}",
+                                                                                    t
+                                                                                )
+                                                                                goDemographics()
+                                                                            }
+                                                                        })
+
+                                                                } else {
+                                                                    Log.e(
+                                                                        TAG,
+                                                                        "Error al obtener racha GAD: ${streakResp.code()}"
+                                                                    )
+                                                                    goDemographics()
+                                                                }
+                                                            }
+
+                                                            override fun onFailure(call: Call<Int>, t: Throwable) {
+                                                                Log.e(
+                                                                    TAG,
+                                                                    "Fallo petición racha GAD: ${t.message}",
+                                                                    t
+                                                                )
+                                                                goDemographics()
+                                                            }
+                                                        })
                                                 }
+
                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
                                                     Log.e(TAG, "Fallo recompensa GAD: ${t.message}", t)
+                                                    // Si falla la recompensa por encuesta, saltamos directamente a demographics
                                                     goDemographics()
                                                 }
                                             })
@@ -139,18 +197,74 @@ class GadActivity : AppCompatActivity() {
                                     override fun onFailure(call: Call<Void>, t: Throwable) {
                                         Log.e(TAG, "Fallo red PUT profile", t)
 
-                                        // Aunque falle el perfil, intentamos igualmente dar la recompensa
+                                        // Aunque falle el perfil, seguimos con recompensa por encuesta y luego racha
                                         gamificationService.rewardSurvey(userId)
                                             .enqueue(object : Callback<Void> {
                                                 override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
-                                                    goDemographics()
+                                                    // (idéntico al bloque anterior)
+                                                    if (rewardResp.isSuccessful) {
+                                                        Log.d(TAG, "Recompensa GAD exitosa")
+                                                    } else {
+                                                        Log.e(TAG, "Error recompensa GAD: ${rewardResp.code()}")
+                                                    }
+                                                    // Cadena racha...
+                                                    questionnaireService.getStreak(userId)
+                                                        .enqueue(object : Callback<Int> {
+                                                            override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                                                if (streakResp.isSuccessful) {
+                                                                    val streak = streakResp.body() ?: 0
+                                                                    gamificationService.rewardStreak(userId, streak)
+                                                                        .enqueue(object : Callback<Void> {
+                                                                            override fun onResponse(
+                                                                                call: Call<Void>,
+                                                                                rewardStreakResp: Response<Void>
+                                                                            ) {
+                                                                                if (rewardStreakResp.isSuccessful) {
+                                                                                    Log.d(
+                                                                                        TAG,
+                                                                                        "Recompensa racha GAD aplicada: $streak días"
+                                                                                    )
+                                                                                } else {
+                                                                                    Log.e(
+                                                                                        TAG,
+                                                                                        "Error recompensa racha GAD: ${rewardStreakResp.code()}"
+                                                                                    )
+                                                                                }
+                                                                                goDemographics()
+                                                                            }
+
+                                                                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                                                Log.e(
+                                                                                    TAG,
+                                                                                    "Fallo recompensa racha GAD: ${t.message}",
+                                                                                    t
+                                                                                )
+                                                                                goDemographics()
+                                                                            }
+                                                                        })
+                                                                } else {
+                                                                    Log.e(
+                                                                        TAG,
+                                                                        "Error al obtener racha GAD: ${streakResp.code()}"
+                                                                    )
+                                                                    goDemographics()
+                                                                }
+                                                            }
+
+                                                            override fun onFailure(call: Call<Int>, t: Throwable) {
+                                                                Log.e(TAG, "Fallo petición racha GAD: ${t.message}", t)
+                                                                goDemographics()
+                                                            }
+                                                        })
                                                 }
+
                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
                                                     goDemographics()
                                                 }
                                             })
                                     }
                                 })
+
                         }
 
                         override fun onFailure(call: Call<Void>, t: Throwable) {

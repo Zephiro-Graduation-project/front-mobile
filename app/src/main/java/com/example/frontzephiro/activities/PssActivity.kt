@@ -85,49 +85,109 @@ class PssActivity : AppCompatActivity() {
                 questionnaireService.addQuestionnaire(request)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, resp: Response<Void>) {
-                            if (resp.isSuccessful) {
-                                Toast.makeText(this@PssActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                            if (!resp.isSuccessful) {
+                                Toast.makeText(this@PssActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
+                                return
+                            }
 
-                                // ← Aquí guardas el JSON de las respuestas PSS
-                                val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                                prefs.edit()
-                                    .putString("PSS_ANSWERS", Gson().toJson(responses))
-                                    .apply()
+                            // Encuesta enviada OK
+                            Toast.makeText(this@PssActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
+                            // Guardas respuestas en prefs
+                            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            prefs.edit()
+                                .putString("HABITS_ANSWERS", Gson().toJson(request.responses))
+                                .apply()
 
-                                gamificationService.rewardSurvey(userId)
-                                    .enqueue(object : Callback<Void> {
-                                        override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
-                                            if (rewardResp.isSuccessful) {
-                                                Toast.makeText(
-                                                    this@PssActivity,
-                                                    "Recompensa aplicada exitosamente",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                Toast.makeText(
-                                                    this@PssActivity,
-                                                    "Error recompensa: ${rewardResp.code()}",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            goGad()
-                                        }
-                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            // Recompensa por completar encuesta
+                            gamificationService.rewardSurvey(userId)
+                                .enqueue(object : Callback<Void> {
+                                    override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                                        if (rewardResp.isSuccessful) {
                                             Toast.makeText(
                                                 this@PssActivity,
-                                                "Fallo recompensa: ${t.message}",
-                                                Toast.LENGTH_LONG
+                                                "Recompensa por encuesta aplicada",
+                                                Toast.LENGTH_SHORT
                                             ).show()
-                                            goGad()
+                                        } else {
+                                            Toast.makeText(
+                                                this@PssActivity,
+                                                "Error recompensa encuesta: ${rewardResp.code()}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    })
 
-                            } else {
-                                Toast.makeText(this@PssActivity, "Error ${resp.code()}", Toast.LENGTH_SHORT).show()
-                            }
+                                        // Obtener la racha actual
+                                        questionnaireService.getStreak(userId)
+                                            .enqueue(object : Callback<Int> {
+                                                override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                                    if (streakResp.isSuccessful) {
+                                                        val streak = streakResp.body() ?: 0
+
+                                                        // Recompensa de racha
+                                                        gamificationService.rewardStreak(userId, streak)
+                                                            .enqueue(object : Callback<Void> {
+                                                                override fun onResponse(
+                                                                    call: Call<Void>,
+                                                                    rewardStreakResp: Response<Void>
+                                                                ) {
+                                                                    if (rewardStreakResp.isSuccessful) {
+                                                                        Toast.makeText(
+                                                                            this@PssActivity,
+                                                                            "Recompensa de racha aplicada: $streak días",
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+                                                                    } else {
+                                                                        Toast.makeText(
+                                                                            this@PssActivity,
+                                                                            "Error recompensa racha: ${rewardStreakResp.code()}",
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+                                                                    }
+                                                                    goGad()
+                                                                }
+                                                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                                    Toast.makeText(
+                                                                        this@PssActivity,
+                                                                        "Fallo recompensa racha: ${t.message}",
+                                                                        Toast.LENGTH_LONG
+                                                                    ).show()
+                                                                    goGad()
+                                                                }
+                                                            })
+
+                                                    } else {
+                                                        Toast.makeText(
+                                                            this@PssActivity,
+                                                            "Error al obtener racha: ${streakResp.code()}",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        goGad()
+                                                    }
+                                                }
+                                                override fun onFailure(call: Call<Int>, t: Throwable) {
+                                                    Toast.makeText(
+                                                        this@PssActivity,
+                                                        "Fallo petición racha: ${t.message}",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    goGad()
+                                                }
+                                            })
+                                    }
+
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        Toast.makeText(
+                                            this@PssActivity,
+                                            "Fallo recompensa encuesta: ${t.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        goGad()
+                                    }
+                                })
                         }
+
                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Toast.makeText(this@PssActivity, "Fallo: ${t.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@PssActivity, "Fallo envío encuesta: ${t.message}", Toast.LENGTH_LONG).show()
                         }
                     })
             }

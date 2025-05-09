@@ -154,34 +154,118 @@ class DemographicsActivity : AppCompatActivity() {
                     }
 
                     // → Aquí recompensamos al completar Demographics
-                    gamificationService
-                        .rewardSurvey(userId)
+                    gamificationService.rewardSurvey(userId)
                         .enqueue(object : Callback<Void> {
                             override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
                                 if (rewardResp.isSuccessful) {
                                     Toast.makeText(
                                         this@DemographicsActivity,
-                                        "¡Recompensa aplicada!",
+                                        "Recompensa por encuesta aplicada",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
                                     Toast.makeText(
                                         this@DemographicsActivity,
-                                        "Error recompensa: ${rewardResp.code()}",
+                                        "Error recompensa encuesta: ${rewardResp.code()}",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-                                goHome()
+
+                                // Obtener la racha
+                                questionnaireService.getStreak(userId)
+                                    .enqueue(object : Callback<Int> {
+                                        override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                            if (streakResp.isSuccessful) {
+                                                val streak = streakResp.body() ?: 0
+
+                                                // Recompensa de racha
+                                                gamificationService.rewardStreak(userId, streak)
+                                                    .enqueue(object : Callback<Void> {
+                                                        override fun onResponse(
+                                                            call: Call<Void>,
+                                                            rewardStreakResp: Response<Void>
+                                                        ) {
+                                                            if (rewardStreakResp.isSuccessful) {
+                                                                Toast.makeText(
+                                                                    this@DemographicsActivity,
+                                                                    "Recompensa de racha aplicada: $streak días",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            } else {
+                                                                Toast.makeText(
+                                                                    this@DemographicsActivity,
+                                                                    "Error recompensa racha: ${rewardStreakResp.code()}",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }
+                                                            goHome()
+                                                        }
+                                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                            Toast.makeText(
+                                                                this@DemographicsActivity,
+                                                                "Fallo recompensa racha: ${t.message}",
+                                                                Toast.LENGTH_LONG
+                                                            ).show()
+                                                            goHome()
+                                                        }
+                                                    })
+
+                                            } else {
+                                                Toast.makeText(
+                                                    this@DemographicsActivity,
+                                                    "Error al obtener racha: ${streakResp.code()}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                goHome()
+                                            }
+                                        }
+                                        override fun onFailure(call: Call<Int>, t: Throwable) {
+                                            Toast.makeText(
+                                                this@DemographicsActivity,
+                                                "Fallo petición racha: ${t.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            goHome()
+                                        }
+                                    })
                             }
+
                             override fun onFailure(call: Call<Void>, t: Throwable) {
+                                // si falla rewardSurvey, igual intentamos la racha
                                 Toast.makeText(
                                     this@DemographicsActivity,
-                                    "Fallo recompensa: ${t.message}",
+                                    "Fallo recompensa encuesta: ${t.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                goHome()
+
+                                questionnaireService.getStreak(userId)
+                                    .enqueue(object : Callback<Int> {
+                                        override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                                            if (streakResp.isSuccessful) {
+                                                val streak = streakResp.body() ?: 0
+                                                gamificationService.rewardStreak(userId, streak)
+                                                    .enqueue(object : Callback<Void> {
+                                                        override fun onResponse(
+                                                            call: Call<Void>,
+                                                            rewardStreakResp: Response<Void>
+                                                        ) {
+                                                            goHome()
+                                                        }
+                                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                            goHome()
+                                                        }
+                                                    })
+                                            } else {
+                                                goHome()
+                                            }
+                                        }
+                                        override fun onFailure(call: Call<Int>, t: Throwable) {
+                                            goHome()
+                                        }
+                                    })
                             }
                         })
+
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {

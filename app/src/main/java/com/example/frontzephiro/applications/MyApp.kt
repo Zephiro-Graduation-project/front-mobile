@@ -47,7 +47,7 @@ class MyApp : Application() {
                     .format(Date())
 
                 // ——— Matutino: 06–11h ——
-                if (hour in 6..11) {
+                if (hour in 5..11) {
                     val diurnaDone = prefs.getString("DIURNO_SURVEY_DATE", "") == today
                     if (!diurnaDone) {
                         val i = Intent(activity,
