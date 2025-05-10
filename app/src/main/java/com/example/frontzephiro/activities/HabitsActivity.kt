@@ -100,7 +100,11 @@ class HabitsActivity : AppCompatActivity() {
                             Toast.makeText(this@HabitsActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
                             // Guardas respuestas en prefs
                             val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                .format(Date())
+
                             prefs.edit()
+                                .putString("HABITS_SURVEY_DATE", today)
                                 .putString("HABITS_ANSWERS", Gson().toJson(request.responses))
                                 .apply()
 
@@ -149,7 +153,7 @@ class HabitsActivity : AppCompatActivity() {
                                                                             Toast.LENGTH_SHORT
                                                                         ).show()
                                                                     }
-                                                                    goPss()
+                                                                    goHome()
                                                                 }
                                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
                                                                     Toast.makeText(
@@ -157,7 +161,7 @@ class HabitsActivity : AppCompatActivity() {
                                                                         "Fallo recompensa racha: ${t.message}",
                                                                         Toast.LENGTH_LONG
                                                                     ).show()
-                                                                    goPss()
+                                                                    goHome()
                                                                 }
                                                             })
 
@@ -167,7 +171,7 @@ class HabitsActivity : AppCompatActivity() {
                                                             "Error al obtener racha: ${streakResp.code()}",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
-                                                        goPss()
+                                                        goHome()
                                                     }
                                                 }
                                                 override fun onFailure(call: Call<Int>, t: Throwable) {
@@ -176,7 +180,7 @@ class HabitsActivity : AppCompatActivity() {
                                                         "Fallo petición racha: ${t.message}",
                                                         Toast.LENGTH_LONG
                                                     ).show()
-                                                    goPss()
+                                                    goHome()
                                                 }
                                             })
                                     }
@@ -187,7 +191,7 @@ class HabitsActivity : AppCompatActivity() {
                                             "Fallo recompensa encuesta: ${t.message}",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                        goPss()
+                                        goHome()
                                     }
                                 })
                         }
@@ -234,8 +238,8 @@ class HabitsActivity : AppCompatActivity() {
             })
     }
 
-    private fun goPss() {
-        startActivity(Intent(this, PssActivity::class.java))
+    private fun goHome() {
+        startActivity(Intent(this,HomeActivity::class.java))
         finish()
     }
 }

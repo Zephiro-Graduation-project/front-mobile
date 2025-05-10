@@ -104,7 +104,11 @@ class GadActivity : AppCompatActivity() {
                             // 1) Éxito al enviar encuesta
                             Toast.makeText(this@GadActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
                             val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                .format(Date())
+
                             prefs.edit()
+                                .putString("GAD_SURVEY_DATE", today)
                                 .putString("GAD_ANSWERS", Gson().toJson(surveyAdapter.getResponses()))
                                 .apply()
 

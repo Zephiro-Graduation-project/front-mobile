@@ -43,8 +43,82 @@ class MyApp : Application() {
                 val now = Calendar.getInstance()
                 val hour = now.get(Calendar.HOUR_OF_DAY)
                 val prefs = activity.getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    .format(Date())
+                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                val nowCal = Calendar.getInstance()
+                val sdf    = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+                val lastHabitsDateStr = prefs.getString("HABITS_SURVEY_DATE", null)
+                val lastPssDateStr = prefs.getString("PSS_SURVEY_DATE", null)
+                val lastGadDateStr = prefs.getString("GAD_SURVEY_DATE", null)
+
+                val dueHabits = if (!lastHabitsDateStr.isNullOrEmpty()) {
+                    // parsear la última fecha y sumarle 10 días
+                    val lastDate = sdf.parse(lastHabitsDateStr)!!
+                    val nextCal  = Calendar.getInstance().apply {
+                        time = lastDate
+                        add(Calendar.DAY_OF_YEAR, 10)
+                    }
+                    // si la fecha actual es >= nextCal → toca lanzar
+                    !nowCal.before(nextCal)
+                } else {
+                    // nunca la ha hecho → toca lanzar
+                    true
+                }
+
+                if (dueHabits) {
+                    val intent = Intent(activity, HabitsActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        putExtra("READ_ONLY", false)
+                    }
+                    activity.startActivity(intent)
+                    return
+                }
+
+                val duePss = if (!lastPssDateStr.isNullOrEmpty()) {
+                    // parsear la última fecha y sumarle 10 días
+                    val lastDate = sdf.parse(lastPssDateStr)!!
+                    val nextCal  = Calendar.getInstance().apply {
+                        time = lastDate
+                        add(Calendar.DAY_OF_YEAR, 10)
+                    }
+                    // si la fecha actual es >= nextCal → toca lanzar
+                    !nowCal.before(nextCal)
+                } else {
+                    // nunca la ha hecho → toca lanzar
+                    true
+                }
+
+                if (duePss) {
+                    val intent = Intent(activity, PssActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        putExtra("READ_ONLY", false)
+                    }
+                    activity.startActivity(intent)
+                    return
+                }
+
+                val dueGad = if (!lastGadDateStr.isNullOrEmpty()) {
+                    // parsear la última fecha y sumarle 10 días
+                    val lastDate = sdf.parse(lastGadDateStr)!!
+                    val nextCal  = Calendar.getInstance().apply {
+                        time = lastDate
+                        add(Calendar.DAY_OF_YEAR, 10)
+                    }
+                    // si la fecha actual es >= nextCal → toca lanzar
+                    !nowCal.before(nextCal)
+                } else {
+                    // nunca la ha hecho → toca lanzar
+                    true
+                }
+
+                if (dueGad) {
+                    val intent = Intent(activity, GadActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        putExtra("READ_ONLY", false)
+                    }
+                    activity.startActivity(intent)
+                    return
+                }
 
                 // ——— Matutino: 06–11h ——
                 if (hour in 5..11) {

@@ -113,13 +113,13 @@ class RegisterActivity : AppCompatActivity() {
                                             createGarden(lr.id)
                                         } else {
                                             showFailure()
-                                            goHabits()
+                                            goHome()
                                         }
                                     }
 
                                     override fun onFailure(call: Call<Void>, t: Throwable) {
                                         showFailure()
-                                        goHabits()
+                                        goHome()
                                     }
                                 })
                         }
@@ -148,12 +148,12 @@ class RegisterActivity : AppCompatActivity() {
                     } else {
                         showFailure()
                     }
-                    goHabits()
+                    goHome()
                 }
 
                 override fun onFailure(call: Call<Void>, t2: Throwable) {
                     showFailure()
-                    goHabits()
+                    goHome()
                 }
             })
     }
@@ -172,11 +172,10 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun goHabits() {
-        startActivity(Intent(this, HabitsActivity::class.java))
+    private fun goHome() {
+        startActivity(Intent(this,HomeActivity::class.java))
         finish()
     }
-
     // Solo estos dos Toast:
     private fun showSuccess() {
         Toast.makeText(this, "Cuenta creada correctamente", Toast.LENGTH_SHORT).show()

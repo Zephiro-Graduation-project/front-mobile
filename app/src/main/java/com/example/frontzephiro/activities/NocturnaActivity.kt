@@ -91,7 +91,7 @@ class NocturnaActivity : AppCompatActivity() {
 
                             // Guarda la fecha y avisamos éxito encuesta
                             prefs.edit()
-                                .putString("DIURNO_SURVEY_DATE", today)
+                                .putString("NOCTURNO_SURVEY_DATE", today)
                                 .apply()
                             Toast.makeText(this@NocturnaActivity, "¡Encuesta enviada!", Toast.LENGTH_SHORT).show()
 

@@ -94,8 +94,12 @@ class PssActivity : AppCompatActivity() {
                             Toast.makeText(this@PssActivity, "Encuesta enviada", Toast.LENGTH_SHORT).show()
                             // Guardas respuestas en prefs
                             val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                .format(Date())
+
                             prefs.edit()
-                                .putString("HABITS_ANSWERS", Gson().toJson(request.responses))
+                                .putString("PSS_SURVEY_DATE", today)
+                                .putString("PSS_ANSWERS", Gson().toJson(request.responses))
                                 .apply()
 
                             // Recompensa por completar encuesta
@@ -143,7 +147,7 @@ class PssActivity : AppCompatActivity() {
                                                                             Toast.LENGTH_SHORT
                                                                         ).show()
                                                                     }
-                                                                    goGad()
+                                                                    goHome()
                                                                 }
                                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
                                                                     Toast.makeText(
@@ -151,7 +155,7 @@ class PssActivity : AppCompatActivity() {
                                                                         "Fallo recompensa racha: ${t.message}",
                                                                         Toast.LENGTH_LONG
                                                                     ).show()
-                                                                    goGad()
+                                                                    goHome()
                                                                 }
                                                             })
 
@@ -161,7 +165,7 @@ class PssActivity : AppCompatActivity() {
                                                             "Error al obtener racha: ${streakResp.code()}",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
-                                                        goGad()
+                                                        goHome()
                                                     }
                                                 }
                                                 override fun onFailure(call: Call<Int>, t: Throwable) {
@@ -170,7 +174,7 @@ class PssActivity : AppCompatActivity() {
                                                         "Fallo petición racha: ${t.message}",
                                                         Toast.LENGTH_LONG
                                                     ).show()
-                                                    goGad()
+                                                    goHome()
                                                 }
                                             })
                                     }
@@ -181,7 +185,7 @@ class PssActivity : AppCompatActivity() {
                                             "Fallo recompensa encuesta: ${t.message}",
                                             Toast.LENGTH_LONG
                                         ).show()
-                                        goGad()
+                                        goHome()
                                     }
                                 })
                         }
@@ -228,8 +232,8 @@ class PssActivity : AppCompatActivity() {
             })
     }
 
-    private fun goGad() {
-        startActivity(Intent(this, GadActivity::class.java))
+    private fun goHome() {
+        startActivity(Intent(this,HomeActivity::class.java))
         finish()
     }
 }
