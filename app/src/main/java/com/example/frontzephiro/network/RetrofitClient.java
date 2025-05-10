@@ -61,18 +61,31 @@ public class RetrofitClient {
         return retrofit;
     }
 
+    // en RetrofitClient.java
     public static Retrofit getContentClient() {
         if (retrofitContentPublic == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_CONTENT", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .build();
+
             retrofitContentPublic = new Retrofit.Builder()
                     .baseUrl(CONTENT_BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofitContentPublic;
     }
+
 
     public static Retrofit getAuthenticatedContentClient(final Context context) {
         if (retrofitContentAuth == null) {
