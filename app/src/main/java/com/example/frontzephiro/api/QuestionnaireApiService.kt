@@ -27,4 +27,7 @@ interface QuestionnaireApiService {
     fun getQuestionnaireDetail(
         @Path("idResponse") idResponse: String
     ): Call<QuestionnaireResponseDetail>
+
+    @GET("questionnaire/streak/{userId}")
+    fun getStreak(@Path("userId") userId: String): Call<Int>
 }

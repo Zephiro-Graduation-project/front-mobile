@@ -68,7 +68,7 @@ class GardenStore : AppCompatActivity() {
                     id = flower.id,
                     name = flower.name,
                     price = flower.price,
-                    imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
+                    imageName = normalizarTexto(flower.healthyAsset),  // Usamos healthyAsset para la imagen
                     description = flower.description,
                     kind = "Plant"  // Todos estos elementos son plantas
                 )

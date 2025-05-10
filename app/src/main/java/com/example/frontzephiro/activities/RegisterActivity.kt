@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.frontzephiro.R
-import com.example.frontzephiro.api.UserApiService
-import com.example.frontzephiro.api.InventoryApiService
 import com.example.frontzephiro.api.GardenApiService
+import com.example.frontzephiro.api.InventoryApiService
+import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.databinding.ActivityRegisterBinding
-import com.example.frontzephiro.models.UserEntity
 import com.example.frontzephiro.models.LoginRequest
 import com.example.frontzephiro.models.LoginResponse
+import com.example.frontzephiro.models.UserEntity
 import com.example.frontzephiro.network.RetrofitClient
 import com.example.frontzephiro.utils.EncryptionUtils
 import okhttp3.ResponseBody
@@ -113,13 +113,13 @@ class RegisterActivity : AppCompatActivity() {
                                             createGarden(lr.id)
                                         } else {
                                             showFailure()
-                                            goHabits()
+                                            goHome()
                                         }
                                     }
 
                                     override fun onFailure(call: Call<Void>, t: Throwable) {
                                         showFailure()
-                                        goHabits()
+                                        goHome()
                                     }
                                 })
                         }
@@ -148,32 +148,34 @@ class RegisterActivity : AppCompatActivity() {
                     } else {
                         showFailure()
                     }
-                    goHabits()
+                    goHome()
                 }
 
                 override fun onFailure(call: Call<Void>, t2: Throwable) {
                     showFailure()
-                    goHabits()
+                    goHome()
                 }
             })
     }
 
     private fun saveUserData(token: String, name: String, id: String, email: String) {
         val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         prefs.edit().apply {
             putString("TOKEN", token)
             putString("USER_NAME", name)
             putString("USER_ID", id)
             putString("email", email)
+            // Guarda la fecha de registro:
+            putString("REGISTRATION_DATE", today)
             apply()
         }
     }
 
-    private fun goHabits() {
-        startActivity(Intent(this, HabitsActivity::class.java))
+    private fun goHome() {
+        startActivity(Intent(this,HomeActivity::class.java))
         finish()
     }
-
     // Solo estos dos Toast:
     private fun showSuccess() {
         Toast.makeText(this, "Cuenta creada correctamente", Toast.LENGTH_SHORT).show()

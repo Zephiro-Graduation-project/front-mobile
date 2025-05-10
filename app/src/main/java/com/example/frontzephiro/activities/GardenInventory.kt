@@ -65,7 +65,7 @@ class GardenInventory : AppCompatActivity() {
                 InventoryProduct(
                     id = flower.id,
                     name = flower.name,
-                    imageName = flower.healthyAsset,  // Usamos healthyAsset para la imagen
+                    imageName = normalizarTexto(flower.healthyAsset),  // Usamos healthyAsset para la imagen
                     description = flower.description,
                     kind = "Plant"  // Todos estos elementos son plantas
                 )
