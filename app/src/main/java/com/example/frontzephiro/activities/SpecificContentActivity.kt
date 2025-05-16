@@ -5,10 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.api.ContentApiService
@@ -30,7 +30,6 @@ class SpecificContentActivity : AppCompatActivity() {
     private lateinit var tvAuthorValue: TextView
     private lateinit var resumeArticle: TextView
     private lateinit var chipGroupDetail: ChipGroup
-    private lateinit var botonVisto: Button
     private lateinit var botonEnlace: Button
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -38,22 +37,22 @@ class SpecificContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specific_content)
 
-        callAnimation     = findViewById(R.id.call)
-        alertAnimation    = findViewById(R.id.alert)
-        backContainer     = findViewById(R.id.backContainer)
-        tvTitle           = findViewById(R.id.nameArticulo)
-        tvAuthorValue     = findViewById(R.id.tvAuthorValue)
-        resumeArticle     = findViewById(R.id.ResumeArticle)
-        chipGroupDetail   = findViewById(R.id.chipGroupDetail)
-        botonVisto        = findViewById(R.id.botonuno)
-        botonEnlace       = findViewById(R.id.botondos)
+        // Vistas
+        callAnimation        = findViewById(R.id.call)
+        alertAnimation       = findViewById(R.id.alert)
+        backContainer        = findViewById(R.id.backContainer)
+        tvTitle              = findViewById(R.id.nameArticulo)
+        tvAuthorValue        = findViewById(R.id.tvAuthorValue)
+        resumeArticle        = findViewById(R.id.ResumeArticle)
+        chipGroupDetail      = findViewById(R.id.chipGroupDetail)
+        botonEnlace          = findViewById(R.id.botondos)
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        callAnimation.repeatCount = 0
+        // Animaciones y navegación de cabecera
+        callAnimation.repeatCount  = 0
         callAnimation.playAnimation()
         alertAnimation.repeatCount = 0
         alertAnimation.playAnimation()
-
         backContainer.setOnClickListener { onBackPressed() }
         callAnimation.setOnClickListener {
             startActivity(Intent(this, EmergencyContactsActivity::class.java))
@@ -61,11 +60,13 @@ class SpecificContentActivity : AppCompatActivity() {
         alertAnimation.setOnClickListener {
             startActivity(Intent(this, EmergencyNumbersActivity::class.java))
         }
+
+        // Bottom nav
         bottomNavigationView.selectedItemId = R.id.menuContenido
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.menuInicio    -> startActivity(Intent(this, HomeActivity::class.java))
-                R.id.menuSeguimiento -> startActivity(Intent(this, TrackerMain::class.java))
+                R.id.menuInicio     -> startActivity(Intent(this, HomeActivity::class.java))
+                R.id.menuSeguimiento-> startActivity(Intent(this, TrackerMain::class.java))
                 R.id.menuJardin     -> startActivity(Intent(this, GardenMain::class.java))
                 R.id.menuPerfil     -> startActivity(Intent(this, ProfileActivity::class.java))
                 else                -> return@setOnItemSelectedListener false
@@ -108,7 +109,6 @@ class SpecificContentActivity : AppCompatActivity() {
     private fun populateContent(content: Content) {
         tvTitle.text       = content.name
         tvAuthorValue.text = content.author
-
         resumeArticle.text = content.description
 
         chipGroupDetail.removeAllViews()
@@ -121,13 +121,20 @@ class SpecificContentActivity : AppCompatActivity() {
             }
         }
 
-        botonVisto.setOnClickListener {
-            Toast.makeText(this, "Marcado como visto", Toast.LENGTH_SHORT).show()
-        }
-
         botonEnlace.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(content.url))
-            startActivity(intent)
+            var url = content.url.trim()
+            if (url.isBlank()) {
+                Toast.makeText(this, "Enlace inválido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!url.startsWith("http://", ignoreCase = true) &&
+                !url.startsWith("https://", ignoreCase = true)) {
+                url = "https://$url"
+            }
+
+            val customTabsIntent = CustomTabsIntent.Builder().build()
+            customTabsIntent.launchUrl(this, Uri.parse(url))
         }
     }
 }

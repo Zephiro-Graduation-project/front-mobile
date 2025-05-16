@@ -95,10 +95,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.runtime.livedata)
+    //para que abra el google chrome
+    implementation(libs.androidx.browser)
 
 // Solo para desarrollo
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-
 }

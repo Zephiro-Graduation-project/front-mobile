@@ -24,22 +24,22 @@ class TrackerMain : AppCompatActivity() {
 
     private lateinit var calendarView: MaterialCalendarView
     private lateinit var questionnaireService: QuestionnaireApiService
+    private var markedDates: List<CalendarDay> = emptyList()
+    private var userId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracker_main)
 
-        // Animaciones y redirecciones
+        // Vistas de animaciones
         findViewById<LottieAnimationView>(R.id.call).apply {
-            repeatCount = 0
-            playAnimation()
+            repeatCount = 0; playAnimation()
             setOnClickListener {
                 startActivity(Intent(this@TrackerMain, EmergencyContactsActivity::class.java))
             }
         }
         findViewById<LottieAnimationView>(R.id.alert).apply {
-            repeatCount = 0
-            playAnimation()
+            repeatCount = 0; playAnimation()
             setOnClickListener {
                 startActivity(Intent(this@TrackerMain, EmergencyNumbersActivity::class.java))
             }
@@ -50,21 +50,21 @@ class TrackerMain : AppCompatActivity() {
         calendarView.setCurrentDate(CalendarDay.today())
         calendarView.setSelectedDate(CalendarDay.today())
 
-        // Recuperar userId de SharedPreferences
-        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        val userId = prefs.getString("USER_ID", "") ?: ""
+        // Obtener userId
+        userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            .getString("USER_ID", "") ?: ""
         if (userId.isBlank()) {
             Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
         } else {
-            // Llamada para obtener fechas marcadas
             questionnaireService = RetrofitClient
                 .getAuthenticatedArtifactClient(this)
                 .create(QuestionnaireApiService::class.java)
 
+            // Traer fechas marcadas
             questionnaireService.getQuestionnaireDates(userId)
                 .enqueue(object : Callback<List<String>> {
                     override fun onResponse(call: Call<List<String>>, resp: Response<List<String>>) {
-                        if (!resp.isSuccessful || resp.body().isNullOrEmpty()) {
+                        if (!resp.isSuccessful) {
                             Toast.makeText(
                                 this@TrackerMain,
                                 "Error cargando fechas: ${resp.code()}",
@@ -72,25 +72,29 @@ class TrackerMain : AppCompatActivity() {
                             ).show()
                             return
                         }
+                        val isoDates = resp.body().orEmpty()
 
-                        // Limpiar decoradores anteriores
-                        calendarView.removeDecorators()
-
-                        // Convertir "yyyy-MM-dd" a CalendarDay (mes - 1)
-                        val markedDates = resp.body()!!
-                            .mapNotNull { iso ->
-                                iso.split("-").takeIf { it.size == 3 }?.let { (y, m, d) ->
-                                    val year  = y.toIntOrNull() ?: return@let null
-                                    val month = (m.toIntOrNull() ?: return@let null) - 1
-                                    val day   = d.toIntOrNull() ?: return@let null
-                                    CalendarDay.from(year, month, day)
-                                }
+                        // Convertir o avisar si no hay ninguno
+                        markedDates = isoDates.mapNotNull { iso ->
+                            iso.split("-").takeIf { it.size == 3 }?.let { (y, m, d) ->
+                                val yy = y.toIntOrNull() ?: return@let null
+                                val mm = (m.toIntOrNull() ?: return@let null) - 1
+                                val dd = d.toIntOrNull() ?: return@let null
+                                CalendarDay.from(yy, mm, dd)
                             }
+                        }
 
-                        // Pintar fechas
-                        calendarView.addDecorator(MarkedDatesDecorator(this@TrackerMain, markedDates))
+                        if (markedDates.isEmpty()) {
+                            Toast.makeText(
+                                this@TrackerMain,
+                                "Aún no has llenado ningún cuestionario",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            calendarView.removeDecorators()
+                            calendarView.addDecorator(MarkedDatesDecorator(this@TrackerMain, markedDates))
+                        }
                     }
-
                     override fun onFailure(call: Call<List<String>>, t: Throwable) {
                         Toast.makeText(
                             this@TrackerMain,
@@ -101,38 +105,41 @@ class TrackerMain : AppCompatActivity() {
                 })
         }
 
-        // Cuando el usuario selecciona un día, navegar a ShowQuestionariesActivity
-        calendarView.setOnDateChangedListener { _, date, selected ->
+        // Al seleccionar un día
+        calendarView.setOnDateChangedListener { widget, date, selected ->
+            // Sólo actúa cuando el usuario está intentando seleccionarlo
             if (!selected) return@setOnDateChangedListener
 
-            // Formatear yyyy-MM-dd
-            val year  = date.year
-            val month = date.month + 1  // CalendarDay.month is 0-based
-            val day   = date.day
-            val dateStr = String.format("%04d-%02d-%02d", year, month, day)
+            if (!markedDates.contains(date)) {
+                // Quitar la selección que acaba de hacer el usuario
+                widget.setDateSelected(date, false)
 
-            // Recuperar userId de nuevo
-            val uid = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                .getString("USER_ID", "") ?: ""
-            if (uid.isBlank()) {
-                Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
-                return@setOnDateChangedListener
+                // Mostrar sólo el toast
+                Toast.makeText(
+                    this@TrackerMain,
+                    "No hay cuestionarios llenados para este día",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                // Si estaba marcado, procedemos con la navegación
+                val dateStr = String.format(
+                    "%04d-%02d-%02d",
+                    date.year, date.month + 1, date.day
+                )
+                startActivity(
+                    Intent(this, ShowQuestionnariesActivity::class.java).apply {
+                        putExtra("USER_ID", userId)
+                        putExtra("SELECTED_DATE", dateStr)
+                    }
+                )
             }
-
-            // Lanzar la nueva pantalla
-            startActivity(
-                Intent(this, ShowQuestionnariesActivity::class.java).apply {
-                    putExtra("USER_ID", uid)
-                    putExtra("SELECTED_DATE", dateStr)
-                }
-            )
         }
 
-        // Bottom Navigation (redirecciones)
+        // Bottom navigation
         findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
             selectedItemId = R.id.menuSeguimiento
-            setOnItemSelectedListener { menuItem ->
-                when (menuItem.itemId) {
+            setOnItemSelectedListener { item ->
+                when (item.itemId) {
                     R.id.menuInicio    -> startActivity(Intent(this@TrackerMain, HomeActivity::class.java))
                     R.id.menuJardin    -> startActivity(Intent(this@TrackerMain, GardenMain::class.java))
                     R.id.menuContenido -> startActivity(Intent(this@TrackerMain, ContentActivity::class.java))
@@ -144,19 +151,14 @@ class TrackerMain : AppCompatActivity() {
         }
     }
 
-    // Decorador para fechas marcadas
+    // Decorador para pintar círculo en fechas marcadas
     class MarkedDatesDecorator(
         context: Context,
         private val dates: Collection<CalendarDay>
     ) : DayViewDecorator {
         private val drawable: Drawable =
             ContextCompat.getDrawable(context, R.drawable.circle_day_background)!!
-
-        override fun shouldDecorate(day: CalendarDay): Boolean =
-            dates.contains(day)
-
-        override fun decorate(view: DayViewFacade) {
-            view.setBackgroundDrawable(drawable)
-        }
+        override fun shouldDecorate(day: CalendarDay) = dates.contains(day)
+        override fun decorate(view: DayViewFacade) = view.setBackgroundDrawable(drawable)
     }
 }
