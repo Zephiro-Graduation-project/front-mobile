@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 
 class GraficaActivity : AppCompatActivity() {
 
-    private lateinit var progressBar: ProgressBar
     private lateinit var anxietyChart: LineChart
     private lateinit var stressChart: LineChart
     private val api by lazy { RetrofitClient.getAuthenticatedGraphicApi(this) }
@@ -40,7 +39,6 @@ class GraficaActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        progressBar  = findViewById(R.id.progressBar)
         anxietyChart = findViewById(R.id.anxietyChart)
         stressChart  = findViewById(R.id.stressChart)
 
@@ -81,8 +79,6 @@ class GraficaActivity : AppCompatActivity() {
             return
         }
 
-        progressBar.visibility = View.VISIBLE
-
         lifecycleScope.launch {
             try {
                 val scores = api.getScores(userId)
@@ -94,7 +90,6 @@ class GraficaActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Toast.makeText(this@GraficaActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
             } finally {
-                progressBar.visibility = View.GONE
             }
         }
     }

@@ -33,8 +33,6 @@ class ContentActivity : AppCompatActivity() {
     private lateinit var contentAdapter: ContentAdapter
 
     private var selectedTagId: String? = null
-
-    // vendrán del back
     private var stressScore: Int = 0
     private var anxietyScore: Int = 0
 
@@ -48,7 +46,6 @@ class ContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_content)
 
-        // Lottie botones
         findViewById<LottieAnimationView>(R.id.call).apply {
             repeatCount = 0; playAnimation()
             setOnClickListener {
@@ -62,7 +59,6 @@ class ContentActivity : AppCompatActivity() {
             }
         }
 
-        // Bottom nav
         findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
             selectedItemId = R.id.menuContenido
             setOnItemSelectedListener { item ->
@@ -77,12 +73,10 @@ class ContentActivity : AppCompatActivity() {
             }
         }
 
-        // UI refs
         chipGroup      = findViewById(R.id.chipGroup)
         rvContent      = findViewById(R.id.rvContent)
         tvCategoryName = findViewById(R.id.namePersona)
 
-        // Recycler + Adapter
         contentAdapter = ContentAdapter(emptyList()) { content ->
             startActivity(
                 Intent(this@ContentActivity, SpecificContentActivity::class.java)
@@ -95,7 +89,6 @@ class ContentActivity : AppCompatActivity() {
             adapter = contentAdapter
         }
 
-        // 1) Recuperar perfil (stress/anxiety) del back
         val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
             .getString("USER_ID", "")
             .orEmpty()
@@ -152,8 +145,13 @@ class ContentActivity : AppCompatActivity() {
                     }
                     chipGroup.removeAllViews()
                     resp.body().orEmpty().forEach { tag ->
-                        Chip(this@ContentActivity).apply {
-                            text        = tag.name
+                        // Creamos el Chip con el styleAttr de chipStyle para heredar colores
+                        val chip = Chip(
+                            chipGroup.context,
+                            null,
+                            com.google.android.material.R.attr.chipStyle
+                        ).apply {
+                            text = tag.name
                             isCheckable = true
                             setOnClickListener {
                                 if (selectedTagId == tag.id) {
@@ -171,8 +169,8 @@ class ContentActivity : AppCompatActivity() {
                                     loadContentByTag(tag.id)
                                 }
                             }
-                            chipGroup.addView(this)
                         }
+                        chipGroup.addView(chip)
                     }
                 }
                 override fun onFailure(call: Call<List<com.example.frontzephiro.models.Tag>>, t: Throwable) {

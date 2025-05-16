@@ -71,8 +71,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <!-- TÍTULO -->
+    <!-- BACK BUTTON + TITLE -->
     <LinearLayout
         android:id="@+id/backContainer"
         android:layout_width="wrap_content"
@@ -106,70 +105,80 @@
 
     </LinearLayout>
 
-    <!-- LISTA DE PLANTAS DEL USUARIO -->
-    <LinearLayout
-        android:id="@+id/plant_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="18dp"
-        android:padding="10dp"
+    <!-- SCROLLABLE CONTENT -->
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/backContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
 
-        <TextView
-            android:id="@+id/title_plants"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tituloALmacenPlantas"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:paddingBottom="4dp"
-            android:fontFamily="@font/titulos"/>
+            android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_almacen"
-            android:layout_gravity="center"
-            android:layout_width = "match_parent"
-            android:layout_height="300dp"
-            android:clipToPadding="false"
-            android:scrollbars="horizontal"/>
-    </LinearLayout>
+            <!-- SECCIÓN DE PLANTAS -->
+            <LinearLayout
+                android:id="@+id/plant_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="18dp"
+                android:padding="10dp">
 
-    <!-- LISTA DE FONDOS DEL USUARIO -->
-    <LinearLayout
-        android:id="@+id/background_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="18dp"
-        android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@id/plant_section"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+                <TextView
+                    android:id="@+id/title_plants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tituloALmacenPlantas"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp"
+                    android:fontFamily="@font/titulos"/>
 
-        <TextView
-            android:id="@+id/title_backgrounds"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/tituloAlmacenFondos"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:paddingBottom="4dp"
-            android:fontFamily="@font/titulos"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_almacen"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="horizontal"/>
+            </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_back_almacen"
-            android:layout_gravity="center"
-            android:layout_width = "match_parent"
-            android:layout_height="300dp"
-            android:clipToPadding="false"
-            android:scrollbars="horizontal"/>
-    </LinearLayout>
+            <!-- SECCIÓN DE FONDOS -->
+            <LinearLayout
+                android:id="@+id/background_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="18dp"
+                android:padding="10dp">
 
+                <TextView
+                    android:id="@+id/title_backgrounds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tituloAlmacenFondos"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp"
+                    android:fontFamily="@font/titulos"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_back_almacen"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="horizontal"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- MENÚ INFERIOR -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -178,4 +187,5 @@
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_navigation_menu"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
