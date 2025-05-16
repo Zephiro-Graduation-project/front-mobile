@@ -60,6 +60,7 @@
     <string name="correoContacto">Correo del contacto</string>
     <string name="botonCrearContacto">Crear contacto</string>
     <string name="VolverContactosEmergencia">Contactos de emergencia</string>
+    <string name="botonActualizarContacto">Actualizar contacto</string>
 
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

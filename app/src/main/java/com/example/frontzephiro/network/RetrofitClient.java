@@ -29,6 +29,8 @@ public class RetrofitClient {
     private static final String GAMIFICATION_BASE_URL = "https://sv-garden.gentleground-3f80269d.eastus.azurecontainerapps.io/";
     //url para perfilacion
     private static final String PROFILE_BASE_URL = "https://sv-psych-profiling.gentleground-3f80269d.eastus.azurecontainerapps.io/";
+    // url para alertas y contactos
+    private static final String ALERTS_BASE_URL = "https://sv-alerts-contacts.gentleground-3f80269d.eastus.azurecontainerapps.io/";
 
     // clientes existentes
     private static Retrofit retrofit = null;
@@ -47,6 +49,10 @@ public class RetrofitClient {
 
     private static GraphicApi graphicApi = null;
     private static GraphicApi graphicApiAuth = null;
+
+    // clientes para alerts
+    private static Retrofit retrofitAlerts = null;
+    private static Retrofit retrofitAlertsAuth = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -250,6 +256,50 @@ public class RetrofitClient {
                     .create(GraphicApi.class);
         }
         return graphicApiAuth;
+    }
+
+    public static Retrofit getAlertsClient() {
+        if (retrofitAlerts == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+            retrofitAlerts = new Retrofit.Builder()
+                    .baseUrl(ALERTS_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitAlerts;
+    }
+
+    public static Retrofit getAuthenticatedAlertsClient(final Context context) {
+        if (retrofitAlertsAuth == null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new DateAdapter())
+                    .create();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request original = chain.request();
+                            String token = TokenUtils.getToken(context);
+                            Request.Builder builder = original.newBuilder();
+                            if (token != null && !token.isEmpty()) {
+                                builder.header("Authorization", "Bearer " + token);
+                            }
+                            Request request = builder.build();
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+            retrofitAlertsAuth = new Retrofit.Builder()
+                    .baseUrl(ALERTS_BASE_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofitAlertsAuth;
     }
 
 }
