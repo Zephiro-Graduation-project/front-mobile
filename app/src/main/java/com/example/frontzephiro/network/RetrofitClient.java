@@ -21,14 +21,14 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 public class RetrofitClient {
     // tus URLs existentes
-    private static final String BASE_URL = "http://10.0.2.2:8090/";
-    private static final String CONTENT_BASE_URL = "http://10.0.2.2:8070/";
+    private static final String BASE_URL = "https://sv-auth.gentleground-3f80269d.eastus.azurecontainerapps.io/";
+    private static final String CONTENT_BASE_URL = "https://sv-content.gentleground-3f80269d.eastus.azurecontainerapps.io";
     // nueva URL para artifact
-    private static final String ARTIFACT_BASE_URL = "http://10.0.2.2:8080/";
+    private static final String ARTIFACT_BASE_URL = "https://sv-artifacts.gentleground-3f80269d.eastus.azurecontainerapps.io/";
     // URLs para la tienda del jardin
-    private static final String GAMIFICATION_BASE_URL = "http://10.0.2.2:8060/";
+    private static final String GAMIFICATION_BASE_URL = "https://sv-garden.gentleground-3f80269d.eastus.azurecontainerapps.io/";
     //url para perfilacion
-    private static final String PROFILE_BASE_URL = "http://10.0.2.2:5032/";
+    private static final String PROFILE_BASE_URL = "https://sv-psych-profiling.gentleground-3f80269d.eastus.azurecontainerapps.io/";
 
     // clientes existentes
     private static Retrofit retrofit = null;

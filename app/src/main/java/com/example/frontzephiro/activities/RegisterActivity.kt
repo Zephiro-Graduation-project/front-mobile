@@ -51,10 +51,23 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.passwordInput.text.toString().trim()
             val birthdateText = binding.birthdateInput.text.toString().trim()
 
+            // 1. Campos vacíos
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || birthdateText.isEmpty()) {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            // 2. Validación de formato de email
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                // Muestra el error en el TextInputLayout asociado
+                binding.emailInputLayout.error = "Ingresa un correo electrónico válido"
+                return@setOnClickListener
+            } else {
+                // Limpia el error si antes había uno
+                binding.emailInputLayout.error = null
+            }
+
+            // 3. Parseo de fecha y registro
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val birthdate = dateFormat.parse(birthdateText)!!
             registerUser(name, email, password, birthdate)
@@ -62,17 +75,29 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showDatePicker() {
-        DatePickerDialog(
+        // Valores iniciales del picker
+        val year  = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day   = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Crea el diálogo
+        val datePickerDialog = DatePickerDialog(
             this,
             { _, y, m, d ->
                 calendar.set(y, m, d)
                 val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 binding.birthdateInput.setText(df.format(calendar.time))
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+            year,
+            month,
+            day
+        )
+
+        // Establece la fecha máxima (hoy) para que no se puedan elegir fechas futuras
+        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+        // Muestra el diálogo
+        datePickerDialog.show()
     }
 
     private fun registerUser(name: String, email: String, password: String, birthdate: Date) {
