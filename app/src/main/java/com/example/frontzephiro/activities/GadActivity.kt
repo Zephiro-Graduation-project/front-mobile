@@ -47,6 +47,8 @@ class GadActivity : AppCompatActivity() {
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.tituloEncuesta.text = "GAD"
+
         artifactService = RetrofitClient
             .getAuthenticatedArtifactClient(this)
             .create(ArtifactApiService::class.java)

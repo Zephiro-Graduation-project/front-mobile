@@ -41,6 +41,8 @@ class PssActivity : AppCompatActivity() {
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.tituloEncuesta.text = "PSS"
+
         val readOnly   = intent.getBooleanExtra("READ_ONLY", false)
         val idResponse = intent.getStringExtra("ID_RESPONSE")
 

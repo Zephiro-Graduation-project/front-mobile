@@ -42,6 +42,8 @@ class HabitsActivity : AppCompatActivity() {
         binding = ActivitySurveyLargeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.tituloEncuesta.text = "Hábitos"
+
         val readOnly   = intent.getBooleanExtra("READ_ONLY", false)
         val idResponse = intent.getStringExtra("ID_RESPONSE")
 
