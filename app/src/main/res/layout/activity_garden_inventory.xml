@@ -126,14 +126,13 @@
             android:text="@string/tituloALmacenPlantas"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingStart="18dp"
             android:paddingBottom="4dp"
             android:fontFamily="@font/titulos"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_almacen"
             android:layout_gravity="center"
-            android:layout_width = "380dp"
+            android:layout_width = "match_parent"
             android:layout_height="300dp"
             android:clipToPadding="false"
             android:scrollbars="horizontal"/>
@@ -146,6 +145,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="18dp"
+        android:padding="10dp"
         app:layout_constraintTop_toBottomOf="@id/plant_section"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -157,14 +158,13 @@
             android:text="@string/tituloAlmacenFondos"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingStart="18dp"
             android:paddingBottom="4dp"
             android:fontFamily="@font/titulos"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_back_almacen"
             android:layout_gravity="center"
-            android:layout_width = "380dp"
+            android:layout_width = "match_parent"
             android:layout_height="300dp"
             android:clipToPadding="false"
             android:scrollbars="horizontal"/>

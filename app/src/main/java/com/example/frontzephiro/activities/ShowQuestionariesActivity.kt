@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieAnimationView
+import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.QuestionariesAdapter
 import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.databinding.ActivityShowQuestionnariesBinding
@@ -26,6 +28,10 @@ class ShowQuestionnariesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Botón atrás
+        findViewById<LottieAnimationView>(R.id.back).apply {
+            repeatCount = 0; playAnimation()
+        }
+
         binding.back.setOnClickListener { finish() }
 
         // Adapter con callback

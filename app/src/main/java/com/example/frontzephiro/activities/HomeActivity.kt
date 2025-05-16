@@ -9,9 +9,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
+import com.example.frontzephiro.adapters.QuestionariesAdapter
+import com.example.frontzephiro.api.ArtifactApiService
 import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.api.ProfilingApiService
+import com.example.frontzephiro.api.QuestionnaireApiService
 import com.example.frontzephiro.models.ProfileResponse
+import com.example.frontzephiro.models.QuestionnaireSummary
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
@@ -20,6 +24,8 @@ import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var service: QuestionnaireApiService
+    private lateinit var adapter: QuestionariesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +70,7 @@ class HomeActivity : AppCompatActivity() {
         // Cada vez que la pantalla se muestre, recarga perfil y monedas
         loadProfileAndPopulate()
         loadCoinsAndPopulate()
+        loadSurveyCheckAndPopulate()
     }
 
     private fun loadProfileAndPopulate() {
@@ -133,4 +140,60 @@ class HomeActivity : AppCompatActivity() {
                 }
             })
     }
+
+    private fun loadSurveyCheckAndPopulate() {
+        val userId = sharedPreferences.getString("USER_ID", "").orEmpty()
+        if (userId.isBlank()) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 1. Toma la fecha del intent si existe, si no, usa HOY en formato yyyy-MM-dd
+        val dateExtra = intent.getStringExtra("SELECTED_DATE")
+        val date = if (!dateExtra.isNullOrBlank()) {
+            dateExtra
+        } else {
+            // Formatea la fecha de hoy
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            sdf.format(java.util.Date())
+        }
+
+        // 2. Llama al servicio autenticado (igual que en ShowQuestionnariesActivity)
+        val service = RetrofitClient
+            .getAuthenticatedArtifactClient(this)
+            .create(QuestionnaireApiService::class.java)
+
+        service.getQuestionnairesOnDate(userId, date)
+            .enqueue(object : Callback<List<QuestionnaireSummary>> {
+                override fun onResponse(
+                    call: Call<List<QuestionnaireSummary>>,
+                    response: Response<List<QuestionnaireSummary>>
+                ) {
+                    if (!response.isSuccessful) {
+                        Log.e("HomeActivity", "Error check cuestionarios ${response.code()} — ${response.errorBody()?.string()}")
+                        Toast.makeText(this@HomeActivity, "No se pudo verificar registros diarios", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    // 3. Analiza la lista: ¿hay alguno Diurno? ¿alguno Nocturno?
+                    val list = response.body().orEmpty()
+                    val respondedDiurna = list.any { it.name.contains("Diurno", ignoreCase = true) }
+                    val respondedNocturna = list.any { it.name.contains("Nocturno", ignoreCase = true) }
+
+                    val textDiurna   = if (respondedDiurna)   "Respondido" else "No lo has respondido"
+                    val textNocturna = if (respondedNocturna) "Respondido" else "No lo has respondido"
+
+                    // 4. Muestra el texto en el widget
+                    findViewById<TextView>(R.id.tvDescrpC4).text =
+                        "Diurno: $textDiurna\nNocturno: $textNocturna"
+                }
+
+                override fun onFailure(call: Call<List<QuestionnaireSummary>>, t: Throwable) {
+                    Log.e("HomeActivity", "Fallo de red check cuestionarios", t)
+                    Toast.makeText(this@HomeActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+
 }
