@@ -2,6 +2,7 @@ package com.example.frontzephiro.api
 
 import com.example.frontzephiro.models.ContactRequest
 import com.example.frontzephiro.models.ContactResponse
+import com.example.frontzephiro.models.ContactUpdateRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -27,6 +28,6 @@ interface AlertsApiService {
         @Path("contactId") contactId: String
     ): Call<Void>
 
-    //@PUT("/api/Contacts")
-    //fun updateContact(@Body contact: ContactUpdateRequest): Call<ContactResponse>
+    @PUT("api/Contacts")
+    fun updateContact(@Body contact: ContactUpdateRequest): Call<ContactResponse>
 }

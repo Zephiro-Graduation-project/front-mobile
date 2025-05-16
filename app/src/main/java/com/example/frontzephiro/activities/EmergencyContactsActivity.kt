@@ -36,7 +36,14 @@ class EmergencyContactsActivity : AppCompatActivity() {
             onItemClick = { contact ->
                 openDialer(contact.cellphone.toString())
             },
-            onEditClick = { /* si lo llegas a necesitar */ },
+            onEditClick = { contact ->
+                Intent(this, CreateEmergencyContactActivity::class.java).apply {
+                    putExtra("CONTACT_ID", contact.id)
+                    putExtra("FULL_NAME",   contact.fullName)
+                    putExtra("EMAIL",       contact.email)
+                    putExtra("CELLPHONE",   contact.cellphone)
+                }.also { startActivity(it) }
+            },
             onDeleteClick = { contact ->
                 showDeleteConfirmation(contact)
             }

@@ -11,6 +11,7 @@ import com.example.frontzephiro.R
 import com.example.frontzephiro.api.AlertsApiService
 import com.example.frontzephiro.models.ContactRequest
 import com.example.frontzephiro.models.ContactResponse
+import com.example.frontzephiro.models.ContactUpdateRequest
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
@@ -20,104 +21,142 @@ import retrofit2.Response
 
 class CreateEmergencyContactActivity : AppCompatActivity() {
 
-    private lateinit var etFullName: TextInputEditText    // aquí recuperaremos R.id.emailInput
-    private lateinit var etCellphone: TextInputEditText   // R.id.telefonoInput
-    private lateinit var etEmail: TextInputEditText       // R.id.correoInput
-    private lateinit var btnSave: Button                  // R.id.botonIniciarSesion
+    private lateinit var etFullName: TextInputEditText
+    private lateinit var etCellphone: TextInputEditText
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var btnSave: Button
+
+    private var isEdit = false
+    private var contactId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_emergency_contact)
-        setupBottomNavigation()
 
-        // Animaciones y botón “volver”
-        findViewById<LottieAnimationView>(R.id.call).apply {
-            repeatCount = 0; playAnimation()
-            setOnClickListener { startActivity(Intent(this@CreateEmergencyContactActivity, EmergencyContactsActivity::class.java)) }
-        }
-        findViewById<LottieAnimationView>(R.id.alert).apply {
-            repeatCount = 0; playAnimation()
-            setOnClickListener { startActivity(Intent(this@CreateEmergencyContactActivity, EmergencyNumbersActivity::class.java)) }
-        }
-        findViewById<LinearLayout>(R.id.backContainer).setOnClickListener { onBackPressed() }
-
-        // Enlazamos vistas según tu XML
-        etFullName  = findViewById(R.id.emailInput)
+        // 1) Vincula vistas
+        etFullName  = findViewById(R.id.emailInput)      // ojo: tu XML usa este id para nombre
         etCellphone = findViewById(R.id.telefonoInput)
         etEmail     = findViewById(R.id.correoInput)
         btnSave     = findViewById(R.id.botonIniciarSesion)
 
-        btnSave.setOnClickListener {
-            // 1) Obtener userId desde SharedPreferences
-            val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                .getString("USER_ID", "")
-                .orEmpty()
-            if (userId.isBlank()) {
-                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        // 2) Animaciones y navegación
+        findViewById<LottieAnimationView>(R.id.call).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@CreateEmergencyContactActivity, EmergencyContactsActivity::class.java))
             }
-
-            // 2) Leer y validar campos
-            val fullName  = etFullName.text.toString().trim()
-            val email     = etEmail.text.toString().trim()
-            val phoneText = etCellphone.text.toString().trim()
-            val cellphone = phoneText.toLongOrNull()
-
-            if (fullName.isEmpty() || email.isEmpty() || cellphone == null) {
-                Toast.makeText(this, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        }
+        findViewById<LottieAnimationView>(R.id.alert).apply {
+            repeatCount = 0; playAnimation()
+            setOnClickListener {
+                startActivity(Intent(this@CreateEmergencyContactActivity, EmergencyNumbersActivity::class.java))
             }
+        }
+        findViewById<LinearLayout>(R.id.backContainer).setOnClickListener { onBackPressed() }
+        findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
+            selectedItemId = R.id.menuPerfil
+            setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.menuInicio     -> startActivity(Intent(this@CreateEmergencyContactActivity, HomeActivity::class.java))
+                    R.id.menuSeguimiento-> startActivity(Intent(this@CreateEmergencyContactActivity, TrackerMain::class.java))
+                    R.id.menuJardin     -> startActivity(Intent(this@CreateEmergencyContactActivity, GadActivity::class.java))
+                    R.id.menuContenido  -> startActivity(Intent(this@CreateEmergencyContactActivity, ContentActivity::class.java))
+                }
+                true
+            }
+        }
 
-            // 3) Crear body del request
-            val request = ContactRequest(
+        // 3) Detecta modo edición
+        contactId = intent.getStringExtra("CONTACT_ID")
+        if (!contactId.isNullOrBlank()) {
+            isEdit = true
+            etFullName.setText(intent.getStringExtra("FULL_NAME"))
+            etEmail.setText(intent.getStringExtra("EMAIL"))
+            etCellphone.setText(intent.getLongExtra("CELLPHONE", 0L).toString())
+            btnSave.text = "Actualizar contacto"
+        }
+
+        // 4) Listener del botón
+        btnSave.setOnClickListener { onSaveClicked() }
+    }
+
+    private fun onSaveClicked() {
+        val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            .getString("USER_ID", "").orEmpty()
+        if (userId.isBlank()) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val fullName  = etFullName.text.toString().trim()
+        val email     = etEmail.text.toString().trim()
+        val phoneStr  = etCellphone.text.toString().trim()
+        val cellphone = phoneStr.toLongOrNull()
+        if (fullName.isEmpty() || email.isEmpty() || cellphone == null) {
+            Toast.makeText(this, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (isEdit && contactId != null) {
+            val updateReq = ContactUpdateRequest(
+                contactId = contactId!!,
                 userId    = userId,
                 fullName  = fullName,
                 email     = email,
                 cellphone = cellphone
             )
 
-            // 4) Llamada al API autenticado
             RetrofitClient
                 .getAuthenticatedAlertsClient(this)
                 .create(AlertsApiService::class.java)
-                .createContact(request)
+                .updateContact(updateReq)
                 .enqueue(object : Callback<ContactResponse> {
                     override fun onResponse(
                         call: Call<ContactResponse>,
                         response: Response<ContactResponse>
                     ) {
                         if (response.isSuccessful) {
-                            Toast.makeText(this@CreateEmergencyContactActivity,
-                                "Contacto creado con éxito", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@CreateEmergencyContactActivity,
+                                "Contacto actualizado",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             finish()
                         } else {
-                            Toast.makeText(this@CreateEmergencyContactActivity,
-                                "Error ${response.code()} al crear contacto",
-                                Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@CreateEmergencyContactActivity,
+                                "Error ${response.code()} al actualizar",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                     override fun onFailure(call: Call<ContactResponse>, t: Throwable) {
-                        Toast.makeText(this@CreateEmergencyContactActivity,
+                        Toast.makeText(
+                            this@CreateEmergencyContactActivity,
                             "Fallo de red: ${t.localizedMessage}",
-                            Toast.LENGTH_LONG).show()
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 })
-        }
-    }
-
-    private fun setupBottomNavigation() {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.menuPerfil
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.menuInicio     -> startActivity(Intent(this, HomeActivity::class.java))
-                R.id.menuSeguimiento-> startActivity(Intent(this, TrackerMain::class.java))
-                R.id.menuJardin     -> startActivity(Intent(this, GadActivity::class.java))
-                R.id.menuContenido  -> startActivity(Intent(this, ContentActivity::class.java))
-                R.id.menuPerfil     -> startActivity(Intent(this, ProfileActivity::class.java))
-                else                -> return@setOnItemSelectedListener false
-            }
-            true
+        } else {
+            val req = ContactRequest(userId, fullName, email, cellphone)
+            RetrofitClient
+                .getAuthenticatedAlertsClient(this)
+                .create(AlertsApiService::class.java)
+                .createContact(req)
+                .enqueue(object : Callback<ContactResponse> {
+                    override fun onResponse(call: Call<ContactResponse>, resp: Response<ContactResponse>) {
+                        if (resp.isSuccessful) {
+                            Toast.makeText(this@CreateEmergencyContactActivity, "Contacto creado", Toast.LENGTH_SHORT).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this@CreateEmergencyContactActivity, "Error ${resp.code()} al crear", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<ContactResponse>, t: Throwable) {
+                        Toast.makeText(this@CreateEmergencyContactActivity, "Fallo de red: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
+                })
         }
     }
 }
