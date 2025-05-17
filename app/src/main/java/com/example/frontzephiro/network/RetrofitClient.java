@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,18 +56,37 @@ public class RetrofitClient {
     private static Retrofit retrofitAlerts = null;
     private static Retrofit retrofitAlertsAuth = null;
 
+
     public static Retrofit getClient() {
         if (retrofit == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
+
+            // 👇 Interceptor para ver logs de red
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_LOGS", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY); // BODY para ver todo
+
+            // 👇 Cliente con timeout + logs + retry
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addInterceptor(logging)
+                    .build();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;
     }
+
 
     // en RetrofitClient.java
     public static Retrofit getContentClient() {
@@ -74,12 +95,17 @@ public class RetrofitClient {
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
+            // Interceptor para ver los logs de la red
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
-                    Log.d("HTTP_CONTENT", message)
+                    Log.d("HTTP_CONTENT_LOGS", message)
             );
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
                     .addInterceptor(logging)
                     .build();
 
@@ -91,6 +117,7 @@ public class RetrofitClient {
         }
         return retrofitContentPublic;
     }
+
 
 
     public static Retrofit getAuthenticatedContentClient(final Context context) {
