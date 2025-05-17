@@ -26,21 +26,19 @@
             android:contentDescription="@string/app_name"/>
     </FrameLayout>
 
-    <!-- Lotti -->
+    <!-- Animación -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationRegister"
         android:layout_width="180dp"
         android:layout_height="180dp"
         app:lottie_rawRes="@raw/flower"
         android:scaleType="centerCrop"
-        android:layout_gravity="center"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <!-- Botones de registro/inicio de sesión -->
+    <!-- Toggle registro/inicio -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleGroup"
         android:layout_width="wrap_content"
@@ -67,149 +65,141 @@
             android:fontFamily="@font/normal"/>
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <!-- Campos de entrada -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nameInputLayout"
+    <!-- CONTENIDO SCROLLABLE -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/nombreCompleto"
-        app:boxBackgroundMode="filled"
-        app:boxBackgroundColor="@color/textFieldBackground"
-        app:boxStrokeColor="?attr/colorPrimary"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
         app:layout_constraintTop_toBottomOf="@id/toggleGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/normal">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/emailInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/correoElectronico"
-        app:boxBackgroundMode="filled"
-        app:boxBackgroundColor="@color/textFieldBackground"
-        app:boxStrokeColor="?attr/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/nameInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/normal">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/emailInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/contrasena"
-        app:boxBackgroundMode="filled"
-        app:boxBackgroundColor="@color/textFieldBackground"
-        app:boxStrokeColor="?attr/colorPrimary"
-        app:endIconMode="password_toggle"
-        app:boxStrokeWidth="1dp"
-        app:hintEnabled="true"
-        app:startIconDrawable="@drawable/baseline_password_24"
-        app:layout_constraintTop_toBottomOf="@id/emailInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/normal">
+            <!-- Desde aquí... -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nombreCompleto"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/textFieldBackground"
+                app:boxStrokeColor="?attr/colorPrimary"
+                android:fontFamily="@font/normal">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/passwordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/correoElectronico"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/textFieldBackground"
+                app:boxStrokeColor="?attr/colorPrimary"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/normal">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/confirmPasswordInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/confirmarContrasena"
-        app:boxBackgroundMode="filled"
-        app:boxBackgroundColor="@color/textFieldBackground"
-        app:boxStrokeColor="?attr/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/passwordInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:endIconMode="password_toggle"
-        android:inputType="textPassword"
-        app:startIconDrawable="@drawable/baseline_password_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/normal">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/confirmPasswordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contrasena"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/textFieldBackground"
+                app:boxStrokeColor="?attr/colorPrimary"
+                app:endIconMode="password_toggle"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/normal">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/birthdateInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/fechaNacimiento"
-        app:boxBackgroundMode="filled"
-        app:boxBackgroundColor="@color/textFieldBackground"
-        app:boxStrokeColor="?attr/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/confirmPasswordInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/normal">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/birthdateInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="false"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confirmPasswordInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/confirmarContrasena"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/textFieldBackground"
+                app:boxStrokeColor="?attr/colorPrimary"
+                app:endIconMode="password_toggle"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/normal">
 
-    <!-- Botón de calendario -->
-    <ImageButton
-        android:id="@+id/birthdatePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_my_calendar"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintEnd_toEndOf="@id/birthdateInputLayout"
-        app:layout_constraintTop_toTopOf="@id/birthdateInputLayout"
-        app:layout_constraintBottom_toBottomOf="@id/birthdateInputLayout"
-        android:layout_marginEnd="10dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirmPasswordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Botón de registrarse -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/botonIniciarSesion"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:text="@string/registrarse"
-        android:textSize="20sp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toBottomOf="@id/birthdateInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/normal"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/birthdateInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fechaNacimiento"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/textFieldBackground"
+                app:boxStrokeColor="?attr/colorPrimary"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/normal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/birthdateInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/birthdatePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_gravity="end"
+                android:layout_marginTop="-44dp"
+                android:layout_marginEnd="30dp"/>
+
+            <!-- ... hasta aquí -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonIniciarSesion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/registrarse"
+                android:textSize="20sp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                android:fontFamily="@font/normal"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

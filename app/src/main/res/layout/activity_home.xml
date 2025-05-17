@@ -127,7 +127,10 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                android:layout_margin="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:background="#FFF8FC"
                 app:layout_constraintTop_toBottomOf="@id/namePersona"
                 app:layout_constraintStart_toStartOf="parent"
@@ -182,7 +185,10 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                android:layout_margin="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:background="#FFF8FC"
                 app:layout_constraintTop_toBottomOf="@id/cardEstadoAct"
                 app:layout_constraintStart_toStartOf="parent"
@@ -237,11 +243,11 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                android:layout_margin="16dp"
-                android:background="#FFF8FC"
-                app:layout_constraintTop_toBottomOf="@id/cardMonedas"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF8FC">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -255,31 +261,34 @@
                         android:text="Contenido recomendado:"
                         android:textSize="16sp"
                         android:textColor="#000000"
+                        android:fontFamily="@font/titulos"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:fontFamily="@font/titulos"/>
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                     <TextView
                         android:id="@+id/tvDescrpC3"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Titulo Ej ¿Qué es ansiedad / estrés?"
+                        android:text="Aquí irá el título dinámico de tu vídeo, puede ser muy largo pero nunca tapará la imagen."
                         android:textSize="14sp"
                         android:textColor="#000000"
+                        android:fontFamily="@font/normal"
+                        android:maxLines="2"
+                        android:ellipsize="end"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/ivCard3"
                         app:layout_constraintTop_toBottomOf="@id/tvTitleC3"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:fontFamily="@font/normal"/>
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <ImageView
                         android:id="@+id/ivCard3"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/logo_multimedia"
+                        android:contentDescription="Icono de multimedia"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:contentDescription="Icono de moneda"/>
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -292,7 +301,10 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                android:layout_margin="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:background="#FFF8FC"
                 app:layout_constraintTop_toBottomOf="@id/cardContRecom"
                 app:layout_constraintStart_toStartOf="parent"
