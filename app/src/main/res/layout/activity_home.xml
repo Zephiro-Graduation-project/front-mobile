@@ -236,64 +236,6 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- CardView de Contenido recomendado -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardContRecom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="#FFF8FC">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvTitleC3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Contenido recomendado:"
-                        android:textSize="16sp"
-                        android:textColor="#000000"
-                        android:fontFamily="@font/titulos"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/tvDescrpC3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Aquí irá el título dinámico de tu vídeo, puede ser muy largo pero nunca tapará la imagen."
-                        android:textSize="14sp"
-                        android:textColor="#000000"
-                        android:fontFamily="@font/normal"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/ivCard3"
-                        app:layout_constraintTop_toBottomOf="@id/tvTitleC3"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-
-                    <ImageView
-                        android:id="@+id/ivCard3"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/logo_multimedia"
-                        android:contentDescription="Icono de multimedia"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
             <!-- CardView de Registro Diario -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardRegDiario"
@@ -306,7 +248,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="#FFF8FC"
-                app:layout_constraintTop_toBottomOf="@id/cardContRecom"
+                app:layout_constraintTop_toBottomOf="@id/cardMonedas"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 

@@ -63,17 +63,15 @@ public class RetrofitClient {
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
-            // 👇 Interceptor para ver logs de red
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
                     Log.d("HTTP_LOGS", message)
             );
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY); // BODY para ver todo
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // 👇 Cliente con timeout + logs + retry
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
                     .addInterceptor(logging)
                     .build();
@@ -87,8 +85,6 @@ public class RetrofitClient {
         return retrofit;
     }
 
-
-    // en RetrofitClient.java
     public static Retrofit getContentClient() {
         if (retrofitContentPublic == null) {
             Gson gson = new GsonBuilder()
@@ -102,9 +98,9 @@ public class RetrofitClient {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
                     .addInterceptor(logging)
                     .build();
@@ -117,8 +113,6 @@ public class RetrofitClient {
         }
         return retrofitContentPublic;
     }
-
-
 
     public static Retrofit getAuthenticatedContentClient(final Context context) {
         if (retrofitContentAuth == null) {
@@ -151,26 +145,51 @@ public class RetrofitClient {
         return retrofitContentAuth;
     }
 
-    /*** NUEVO MÉTODO PARA ARTIFACT ***/
     public static Retrofit getArtifactClient() {
         if (retrofitArtifact == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_ARTIFACT_LOGS", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addInterceptor(logging)
+                    .build();
+
             retrofitArtifact = new Retrofit.Builder()
                     .baseUrl(ARTIFACT_BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofitArtifact;
     }
+
     public static Retrofit getAuthenticatedArtifactClient(final Context context) {
         if (retrofitArtifactAuth == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_ARTIFACT_LOGS", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addInterceptor(logging)
                     .addInterceptor(new Interceptor() {
                         @Override
                         public Response intercept(Chain chain) throws IOException {
@@ -187,7 +206,7 @@ public class RetrofitClient {
                     .build();
 
             retrofitArtifactAuth = new Retrofit.Builder()
-                    .baseUrl(ARTIFACT_BASE_URL)            // http://10.0.2.2:8080/
+                    .baseUrl(ARTIFACT_BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
@@ -207,13 +226,24 @@ public class RetrofitClient {
         }
         return retrofitGamification;
     }
+
     public static Retrofit getAuthenticatedGamificationClient(final Context context) {
         if (retrofitGamificationAuth == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_GAMIFICATION_LOGS", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addInterceptor(logging)
                     .addInterceptor(new Interceptor() {
                         @Override
                         public Response intercept(Chain chain) throws IOException {
@@ -230,7 +260,7 @@ public class RetrofitClient {
                     .build();
 
             retrofitGamificationAuth = new Retrofit.Builder()
-                    .baseUrl(GAMIFICATION_BASE_URL)            // http://10.0.2.2:8060/
+                    .baseUrl(GAMIFICATION_BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
@@ -238,36 +268,34 @@ public class RetrofitClient {
         return retrofitGamificationAuth;
     }
 
+
     public static Retrofit getProfileClient() {
         if (retrofitProfile == null) {
-            // 1. Configura GSON
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
-            // 2. Crea un interceptor de logging que use el tag "HTTP"
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override public void log(String message) {
-                    Log.d("HTTP", message);
-                }
-            });
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_PROFILE_LOGS", message)
+            );
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // 3. Usa ese interceptor en tu OkHttpClient
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
                     .addInterceptor(logging)
                     .build();
 
-            // 4. Crea el Retrofit con ese cliente
             retrofitProfile = new Retrofit.Builder()
-                    .baseUrl(PROFILE_BASE_URL)   // "http://10.0.2.2:5032/"
+                    .baseUrl(PROFILE_BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofitProfile;
     }
-
 
     public static GraphicApi getGraphicApi() {
         if (graphicApi == null) {
@@ -304,7 +332,17 @@ public class RetrofitClient {
                     .registerTypeAdapter(Date.class, new DateAdapter())
                     .create();
 
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
+                    Log.d("HTTP_ALERTS_LOGS", message)
+            );
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addInterceptor(logging)
                     .addInterceptor(new Interceptor() {
                         @Override
                         public Response intercept(Chain chain) throws IOException {
@@ -328,5 +366,4 @@ public class RetrofitClient {
         }
         return retrofitAlertsAuth;
     }
-
 }

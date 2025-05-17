@@ -93,31 +93,6 @@ class HomeActivity : AppCompatActivity() {
         loadProfileAndPopulate()
         loadCoinsAndPopulate()
         loadSurveyCheckAndPopulate()
-
-        showRecommendedContent()
-    }
-
-    private fun showRecommendedContent() {
-        val dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
-        val idx = (dayOfYear - 1) % recommendedVideos.size
-        val (title, rawUrl) = recommendedVideos[idx]
-
-        findViewById<TextView>(R.id.tvDescrpC3).text = title
-
-        findViewById<CardView>(R.id.cardContRecom).setOnClickListener {
-            var url = rawUrl.trim()
-            if (url.isBlank()) {
-                Toast.makeText(this, "Enlace inválido", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (!url.startsWith("http://", ignoreCase = true) &&
-                !url.startsWith("https://", ignoreCase = true)) {
-                url = "https://$url"
-            }
-
-            val customTabsIntent = CustomTabsIntent.Builder().build()
-            customTabsIntent.launchUrl(this, Uri.parse(url))
-        }
     }
 
     private fun loadProfileAndPopulate() {
