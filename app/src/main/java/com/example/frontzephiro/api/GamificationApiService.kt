@@ -64,4 +64,10 @@ interface GamificationApiService {
         @Path("streak") streak: Int
     ): Call<Void>
 
+    @PUT("inventory/{userId}/rewardContent")
+    fun rewardContent(@Path("userId") userId: String): Call<Void>
+
+    @PUT("inventory/{userId}/rewardEmergencyContact")
+    fun rewardEmergencyContact(@Path("userId") userId: String): Call<Void>
+
 }

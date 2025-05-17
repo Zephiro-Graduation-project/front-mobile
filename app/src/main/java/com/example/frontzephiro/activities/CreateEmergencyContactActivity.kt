@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.api.AlertsApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.models.ContactRequest
 import com.example.frontzephiro.models.ContactResponse
 import com.example.frontzephiro.models.ContactUpdateRequest
@@ -25,6 +26,7 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
     private lateinit var etCellphone: TextInputEditText
     private lateinit var etEmail: TextInputEditText
     private lateinit var btnSave: Button
+    private lateinit var gamificationService: GamificationApiService
 
     private var isEdit = false
     private var contactId: String? = null
@@ -147,6 +149,7 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
                 .enqueue(object : Callback<ContactResponse> {
                     override fun onResponse(call: Call<ContactResponse>, resp: Response<ContactResponse>) {
                         if (resp.isSuccessful) {
+                            rewardUserForNewContact()
                             Toast.makeText(this@CreateEmergencyContactActivity, "Contacto creado", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
@@ -158,5 +161,39 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
                     }
                 })
         }
+    }
+    private fun rewardUserForNewContact() {
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
+        val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", "") ?: ""
+
+        gamificationService.rewardEmergencyContact(userId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                    if (rewardResp.isSuccessful) {
+                        Toast.makeText(
+                            this@CreateEmergencyContactActivity,
+                            "Recompensa por nuevo contacto aplicada",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this@CreateEmergencyContactActivity,
+                            "Error recompensa nuevo contacto: ${rewardResp.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(
+                        this@CreateEmergencyContactActivity,
+                        "Fallo recompensa nuevo contacto: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
     }
 }

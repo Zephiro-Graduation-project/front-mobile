@@ -12,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
 import com.example.frontzephiro.api.ContentApiService
+import com.example.frontzephiro.api.GamificationApiService
 import com.example.frontzephiro.models.Content
 import com.example.frontzephiro.network.RetrofitClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,6 +33,7 @@ class SpecificContentActivity : AppCompatActivity() {
     private lateinit var chipGroupDetail: ChipGroup
     private lateinit var botonEnlace: Button
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var gamificationService: GamificationApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,6 +137,44 @@ class SpecificContentActivity : AppCompatActivity() {
 
             val customTabsIntent = CustomTabsIntent.Builder().build()
             customTabsIntent.launchUrl(this, Uri.parse(url))
+
+
+
+            rewardUserForContent()
         }
+    }
+    private fun rewardUserForContent() {
+        gamificationService = RetrofitClient
+            .getAuthenticatedGamificationClient(this)
+            .create(GamificationApiService::class.java)
+
+        val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", "") ?: ""
+
+        gamificationService.rewardContent(userId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
+                    if (rewardResp.isSuccessful) {
+                        Toast.makeText(
+                            this@SpecificContentActivity,
+                            "Recompensa por contenido aplicada",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this@SpecificContentActivity,
+                            "Error recompensa contenido: ${rewardResp.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(
+                        this@SpecificContentActivity,
+                        "Fallo recompensa contenido: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
     }
 }

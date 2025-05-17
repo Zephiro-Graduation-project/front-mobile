@@ -314,11 +314,20 @@ class GardenMain : AppCompatActivity() {
                     jardin.flowers.forEachIndexed { index, flower ->
                         flower?.let {
                             val planta = ImageView(this@GardenMain)
-                            val resId = resources.getIdentifier(
-                                it.healthyAsset.lowercase(), "drawable", packageName
-                            )
-                            planta.setImageResource(resId)
-                            planta.tag = it
+                            if (jardin.state == true) {
+                                val resId = resources.getIdentifier(
+                                    it.healthyAsset.lowercase(), "drawable", packageName
+                                )
+                                planta.setImageResource(resId)
+                                planta.tag = it
+                            } else {
+                                val resId = resources.getIdentifier(
+                                    it.dryAsset.lowercase(), "drawable", packageName
+                                )
+                                planta.setImageResource(resId)
+                                planta.tag = it
+                            }
+
 
                             planta.layoutParams = FrameLayout.LayoutParams(200, 200).apply {
                                 setMargins(16, 16, 16, 16)
