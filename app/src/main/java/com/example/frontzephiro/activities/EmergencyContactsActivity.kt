@@ -60,12 +60,12 @@ class EmergencyContactsActivity : AppCompatActivity() {
             }
 
         // 3) Animaciones Lottie
-        findViewById<LottieAnimationView>(R.id.call).apply {
+        /*findViewById<LottieAnimationView>(R.id.call).apply {
             repeatCount = 0; playAnimation()
             setOnClickListener {
                 startActivity(Intent(this@EmergencyContactsActivity, EmergencyContactsActivity::class.java))
             }
-        }
+        }*/
         findViewById<LottieAnimationView>(R.id.alert).apply {
             repeatCount = 0; playAnimation()
             setOnClickListener {
@@ -124,7 +124,7 @@ class EmergencyContactsActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(
                             this@EmergencyContactsActivity,
-                            "Error ${response.code()} al cargar contactos",
+                            "¡Tienes 0 contactos, crea uno!",
                             Toast.LENGTH_LONG
                         ).show()
                     }

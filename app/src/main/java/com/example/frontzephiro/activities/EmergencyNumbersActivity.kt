@@ -28,10 +28,10 @@ class EmergencyNumbersActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        alertAnimation.setOnClickListener {
+        /*alertAnimation.setOnClickListener {
             val intent = Intent(this, EmergencyNumbersActivity::class.java)
             startActivity(intent)
-        }
+        }*/
 
         findViewById<MaterialCardView>(R.id.cardBogota).setOnClickListener {
             openDialer("601106")

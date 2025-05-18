@@ -154,7 +154,7 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
                             Toast.makeText(this@CreateEmergencyContactActivity, "Contacto creado", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
-                            Toast.makeText(this@CreateEmergencyContactActivity, "Error ${resp.code()} al crear", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@CreateEmergencyContactActivity, "Debes que agregar un correo valido", Toast.LENGTH_LONG).show()
                         }
                     }
                     override fun onFailure(call: Call<ContactResponse>, t: Throwable) {
@@ -176,7 +176,6 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
                     if (rewardResp.isSuccessful) {
                         Log.e("CreateEmergencyContactActivity", "Recompensa por nuevo contacto aplicada")
-                        Toast.makeText(this@CreateEmergencyContactActivity,"Recompensa por nuevo contacto aplicada",Toast.LENGTH_SHORT).show()
                     } else {
                         Log.e("CreateEmergencyContactActivity", "Error recompensa nuevo contacto: ${rewardResp.code()}")
                         Toast.makeText(this@CreateEmergencyContactActivity,"Error recompensa nuevo contacto: ${rewardResp.code()}",Toast.LENGTH_SHORT).show()

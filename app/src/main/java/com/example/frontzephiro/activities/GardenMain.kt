@@ -212,7 +212,7 @@ class GardenMain : AppCompatActivity() {
         obtenerPrimeraCeldaDisponible { celdaIndex ->
             if (celdaIndex == null) {
                 runOnUiThread {
-                    Toast.makeText(this, "El jardín está lleno o hubo un error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "El jardín está lleno", Toast.LENGTH_SHORT).show()
                 }
                 return@obtenerPrimeraCeldaDisponible
             }
