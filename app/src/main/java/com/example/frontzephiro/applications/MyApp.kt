@@ -51,6 +51,8 @@ class MyApp : Application() {
                 val lastPssDateStr = prefs.getString("PSS_SURVEY_DATE", null)
                 val lastGadDateStr = prefs.getString("GAD_SURVEY_DATE", null)
 
+                val suppressDaily = prefs.getString("DAILY_SUPPRESS_DATE", "") == today
+
                 val dueHabits = if (!lastHabitsDateStr.isNullOrEmpty()) {
                     // parsear la última fecha y sumarle 10 días
                     val lastDate = sdf.parse(lastHabitsDateStr)!!
@@ -66,6 +68,12 @@ class MyApp : Application() {
                 }
 
                 if (dueHabits) {
+
+                    // marcamos el día para no lanzar diarios:
+                    prefs.edit()
+                        .putString("DAILY_SUPPRESS_DATE", today)
+                        .apply()
+
                     val intent = Intent(activity, HabitsActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         putExtra("READ_ONLY", false)
@@ -89,6 +97,12 @@ class MyApp : Application() {
                 }
 
                 if (duePss) {
+
+                    // marcamos el día para no lanzar diarios:
+                    prefs.edit()
+                        .putString("DAILY_SUPPRESS_DATE", today)
+                        .apply()
+
                     val intent = Intent(activity, PssActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         putExtra("READ_ONLY", false)
@@ -112,6 +126,12 @@ class MyApp : Application() {
                 }
 
                 if (dueGad) {
+
+                    // marcamos el día para no lanzar diarios:
+                    prefs.edit()
+                        .putString("DAILY_SUPPRESS_DATE", today)
+                        .apply()
+
                     val intent = Intent(activity, GadActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         putExtra("READ_ONLY", false)
@@ -120,34 +140,40 @@ class MyApp : Application() {
                     return
                 }
 
-                // ——— Matutino: 06–11h ——
-                if (hour in 5..11) {
-                    val diurnaDone = prefs.getString("DIURNO_SURVEY_DATE", "") == today
-                    if (!diurnaDone) {
-                        val i = Intent(activity,
-                            DiurnaActivity::class.java)
-                            .apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                putExtra("READ_ONLY", false)
-                            }
-                        activity.startActivity(i)
-                        return
+                if (!suppressDaily) {
+                    // ——— Matutino: 06–11h ——
+                    if (hour in 5..11) {
+                        val diurnaDone = prefs.getString("DIURNO_SURVEY_DATE", "") == today
+                        if (!diurnaDone) {
+                            val i = Intent(
+                                activity,
+                                DiurnaActivity::class.java
+                            )
+                                .apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    putExtra("READ_ONLY", false)
+                                }
+                            activity.startActivity(i)
+                            return
+                        }
                     }
-                }
 
-                // ——— Nocturno: 17–23h ——
-                if (hour in 18..23) {
-                    val nocturnaDone = prefs.getString("NOCTURNO_SURVEY_DATE", "") == today
-                    if (!nocturnaDone) {
-                        val i = Intent(activity,
-                            NocturnaActivity::class.java)
-                            .apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                putExtra("READ_ONLY", false)
-                            }
-                        activity.startActivity(i)
+                    // ——— Nocturno: 17–23h ——
+                    if (hour in 18..23) {
+                        val nocturnaDone = prefs.getString("NOCTURNO_SURVEY_DATE", "") == today
+                        if (!nocturnaDone) {
+                            val i = Intent(
+                                activity,
+                                NocturnaActivity::class.java
+                            )
+                                .apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    putExtra("READ_ONLY", false)
+                                }
+                            activity.startActivity(i)
+                        }
                     }
                 }
             }
