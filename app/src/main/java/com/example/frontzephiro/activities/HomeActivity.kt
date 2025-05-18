@@ -38,6 +38,7 @@ class HomeActivity : AppCompatActivity() {
     )
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var questionnaireService: QuestionnaireApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,12 +94,14 @@ class HomeActivity : AppCompatActivity() {
         loadProfileAndPopulate()
         loadCoinsAndPopulate()
         loadSurveyCheckAndPopulate()
+        loadStreakAndPopulate()
     }
 
     private fun loadProfileAndPopulate() {
         val userId = sharedPreferences.getString("USER_ID", "") ?: ""
         if (userId.isBlank()) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            Log.e("HomeActivity", "Usuario no autenticado")
+            // Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -117,12 +120,12 @@ class HomeActivity : AppCompatActivity() {
                         }
                     } else {
                         Log.e("HomeActivity", "Error perfil ${response.code()} — ${response.errorBody()?.string()}")
-                        Toast.makeText(this@HomeActivity, "No se pudo cargar perfil", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@HomeActivity, "No se pudo cargar perfil", Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
                     Log.e("HomeActivity", "Fallo red perfil", t)
-                    Toast.makeText(this@HomeActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@HomeActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
                 }
             })
     }
@@ -160,7 +163,8 @@ class HomeActivity : AppCompatActivity() {
     private fun loadSurveyCheckAndPopulate() {
         val userId = sharedPreferences.getString("USER_ID", "").orEmpty()
         if (userId.isBlank()) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            Log.e("HomeActivity", "Usuario no autenticado")
+            //Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -178,7 +182,7 @@ class HomeActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<List<QuestionnaireSummary>>, response: Response<List<QuestionnaireSummary>>) {
                     if (!response.isSuccessful) {
                         Log.e("HomeActivity", "Error check cuestionarios ${response.code()} — ${response.errorBody()?.string()}")
-                        Toast.makeText(this@HomeActivity, "No se pudo verificar registros diarios", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@HomeActivity, "No se pudo verificar registros diarios", Toast.LENGTH_SHORT).show()
                         return
                     }
                     val list = response.body().orEmpty()
@@ -193,7 +197,39 @@ class HomeActivity : AppCompatActivity() {
                 }
                 override fun onFailure(call: Call<List<QuestionnaireSummary>>, t: Throwable) {
                     Log.e("HomeActivity", "Fallo de red check cuestionarios", t)
-                    Toast.makeText(this@HomeActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@HomeActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun loadStreakAndPopulate() {
+        questionnaireService = RetrofitClient
+            .getAuthenticatedArtifactClient(this)
+            .create(QuestionnaireApiService::class.java)
+
+        val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val userId = prefs.getString("USER_ID", "") ?: ""
+        val tvStreak = findViewById<TextView>(R.id.tvDescrpC5)
+
+        if (userId.isBlank()) {
+            tvStreak.text = "Usuario no autenticado"
+            return
+        }
+
+        questionnaireService.getStreak(userId)
+            .enqueue(object : Callback<Int> {
+                override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
+                    if (streakResp.isSuccessful) {
+                        val streak = streakResp.body() ?: 0
+                        tvStreak.text = "$streak Dias en racha!"
+                    } else {
+                        Log.e("HomeActivity", "Error al obtener racha: ${streakResp.code()}")
+                        //Toast.makeText(this@HomeActivity,"Error al obtener racha: ${streakResp.code()}",Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<Int>, t: Throwable) {
+                    Log.e("HomeActivity", "Fallo petición racha: ${t.message}")
+                    //Toast.makeText(this@HomeActivity,"Fallo petición racha: ${t.message}",Toast.LENGTH_LONG).show()
                 }
             })
     }

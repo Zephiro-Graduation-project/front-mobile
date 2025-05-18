@@ -105,11 +105,7 @@ fun StoreItemDetailDialog(
                                         Log.d("CompraDebug", "Flor comprada correctamente: $response")
 
                                         withContext(Dispatchers.Main) {
-                                            Toast.makeText(
-                                                context,
-                                                "¡Has comprado ${flower.name}!",
-                                                Toast.LENGTH_LONG
-                                            ).show()
+                                            Toast.makeText(context,"¡Has comprado ${flower.name}!",Toast.LENGTH_LONG).show()
                                             launchGardenActivity(context, storeProduct)
                                             onDismiss()
                                         }
@@ -122,11 +118,7 @@ fun StoreItemDetailDialog(
                                         Log.d("CompraDebug", "Fondo comprado correctamente: $response")
 
                                         withContext(Dispatchers.Main) {
-                                            Toast.makeText(
-                                                context,
-                                                "¡Has comprado ${background.title}!",
-                                                Toast.LENGTH_LONG
-                                            ).show()
+                                            Toast.makeText(context,"¡Has comprado ${background.title}!",Toast.LENGTH_LONG).show()
                                             launchGardenActivity(context, storeProduct)
                                             onDismiss()
                                         }
@@ -141,7 +133,7 @@ fun StoreItemDetailDialog(
                                     val mensajeError = when {
                                         errorCode == 404 -> "Fondo no encontrado. Verifica el ID y la URL del backend."
                                         errorBody?.contains("not have enough coins") == true -> "No tienes suficientes monedas."
-                                        errorBody?.contains("already in the inventory") == true -> "Ya tienes este fondo."
+                                        errorBody?.contains("already in the inventory") == true -> "Ya tienes este item."
                                         else -> "Error al realizar la compra. Código $errorCode"
                                     }
 

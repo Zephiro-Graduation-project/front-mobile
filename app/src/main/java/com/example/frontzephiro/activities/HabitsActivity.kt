@@ -3,6 +3,7 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -73,7 +74,8 @@ class HabitsActivity : AppCompatActivity() {
                 val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                     .getString("USER_ID", "") ?: ""
                 if (userId.isBlank()) {
-                    Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
+                    Log.e("HabitsActivity", "No hay usuario autenticado")
+                    //Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 val responses = surveyAdapter.getResponses()
@@ -143,45 +145,30 @@ class HabitsActivity : AppCompatActivity() {
                                                                     rewardStreakResp: Response<Void>
                                                                 ) {
                                                                     if (rewardStreakResp.isSuccessful) {
-                                                                        Toast.makeText(
-                                                                            this@HabitsActivity,
-                                                                            "Recompensa de racha aplicada: $streak días",
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
+                                                                        Log.e("HabitsActivity", "Recompensa de racha aplicada: $streak días")
+                                                                        //Toast.makeText(this@HabitsActivity,"Recompensa de racha aplicada: $streak días",Toast.LENGTH_SHORT).show()
                                                                     } else {
-                                                                        Toast.makeText(
-                                                                            this@HabitsActivity,
-                                                                            "Error recompensa racha: ${rewardStreakResp.code()}",
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
+                                                                        Log.e("HabitsActivity", "Error recompensa racha: ${rewardStreakResp.code()}")
+                                                                        //Toast.makeText(this@HabitsActivity,"Error recompensa racha: ${rewardStreakResp.code()}",Toast.LENGTH_SHORT).show()
                                                                     }
                                                                     goHome()
                                                                 }
                                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                                                                    Toast.makeText(
-                                                                        this@HabitsActivity,
-                                                                        "Fallo recompensa racha: ${t.message}",
-                                                                        Toast.LENGTH_LONG
-                                                                    ).show()
+                                                                    Log.e("HabitsActivity", "Fallo recompensa racha: ${t.message}")
+                                                                    //Toast.makeText(this@HabitsActivity,"Fallo recompensa racha: ${t.message}",Toast.LENGTH_LONG).show()
                                                                     goHome()
                                                                 }
                                                             })
 
                                                     } else {
-                                                        Toast.makeText(
-                                                            this@HabitsActivity,
-                                                            "Error al obtener racha: ${streakResp.code()}",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                        Log.e("HabitsActivity", "Error al obtener racha: ${streakResp.code()}")
+                                                        //Toast.makeText(this@HabitsActivity,"Error al obtener racha: ${streakResp.code()}",Toast.LENGTH_SHORT).show()
                                                         goHome()
                                                     }
                                                 }
                                                 override fun onFailure(call: Call<Int>, t: Throwable) {
-                                                    Toast.makeText(
-                                                        this@HabitsActivity,
-                                                        "Fallo petición racha: ${t.message}",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
+                                                    Log.e("HabitsActivity", "Fallo petición racha: ${t.message}")
+                                                    //Toast.makeText(this@HabitsActivity,"Fallo petición racha: ${t.message}",Toast.LENGTH_LONG).show()
                                                     goHome()
                                                 }
                                             })

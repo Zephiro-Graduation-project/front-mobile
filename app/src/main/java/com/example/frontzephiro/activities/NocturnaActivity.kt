@@ -2,6 +2,7 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -63,7 +64,8 @@ class NocturnaActivity : AppCompatActivity() {
                 val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                 val userId = prefs.getString("USER_ID", "") ?: ""
                 if (userId.isBlank()) {
-                    Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
+                    Log.e("NocturnaActivity", "Usuario no autenticado")
+                    //Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 val responses = adapter.getResponses()
@@ -100,17 +102,9 @@ class NocturnaActivity : AppCompatActivity() {
                                 .enqueue(object : Callback<Void> {
                                     override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
                                         if (rewardResp.isSuccessful) {
-                                            Toast.makeText(
-                                                this@NocturnaActivity,
-                                                "Recompensa por encuesta aplicada",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            Toast.makeText(this@NocturnaActivity,"Recompensa por encuesta aplicada",Toast.LENGTH_SHORT).show()
                                         } else {
-                                            Toast.makeText(
-                                                this@NocturnaActivity,
-                                                "Error recompensa encuesta: ${rewardResp.code()}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            Toast.makeText(this@NocturnaActivity,"Error recompensa encuesta: ${rewardResp.code()}",Toast.LENGTH_SHORT).show()
                                         }
 
                                         // Obtener la racha
@@ -128,45 +122,30 @@ class NocturnaActivity : AppCompatActivity() {
                                                                     rewardStreakResp: Response<Void>
                                                                 ) {
                                                                     if (rewardStreakResp.isSuccessful) {
-                                                                        Toast.makeText(
-                                                                            this@NocturnaActivity,
-                                                                            "Recompensa de racha aplicada: $streak días",
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
+                                                                        Log.e("NocturnaActivity", "Recompensa de racha aplicada: $streak días")
+                                                                        //Toast.makeText(this@NocturnaActivity,"Recompensa de racha aplicada: $streak días",Toast.LENGTH_SHORT).show()
                                                                     } else {
-                                                                        Toast.makeText(
-                                                                            this@NocturnaActivity,
-                                                                            "Error recompensa racha: ${rewardStreakResp.code()}",
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
+                                                                        Log.e("NocturnaActivity", "Error recompensa racha: ${rewardStreakResp.code()}")
+                                                                        //Toast.makeText(this@NocturnaActivity,"Error recompensa racha: ${rewardStreakResp.code()}",Toast.LENGTH_SHORT).show()
                                                                     }
                                                                     goHome()
                                                                 }
                                                                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                                                                    Toast.makeText(
-                                                                        this@NocturnaActivity,
-                                                                        "Fallo recompensa racha: ${t.message}",
-                                                                        Toast.LENGTH_LONG
-                                                                    ).show()
+                                                                    Log.e("NocturnaActivity", "Fallo recompensa racha: ${t.message}")
+                                                                    //Toast.makeText(this@NocturnaActivity,"Fallo recompensa racha: ${t.message}",Toast.LENGTH_LONG).show()
                                                                     goHome()
                                                                 }
                                                             })
 
                                                     } else {
-                                                        Toast.makeText(
-                                                            this@NocturnaActivity,
-                                                            "Error al obtener racha: ${streakResp.code()}",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                        Log.e("NocturnaActivity", "Error al obtener racha: ${streakResp.code()}")
+                                                        //Toast.makeText(this@NocturnaActivity,"Error al obtener racha: ${streakResp.code()}",Toast.LENGTH_SHORT).show()
                                                         goHome()
                                                     }
                                                 }
                                                 override fun onFailure(call: Call<Int>, t: Throwable) {
-                                                    Toast.makeText(
-                                                        this@NocturnaActivity,
-                                                        "Fallo petición racha: ${t.message}",
-                                                        Toast.LENGTH_LONG
-                                                    ).show()
+                                                    Log.e("NocturnaActivity", "Fallo petición racha: ${t.message}")
+                                                    //Toast.makeText(this@NocturnaActivity,"Fallo petición racha: ${t.message}",Toast.LENGTH_LONG).show()
                                                     goHome()
                                                 }
                                             })

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.View.DragShadowBuilder
@@ -307,9 +308,6 @@ class GardenMain : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val jardin = response.body() ?: return
 
-                    // Fondo dinámico desde back (ya estás haciéndolo local, podrías sincronizar)
-//                    setBackgroundFromTitle(jardin.background.title)
-
                     // Renderizar flores en el grid
                     jardin.flowers.forEachIndexed { index, flower ->
                         flower?.let {
@@ -364,7 +362,8 @@ class GardenMain : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<GardenResponse>, t: Throwable) {
-                Toast.makeText(this@GardenMain, "Fallo de conexión", Toast.LENGTH_SHORT).show()
+                Log.e("GardenMain", "Fallo de conexión:")
+                //Toast.makeText(this@GardenMain, "Fallo de conexión", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -374,7 +373,8 @@ class GardenMain : AppCompatActivity() {
         val userId = prefs.getString("USER_ID", null)
 
         if (userId == null) {
-            Toast.makeText(this, "Usuario no identificado", Toast.LENGTH_SHORT).show()
+            Log.e("GardenMain", "Usuario no identificado")
+            //Toast.makeText(this, "Usuario no identificado", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -411,14 +411,17 @@ class GardenMain : AppCompatActivity() {
         service.updateGarden(userId, gardenRequest).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@GardenMain, "Jardín actualizado", Toast.LENGTH_SHORT).show()
+                    Log.e("GardenMain", "Jardín actualizado")
+                    //Toast.makeText(this@GardenMain, "Jardín actualizado", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@GardenMain, "Error al actualizar jardín", Toast.LENGTH_SHORT).show()
+                    Log.e("GardenMain", "Error al actualizar jardín")
+                    //Toast.makeText(this@GardenMain, "Error al actualizar jardín", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@GardenMain, "Fallo de red al actualizar", Toast.LENGTH_SHORT).show()
+                Log.e("GardenMain", "Fallo de red al actualizar")
+                //Toast.makeText(this@GardenMain, "Fallo de red al actualizar", Toast.LENGTH_SHORT).show()
             }
         })
     }

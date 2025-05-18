@@ -2,6 +2,7 @@ package com.example.frontzephiro.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -174,25 +175,16 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
                     if (rewardResp.isSuccessful) {
-                        Toast.makeText(
-                            this@CreateEmergencyContactActivity,
-                            "Recompensa por nuevo contacto aplicada",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("CreateEmergencyContactActivity", "Recompensa por nuevo contacto aplicada")
+                        Toast.makeText(this@CreateEmergencyContactActivity,"Recompensa por nuevo contacto aplicada",Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(
-                            this@CreateEmergencyContactActivity,
-                            "Error recompensa nuevo contacto: ${rewardResp.code()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("CreateEmergencyContactActivity", "Error recompensa nuevo contacto: ${rewardResp.code()}")
+                        Toast.makeText(this@CreateEmergencyContactActivity,"Error recompensa nuevo contacto: ${rewardResp.code()}",Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(
-                        this@CreateEmergencyContactActivity,
-                        "Fallo recompensa nuevo contacto: ${t.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.e("CreateEmergencyContactActivity", "Fallo recompensa nuevo contacto: ${t.message}")
+                    //Toast.makeText(this@CreateEmergencyContactActivity,"Fallo recompensa nuevo contacto: ${t.message}",Toast.LENGTH_LONG).show()
                 }
             })
     }

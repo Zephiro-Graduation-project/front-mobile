@@ -121,9 +121,9 @@ fun InventoryItemDialog(
                                     }
 
                                 } catch (e: Exception) {
-                                    Log.e("CompraError", "Error inesperado al comprar", e)
+                                    Log.e("CompraError", "Error inesperado", e)
                                     withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, "Error inesperado al comprar", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Error inesperado", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }

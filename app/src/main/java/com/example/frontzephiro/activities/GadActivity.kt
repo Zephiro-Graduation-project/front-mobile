@@ -75,7 +75,8 @@ class GadActivity : AppCompatActivity() {
                 val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                 val userId = prefs.getString("USER_ID", "") ?: ""
                 if (userId.isBlank()) {
-                    Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
+                    Log.e("GadActivity", "No hay usuario autenticado")
+                    //Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 val responses = surveyAdapter.getResponses()

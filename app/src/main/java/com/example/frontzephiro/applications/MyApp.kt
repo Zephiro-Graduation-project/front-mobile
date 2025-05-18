@@ -142,7 +142,7 @@ class MyApp : Application() {
 
                 if (!suppressDaily) {
                     // ——— Matutino: 06–11h ——
-                    if (hour in 5..11) {
+                    if (hour in 6..11) {
                         val diurnaDone = prefs.getString("DIURNO_SURVEY_DATE", "") == today
                         if (!diurnaDone) {
                             val i = Intent(
@@ -160,7 +160,7 @@ class MyApp : Application() {
                     }
 
                     // ——— Nocturno: 17–23h ——
-                    if (hour in 18..23) {
+                    if (hour in 17..23) {
                         val nocturnaDone = prefs.getString("NOCTURNO_SURVEY_DATE", "") == today
                         if (!nocturnaDone) {
                             val i = Intent(

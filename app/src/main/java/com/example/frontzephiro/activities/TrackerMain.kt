@@ -16,6 +16,7 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import androidx.core.content.ContextCompat
 import android.graphics.drawable.Drawable
+import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,7 +55,8 @@ class TrackerMain : AppCompatActivity() {
         userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
             .getString("USER_ID", "") ?: ""
         if (userId.isBlank()) {
-            Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
+            Log.e("TrackerMain", "No hay usuario autenticado")
+            //Toast.makeText(this, "No hay usuario autenticado", Toast.LENGTH_SHORT).show()
         } else {
             questionnaireService = RetrofitClient
                 .getAuthenticatedArtifactClient(this)
@@ -65,11 +67,8 @@ class TrackerMain : AppCompatActivity() {
                 .enqueue(object : Callback<List<String>> {
                     override fun onResponse(call: Call<List<String>>, resp: Response<List<String>>) {
                         if (!resp.isSuccessful) {
-                            Toast.makeText(
-                                this@TrackerMain,
-                                "Error cargando fechas: ${resp.code()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Log.e("TrackerMain", "Error cargando fechas: ${resp.code()}")
+                            //Toast.makeText(this@TrackerMain,"Error cargando fechas: ${resp.code()}",Toast.LENGTH_SHORT).show()
                             return
                         }
                         val isoDates = resp.body().orEmpty()
@@ -85,22 +84,15 @@ class TrackerMain : AppCompatActivity() {
                         }
 
                         if (markedDates.isEmpty()) {
-                            Toast.makeText(
-                                this@TrackerMain,
-                                "Aún no has llenado ningún cuestionario",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toast.makeText(this@TrackerMain,"Aún no has llenado ningún cuestionario",Toast.LENGTH_LONG).show()
                         } else {
                             calendarView.removeDecorators()
                             calendarView.addDecorator(MarkedDatesDecorator(this@TrackerMain, markedDates))
                         }
                     }
                     override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                        Toast.makeText(
-                            this@TrackerMain,
-                            "Fallo de red: ${t.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Log.e("TrackerMain", "Fallo de red: ${t.message}")
+                        //Toast.makeText(this@TrackerMain,"Fallo de red: ${t.message}",Toast.LENGTH_LONG).show()
                     }
                 })
         }
@@ -115,11 +107,7 @@ class TrackerMain : AppCompatActivity() {
                 widget.setDateSelected(date, false)
 
                 // Mostrar sólo el toast
-                Toast.makeText(
-                    this@TrackerMain,
-                    "No hay cuestionarios llenados para este día",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@TrackerMain,"No hay cuestionarios llenados para este día",Toast.LENGTH_SHORT).show()
             } else {
                 // Si estaba marcado, procedemos con la navegación
                 val dateStr = String.format(

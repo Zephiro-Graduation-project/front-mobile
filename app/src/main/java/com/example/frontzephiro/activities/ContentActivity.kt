@@ -94,7 +94,7 @@ class ContentActivity : AppCompatActivity() {
             .orEmpty()
 
         if (userId.isBlank()) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
             loadTags()
             loadContent()
             return
@@ -140,6 +140,7 @@ class ContentActivity : AppCompatActivity() {
                     resp: Response<List<com.example.frontzephiro.models.Tag>>
                 ) {
                     if (!resp.isSuccessful) {
+                        Log.e("ContentActivity", "Error ${resp.code()} al cargar tags")
                         Toast.makeText(this@ContentActivity, "Error ${resp.code()} al cargar tags", Toast.LENGTH_SHORT).show()
                         return
                     }
@@ -174,6 +175,7 @@ class ContentActivity : AppCompatActivity() {
                     }
                 }
                 override fun onFailure(call: Call<List<com.example.frontzephiro.models.Tag>>, t: Throwable) {
+                    Log.e("ContentActivity", "Fallo conexión tags")
                     Toast.makeText(this@ContentActivity, "Fallo conexión tags", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -188,12 +190,14 @@ class ContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<Content>> {
                 override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
                     if (!resp.isSuccessful) {
+                        Log.e("ContentActivity", "Error ${resp.code()} al cargar tags")
                         Toast.makeText(this@ContentActivity, "Error al cargar contenido", Toast.LENGTH_SHORT).show()
                         return
                     }
                     contentAdapter.updateItems(resp.body().orEmpty())
                 }
                 override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Log.e("ContentActivity", "Error de conexión al cargar contenido")
                     Toast.makeText(this@ContentActivity, "Error de conexión al cargar contenido", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -208,12 +212,14 @@ class ContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<Content>> {
                 override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
                     if (!resp.isSuccessful) {
+                        Log.e("ContentActivity", "Error ${resp.code()} al cargar recomendaciones")
                         Toast.makeText(this@ContentActivity, "Error ${resp.code()} al cargar recomendaciones", Toast.LENGTH_SHORT).show()
                         return
                     }
                     contentAdapter.updateItems(resp.body().orEmpty())
                 }
                 override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Log.e("ContentActivity", "Fallo de red al cargar recomendaciones")
                     Toast.makeText(this@ContentActivity, "Fallo de red al cargar recomendaciones", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -227,12 +233,14 @@ class ContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<Content>> {
                 override fun onResponse(call: Call<List<Content>>, resp: Response<List<Content>>) {
                     if (!resp.isSuccessful) {
+                        Log.e("ContentActivity", "Error ${resp.code()} al filtrar contenido")
                         Toast.makeText(this@ContentActivity, "Error al filtrar contenido", Toast.LENGTH_SHORT).show()
                         return
                     }
                     contentAdapter.updateItems(resp.body().orEmpty())
                 }
                 override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                    Log.e("ContentActivity", "Fallo al filtrar contenido")
                     Toast.makeText(this@ContentActivity, "Fallo al filtrar contenido", Toast.LENGTH_SHORT).show()
                 }
             })

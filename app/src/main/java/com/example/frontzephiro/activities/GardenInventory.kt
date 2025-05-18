@@ -146,7 +146,7 @@ class GardenInventory : AppCompatActivity() {
 
         if (userId == null) {
             Log.e("GardenInventory", "USER_ID no encontrado en SharedPreferences")
-            Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -185,7 +185,7 @@ class GardenInventory : AppCompatActivity() {
 
         if (userId == null) {
             Log.e("GardenInventory", "USER_ID no encontrado en SharedPreferences")
-            Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show()
             return
         }
 

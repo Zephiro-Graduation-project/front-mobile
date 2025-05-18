@@ -84,7 +84,8 @@ class DemographicsActivity : AppCompatActivity() {
     private fun onSendClicked() {
         val userId = prefs.getString("USER_ID","") ?: ""
         if (userId.isBlank()) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            Log.e("DemographicsActivity", "No hay usuario autenticado")
+            //Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
             Log.e(TAG, "No hay USER_ID en prefs")
             return
         }
@@ -172,32 +173,29 @@ class DemographicsActivity : AppCompatActivity() {
                                                     .enqueue(object : Callback<Void> {
                                                         override fun onResponse(call: Call<Void>, rewardStreakResp: Response<Void>) {
                                                             if (rewardStreakResp.isSuccessful) {
-                                                                Toast.makeText(
-                                                                    this@DemographicsActivity,
-                                                                    "Recompensa de racha aplicada: $streak días",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
+                                                                Log.e("DemographicsActivity", "Recompensa de racha aplicada: $streak días")
+                                                                //Toast.makeText(this@DemographicsActivity,"Recompensa de racha aplicada: $streak días",Toast.LENGTH_SHORT).show()
                                                             } else {
-                                                                Toast.makeText(
-                                                                    this@DemographicsActivity,
-                                                                    "Error recompensa racha: ${rewardStreakResp.code()}",
-                                                                    Toast.LENGTH_SHORT
-                                                                ).show()
+                                                                Log.e("DemographicsActivity", "Error recompensa racha: ${rewardStreakResp.code()}")
+                                                                //Toast.makeText(this@DemographicsActivity,"Error recompensa racha: ${rewardStreakResp.code()}",Toast.LENGTH_SHORT).show()
                                                             }
                                                             goHome()
                                                         }
                                                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                                                            Toast.makeText(this@DemographicsActivity, "Fallo recompensa racha: ${t.message}", Toast.LENGTH_LONG).show()
+                                                            Log.e("DemographicsActivity", "Fallo recompensa racha: ${t.message}")
+                                                            //Toast.makeText(this@DemographicsActivity, "Fallo recompensa racha: ${t.message}", Toast.LENGTH_LONG).show()
                                                             goHome()
                                                         }
                                                     })
                                             } else {
-                                                Toast.makeText(this@DemographicsActivity, "Error al obtener racha: ${streakResp.code()}", Toast.LENGTH_SHORT).show()
+                                                Log.e("DemographicsActivity", "Error al obtener racha: ${streakResp.code()}")
+                                                //Toast.makeText(this@DemographicsActivity, "Error al obtener racha: ${streakResp.code()}", Toast.LENGTH_SHORT).show()
                                                 goHome()
                                             }
                                         }
                                         override fun onFailure(call: Call<Int>, t: Throwable) {
-                                            Toast.makeText(this@DemographicsActivity, "Fallo petición racha: ${t.message}", Toast.LENGTH_LONG).show()
+                                            Log.e("DemographicsActivity", "Fallo petición racha: ${t.message}")
+                                            //Toast.makeText(this@DemographicsActivity, "Fallo petición racha: ${t.message}", Toast.LENGTH_LONG).show()
                                             goHome()
                                         }
                                     })

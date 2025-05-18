@@ -3,6 +3,7 @@ package com.example.frontzephiro.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -78,7 +79,8 @@ class SpecificContentActivity : AppCompatActivity() {
 
         val contentId = intent.getStringExtra("CONTENT_ID")
         if (contentId.isNullOrBlank()) {
-            Toast.makeText(this, "Falta ID de contenido", Toast.LENGTH_SHORT).show()
+            Log.e("SpecificContentActivity", "Falta ID de contenido")
+            //Toast.makeText(this, "Falta ID de contenido", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -89,21 +91,14 @@ class SpecificContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<Content> {
                 override fun onResponse(call: Call<Content>, resp: Response<Content>) {
                     if (!resp.isSuccessful || resp.body() == null) {
-                        Toast.makeText(
-                            this@SpecificContentActivity,
-                            "Error ${resp.code()} al cargar artículo",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("SpecificContentActivity", "Error ${resp.code()} al cargar artículo")
+                        Toast.makeText(this@SpecificContentActivity,"Error ${resp.code()} al cargar artículo",Toast.LENGTH_SHORT).show()
                         return
                     }
                     populateContent(resp.body()!!)
                 }
                 override fun onFailure(call: Call<Content>, t: Throwable) {
-                    Toast.makeText(
-                        this@SpecificContentActivity,
-                        "Fallo de red: ${t.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(this@SpecificContentActivity,"Fallo de red: ${t.message}",Toast.LENGTH_LONG).show()
                 }
             })
     }
@@ -155,25 +150,16 @@ class SpecificContentActivity : AppCompatActivity() {
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
                     if (rewardResp.isSuccessful) {
-                        Toast.makeText(
-                            this@SpecificContentActivity,
-                            "Recompensa por contenido aplicada",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("SpecificContentActivity", "Recompensa por contenido aplicada, si no se ve reflejada en las monedas es porque ya habia visto un contenido antes ")
+                        //Toast.makeText(this@SpecificContentActivity,"Recompensa por contenido aplicada",Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(
-                            this@SpecificContentActivity,
-                            "Error recompensa contenido: ${rewardResp.code()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("SpecificContentActivity", "Error recompensa contenido: ${rewardResp.code()}")
+                        //Toast.makeText(this@SpecificContentActivity,"Error recompensa contenido: ${rewardResp.code()}",Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(
-                        this@SpecificContentActivity,
-                        "Fallo recompensa contenido: ${t.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.e("SpecificContentActivity", "Fallo recompensa contenido: ${t.message}")
+                    //Toast.makeText(this@SpecificContentActivity,"Fallo recompensa contenido: ${t.message}",Toast.LENGTH_LONG).show()
                 }
             })
     }
