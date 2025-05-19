@@ -154,7 +154,7 @@ class CreateEmergencyContactActivity : AppCompatActivity() {
                             Toast.makeText(this@CreateEmergencyContactActivity, "Contacto creado", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
-                            Toast.makeText(this@CreateEmergencyContactActivity, "Debes que agregar un correo valido", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@CreateEmergencyContactActivity, "Tienes que agregar un correo valido", Toast.LENGTH_LONG).show()
                         }
                     }
                     override fun onFailure(call: Call<ContactResponse>, t: Throwable) {

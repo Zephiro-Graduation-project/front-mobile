@@ -36,6 +36,8 @@ class GadActivity : AppCompatActivity() {
     private lateinit var questionnaireService: QuestionnaireApiService
     private lateinit var profilingService: ProfilingApiService
     private lateinit var gamificationService: GamificationApiService
+    private var isSending = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -72,6 +74,14 @@ class GadActivity : AppCompatActivity() {
 
         if (!readOnly) {
             binding.botonEnviar.setOnClickListener {
+                if (isSending) return@setOnClickListener
+                isSending = true
+
+                // 2) deshabilita el botón y cambia el texto
+                binding.botonEnviar.apply {
+                    isEnabled = false
+                    text = "Enviando..."
+                }
                 val prefs  = getSharedPreferences("AppPrefs", MODE_PRIVATE)
                 val userId = prefs.getString("USER_ID", "") ?: ""
                 if (userId.isBlank()) {

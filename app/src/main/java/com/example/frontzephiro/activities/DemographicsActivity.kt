@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.frontzephiro.R
 import com.example.frontzephiro.adapters.DemographicsAdapter
 import com.example.frontzephiro.api.ArtifactApiService
 import com.example.frontzephiro.api.GamificationApiService
@@ -37,6 +38,9 @@ class DemographicsActivity : AppCompatActivity() {
     private lateinit var profilingService: ProfilingApiService
     private lateinit var gamificationService: GamificationApiService
     private lateinit var prefs: SharedPreferences
+
+    // Flag para evitar doble envío
+    private var isSending = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,23 +86,44 @@ class DemographicsActivity : AppCompatActivity() {
     }
 
     private fun onSendClicked() {
+        // Evita doble click
+        if (isSending) return
+        isSending = true
+        binding.botonEnviar.apply {
+            isEnabled = false
+            text = "Enviando..."
+        }
+
         val userId = prefs.getString("USER_ID","") ?: ""
         if (userId.isBlank()) {
-            Log.e("DemographicsActivity", "No hay usuario autenticado")
-            //Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
-            Log.e(TAG, "No hay USER_ID en prefs")
+            Log.e(TAG, "No hay usuario autenticado")
+            isSending = false
+            binding.botonEnviar.apply {
+                isEnabled = true
+                text = "Enviar"
+            }
             return
         }
         val age = binding.etEdad.text.toString().trim()
         if (age.isEmpty()) {
             Toast.makeText(this, "Ingresa tu edad", Toast.LENGTH_SHORT).show()
             Log.w(TAG, "Edad vacía")
+            isSending = false
+            binding.botonEnviar.apply {
+                isEnabled = true
+                text = "Enviar"
+            }
             return
         }
         val rest = adapter.getResponses()
         if (rest.any { it.selectedAnswer.isBlank() }) {
             Toast.makeText(this, "Completa todas las preguntas", Toast.LENGTH_SHORT).show()
             Log.w(TAG, "Respuestas incompletas: $rest")
+            isSending = false
+            binding.botonEnviar.apply {
+                isEnabled = true
+                text = "Enviar"
+            }
             return
         }
 
@@ -132,11 +157,23 @@ class DemographicsActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(this@DemographicsActivity, "Error envío ${resp.code()}", Toast.LENGTH_SHORT).show()
                         Log.e(TAG, "Error DEMOG: ${resp.code()} – ${resp.errorBody()?.string()}")
+                        // Re-habilitar para reintentar
+                        isSending = false
+                        binding.botonEnviar.apply {
+                            isEnabled = true
+                            text = "Enviar"
+                        }
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     Toast.makeText(this@DemographicsActivity, "Fallo envío: ${t.message}", Toast.LENGTH_LONG).show()
                     Log.e(TAG, "Fallo red DEMOG", t)
+                    // Re-habilitar para reintentar
+                    isSending = false
+                    binding.botonEnviar.apply {
+                        isEnabled = true
+                        text = "Enviar"
+                    }
                 }
             })
     }
@@ -154,7 +191,7 @@ class DemographicsActivity : AppCompatActivity() {
                         Toast.makeText(this@DemographicsActivity, "Error creando perfil: ${resp.code()}", Toast.LENGTH_LONG).show()
                     }
 
-                    // Recompensas
+                    // Recompensas por encuesta y racha…
                     gamificationService.rewardSurvey(userId)
                         .enqueue(object : Callback<Void> {
                             override fun onResponse(call: Call<Void>, rewardResp: Response<Void>) {
@@ -172,46 +209,28 @@ class DemographicsActivity : AppCompatActivity() {
                                                 gamificationService.rewardStreak(userId, streak)
                                                     .enqueue(object : Callback<Void> {
                                                         override fun onResponse(call: Call<Void>, rewardStreakResp: Response<Void>) {
-                                                            if (rewardStreakResp.isSuccessful) {
-                                                                Log.e("DemographicsActivity", "Recompensa de racha aplicada: $streak días")
-                                                                //Toast.makeText(this@DemographicsActivity,"Recompensa de racha aplicada: $streak días",Toast.LENGTH_SHORT).show()
-                                                            } else {
-                                                                Log.e("DemographicsActivity", "Error recompensa racha: ${rewardStreakResp.code()}")
-                                                                //Toast.makeText(this@DemographicsActivity,"Error recompensa racha: ${rewardStreakResp.code()}",Toast.LENGTH_SHORT).show()
-                                                            }
+                                                            Log.e(TAG, "Recompensa de racha aplicada: $streak días")
                                                             goHome()
                                                         }
                                                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                                                            Log.e("DemographicsActivity", "Fallo recompensa racha: ${t.message}")
-                                                            //Toast.makeText(this@DemographicsActivity, "Fallo recompensa racha: ${t.message}", Toast.LENGTH_LONG).show()
+                                                            Log.e(TAG, "Fallo recompensa racha: ${t.message}")
                                                             goHome()
                                                         }
                                                     })
                                             } else {
-                                                Log.e("DemographicsActivity", "Error al obtener racha: ${streakResp.code()}")
-                                                //Toast.makeText(this@DemographicsActivity, "Error al obtener racha: ${streakResp.code()}", Toast.LENGTH_SHORT).show()
+                                                Log.e(TAG, "Error al obtener racha: ${streakResp.code()}")
                                                 goHome()
                                             }
                                         }
                                         override fun onFailure(call: Call<Int>, t: Throwable) {
-                                            Log.e("DemographicsActivity", "Fallo petición racha: ${t.message}")
-                                            //Toast.makeText(this@DemographicsActivity, "Fallo petición racha: ${t.message}", Toast.LENGTH_LONG).show()
+                                            Log.e(TAG, "Fallo petición racha: ${t.message}")
                                             goHome()
                                         }
                                     })
                             }
                             override fun onFailure(call: Call<Void>, t: Throwable) {
                                 Toast.makeText(this@DemographicsActivity, "Fallo recompensa encuesta: ${t.message}", Toast.LENGTH_LONG).show()
-                                // Intentar racha igual
-                                questionnaireService.getStreak(userId)
-                                    .enqueue(object : Callback<Int> {
-                                        override fun onResponse(call: Call<Int>, streakResp: Response<Int>) {
-                                            goHome()
-                                        }
-                                        override fun onFailure(call: Call<Int>, t: Throwable) {
-                                            goHome()
-                                        }
-                                    })
+                                goHome()
                             }
                         })
                 }

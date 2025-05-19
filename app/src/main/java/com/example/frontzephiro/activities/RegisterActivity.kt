@@ -26,6 +26,8 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private val calendar = Calendar.getInstance()
 
+    private var isSending = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
@@ -46,71 +48,72 @@ class RegisterActivity : AppCompatActivity() {
         binding.birthdatePicker.setOnClickListener { showDatePicker() }
 
         binding.botonIniciarSesion.setOnClickListener {
-            val name = binding.nameInput.text.toString().trim()
-            val email = binding.emailInput.text.toString().trim()
-            val password = binding.passwordInput.text.toString().trim()
+            if (isSending) return@setOnClickListener
+
+            val name          = binding.nameInput.text.toString().trim()
+            val email         = binding.emailInput.text.toString().trim()
+            val password      = binding.passwordInput.text.toString().trim()
+            val confirmPass   = binding.confirmPasswordInput.text.toString().trim()
             val birthdateText = binding.birthdateInput.text.toString().trim()
 
-            // 1. Campos vacíos
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || birthdateText.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() ||
+                confirmPass.isEmpty() || birthdateText.isEmpty()
+            ) {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            // 2. Validación de formato de email
+            if (password != confirmPass) {
+                binding.confirmPasswordInputLayout.error = "Las contraseñas no coinciden"
+                return@setOnClickListener
+            } else {
+                binding.confirmPasswordInputLayout.error = null
+            }
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                // Muestra el error en el TextInputLayout asociado
                 binding.emailInputLayout.error = "Ingresa un correo electrónico válido"
                 return@setOnClickListener
             } else {
-                // Limpia el error si antes había uno
                 binding.emailInputLayout.error = null
             }
 
-            // 3. Parseo de fecha y registro
+            isSending = true
+            binding.botonIniciarSesion.apply {
+                isEnabled = false
+                text = "Registrando..."
+            }
+
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val birthdate = dateFormat.parse(birthdateText)!!
+            val birthdate  = dateFormat.parse(birthdateText)!!
             registerUser(name, email, password, birthdate)
         }
     }
 
     private fun showDatePicker() {
-        // Valores iniciales del picker
         val year  = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day   = calendar.get(Calendar.DAY_OF_MONTH)
-
-        // Crea el diálogo
-        val datePickerDialog = DatePickerDialog(
+        val picker = DatePickerDialog(
             this,
             { _, y, m, d ->
                 calendar.set(y, m, d)
                 val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 binding.birthdateInput.setText(df.format(calendar.time))
             },
-            year,
-            month,
-            day
+            year, month, day
         )
-
-        // Establece la fecha máxima (hoy) para que no se puedan elegir fechas futuras
-        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-
-        // Muestra el diálogo
-        datePickerDialog.show()
+        picker.datePicker.maxDate = System.currentTimeMillis()
+        picker.show()
     }
 
     private fun registerUser(name: String, email: String, password: String, birthdate: Date) {
         val apiService = RetrofitClient.getClient()
             .create(UserApiService::class.java)
-
         val encryptedPassword = EncryptionUtils.encryptAES(password, "1234567890123456")
         val user = UserEntity(name, email, encryptedPassword, birthdate)
 
         apiService.register(user).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (!response.isSuccessful) {
-                    showFailure()
+                    showFailureAndReset()
                     return
                 }
 
@@ -122,10 +125,9 @@ class RegisterActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<LoginResponse>, resp: Response<LoginResponse>) {
                             val lr = resp.body()
                             if (!resp.isSuccessful || lr == null) {
-                                showFailure()
+                                showFailureAndReset()
                                 return
                             }
-
                             saveUserData(lr.token, lr.name, lr.id, email)
 
                             RetrofitClient
@@ -141,22 +143,20 @@ class RegisterActivity : AppCompatActivity() {
                                             goHome()
                                         }
                                     }
-
                                     override fun onFailure(call: Call<Void>, t: Throwable) {
                                         showFailure()
                                         goHome()
                                     }
                                 })
                         }
-
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            showFailure()
+                            showFailureAndReset()
                         }
                     })
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                showFailure()
+                showFailureAndReset()
             }
         })
     }
@@ -175,7 +175,6 @@ class RegisterActivity : AppCompatActivity() {
                     }
                     goHome()
                 }
-
                 override fun onFailure(call: Call<Void>, t2: Throwable) {
                     showFailure()
                     goHome()
@@ -191,21 +190,30 @@ class RegisterActivity : AppCompatActivity() {
             putString("USER_NAME", name)
             putString("USER_ID", id)
             putString("email", email)
-            // Guarda la fecha de registro:
             putString("REGISTRATION_DATE", today)
             apply()
         }
     }
 
-    private fun goHome() {
-        startActivity(Intent(this,HomeActivity::class.java))
-        finish()
-    }
-    // Solo estos dos Toast:
     private fun showSuccess() {
         Toast.makeText(this, "Cuenta creada correctamente", Toast.LENGTH_SHORT).show()
     }
+
     private fun showFailure() {
         Toast.makeText(this, "Error al crear la cuenta", Toast.LENGTH_LONG).show()
+    }
+
+    private fun showFailureAndReset() {
+        showFailure()
+        isSending = false
+        binding.botonIniciarSesion.apply {
+            isEnabled = true
+            text = getString(R.string.registrarse)
+        }
+    }
+
+    private fun goHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }
