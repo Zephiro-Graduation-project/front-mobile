@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -35,10 +36,27 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        compose = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+
 }
 
 dependencies {
+
+    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.github.tehras:charts:0.2.2-alpha")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -64,4 +82,23 @@ dependencies {
     //Implementacion para poder leer token JWT
     implementation ("com.auth0.android:jwtdecode:2.0.1")
     implementation("com.github.bumptech.glide:glide:4.15.1")
+
+    implementation("com.github.prolificinteractive:material-calendarview:1.4.3")
+
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("androidx.core:core:1.10.1")
+
+    // Jetpack Compose
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
+    //para que abra el google chrome
+    implementation(libs.androidx.browser)
+
+// Solo para desarrollo
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

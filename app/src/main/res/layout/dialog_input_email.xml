@@ -14,5 +14,6 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:background="?android:attr/editTextBackground"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:fontFamily="@font/normal"/>
 </com.google.android.material.textfield.TextInputLayout>

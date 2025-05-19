@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pregunta x "
+                android:fontFamily="@font/titulos"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 />
             <TextView
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="¿Porque ......? Seleccione una de las opciones"
+                android:fontFamily="@font/normal"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?android:attr/textColorSecondary"/>
         </LinearLayout>
@@ -45,26 +47,30 @@
                 android:id="@+id/checkbox_child_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Respuesta 1"/>
+                android:text="Respuesta 1"
+                android:fontFamily="@font/normal"/>
 
             <CheckBox
                 android:id="@+id/checkbox_child_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Respuesta 2"/>
+                android:text="Respuesta 2"
+                android:fontFamily="@font/normal"/>
 
             <CheckBox
                 android:id="@+id/checkbox_child_3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Respuesta 3"/>
+                android:text="Respuesta 3"
+                android:fontFamily="@font/normal"/>
 
 
             <CheckBox
                 android:id="@+id/checkbox_child_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Respuesta 4"/>
+                android:text="Respuesta 4"
+                android:fontFamily="@font/normal"/>
 
         </LinearLayout>
     </LinearLayout>

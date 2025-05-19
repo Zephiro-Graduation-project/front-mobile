@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app=  "http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Texto de la pregunta -->
+        <TextView
+            android:id="@+id/preguntaGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Aquí va la pregunta?"
+            android:fontFamily="@font/titulos"
+            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"/>
+
+        <!-- Texto secundario (opcional) -->
+        <TextView
+            android:id="@+id/textoGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text=""
+            android:fontFamily="@font/normal"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <!-- Exposed dropdown menu -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuLayout"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/etDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Selecciona una opción"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

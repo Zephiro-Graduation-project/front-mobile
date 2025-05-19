@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.example.frontzephiro.R
+import com.example.frontzephiro.api.ProfilingApiService
 import com.example.frontzephiro.api.UserApiService
 import com.example.frontzephiro.models.MailDTO
 import com.example.frontzephiro.network.RetrofitClient
@@ -32,6 +33,24 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        val callAnimation = findViewById<LottieAnimationView>(R.id.call)
+        val alertAnimation = findViewById<LottieAnimationView>(R.id.alert)
+        callAnimation.repeatCount = 0
+        callAnimation.playAnimation()
+
+        alertAnimation.repeatCount = 0
+        alertAnimation.playAnimation()
+
+        callAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyContactsActivity::class.java)
+            startActivity(intent)
+        }
+
+        alertAnimation.setOnClickListener {
+            val intent = Intent(this, EmergencyNumbersActivity::class.java)
+            startActivity(intent)
+        }
+
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
@@ -44,6 +63,12 @@ class ProfileActivity : AppCompatActivity() {
 
         setupCardInteractions()
         setupBottomNavigation()
+
+        val exit = findViewById<ImageView>(R.id.logout)
+        exit.setOnClickListener {
+            logout()
+        }
+
     }
 
     private fun setupCardInteractions() {
@@ -57,7 +82,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         card2.setOnClickListener {
-            // startActivity(Intent(this, MetricsActivity::class.java))
+            startActivity(Intent(this, GraficaActivity::class.java))
         }
 
         card3.setOnClickListener {
@@ -86,19 +111,26 @@ class ProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
+
                 R.id.menuSeguimiento -> {
-                    startActivity(Intent(this, SeguimientoActivity::class.java))
+                    startActivity(Intent(this, TrackerMain::class.java))
                     true
                 }
+
                 R.id.menuJardin -> {
                     startActivity(Intent(this, GardenMain::class.java))
                     true
                 }
+
                 R.id.menuContenido -> {
                     startActivity(Intent(this, ContentActivity::class.java))
                     true
                 }
-                R.id.menuPerfil -> true
+                /*
+                R.id.menuPerfil -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                } */
                 else -> false
             }
         }
@@ -134,23 +166,81 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun deleteAccount(userId: String, email: String) {
-        val apiService = RetrofitClient.getClient().create(UserApiService::class.java)
+        val userService = RetrofitClient
+            .getClient()
+            .create(UserApiService::class.java)
 
-        apiService.deleteAccount(userId, MailDTO(email)).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "Cuenta eliminada exitosamente", Toast.LENGTH_LONG).show()
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(applicationContext, "Error al eliminar la cuenta", Toast.LENGTH_LONG).show()
+        val profilingService = RetrofitClient
+            .getProfileClient()     // apunta a http://10.0.2.2:5032/
+            .create(ProfilingApiService::class.java)
+
+        userService.deleteAccount(userId, MailDTO(email))
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, resp: Response<ResponseBody>) {
+                    if (resp.isSuccessful) {
+                        profilingService.deleteProfile(userId, "Mongo")
+                            .enqueue(object : Callback<Void> {
+                                override fun onResponse(call: Call<Void>, resp: Response<Void>) {
+                                    if (resp.isSuccessful) {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Cuenta y perfil eliminados",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Cuenta eliminada pero error borrando perfil: ${resp.code()}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    goToLogin()
+                                }
+                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Error de red al borrar perfil",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    goToLogin()
+                                }
+                            })
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Error al eliminar la cuenta: ${resp.code()}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(applicationContext, "Error de conexión", Toast.LENGTH_LONG).show()
-            }
-        })
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(
+                        applicationContext,
+                        "Error de conexión al eliminar cuenta",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+    }
+
+    private fun goToLogin() {
+        sharedPreferences.edit().clear().apply()
+        startActivity(Intent(this, LoginActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        finish()
+    }
+
+
+    private fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.remove("USER_ID")
+        editor.remove("USER_NAME")
+        editor.remove("TOKEN")
+        editor.apply()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

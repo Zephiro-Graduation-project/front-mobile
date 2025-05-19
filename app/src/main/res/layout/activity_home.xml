@@ -6,62 +6,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/logoHome"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/logozephiro_cuadrado"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <ImageView
-        android:id="@+id/nombreApp"
-        android:layout_width="74dp"
-        android:layout_height="24dp"
-        android:src="@drawable/zephiro_letra"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/logoHome"/>
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoHome"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/logozephiro_cuadrado"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/call"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:lottie_rawRes="@raw/call"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/alert"/>
+        <!-- Nombre App -->
+        <ImageView
+            android:id="@+id/nombreApp"
+            android:layout_width="74dp"
+            android:layout_height="24dp"
+            android:src="@drawable/zephiro_letra"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toEndOf="@id/logoHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/alert"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:lottie_rawRes="@raw/alert"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/call"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:lottie_rawRes="@raw/call"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/alert"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/alert"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:lottie_rawRes="@raw/alert"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardLottiHome"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         app:cardCornerRadius="90dp"
         app:cardElevation="4dp"
         android:layout_marginTop="10dp"
         android:paddingBottom="0dp"
         app:cardBackgroundColor="@color/moradoTesis"
-        app:layout_constraintTop_toBottomOf="@id/logoHome"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -87,221 +103,257 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- CardView de Estado actual -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardEstadoAct"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_margin="16dp"
-        android:background="#FFF8FC"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_cards"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/namePersona"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- Un LinearLayout vertical para apilar los cards -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
 
-            <TextView
-                android:id="@+id/tvTitleC1"
-                android:layout_width="wrap_content"
+            <!-- CardView de Estado actual -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardEstadoAct"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado actual:"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF8FC"
+                app:layout_constraintTop_toBottomOf="@id/namePersona"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/tvDescrpC1"
-                android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleC1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado actual:"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:fontFamily="@font/titulos"/>
+
+                    <TextView
+                        android:id="@+id/tvDescrpC1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ultima emoción registrada:____"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvTitleC1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:fontFamily="@font/normal"/>
+
+                    <ImageView
+                        android:id="@+id/ivCard1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/logo_persona"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="Icono de moneda"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView de las monedas -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMonedas"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ultima emoción registrada:____"
-                android:textSize="14sp"
-                android:textColor="#000000"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF8FC"
+                app:layout_constraintTop_toBottomOf="@id/cardEstadoAct"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitleC1"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageView
-                android:id="@+id/ivCard1"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/logo_persona"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:contentDescription="Icono de moneda"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tus monedas:"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:fontFamily="@font/titulos"/>
 
-    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/tvCoins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="¡Tienes ### monedas!"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:fontFamily="@font/normal"/>
 
-    <!-- CardView de las monedas -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardMonedas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_margin="16dp"
-        android:background="#FFF8FC"
-        app:layout_constraintTop_toBottomOf="@id/cardEstadoAct"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+                    <ImageView
+                        android:id="@+id/ivCoin"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/logo_moneda"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="Icono de moneda"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView de Registro Diario -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRegDiario"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tus monedas:"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF8FC"
+                app:layout_constraintTop_toBottomOf="@id/cardMonedas"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/tvCoins"
-                android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleC4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registro Diario:"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:fontFamily="@font/titulos"/>
+
+                    <TextView
+                        android:id="@+id/tvDescrpC4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Si / No has hecho tu registro diario"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvTitleC4"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:fontFamily="@font/normal"/>
+
+                    <ImageView
+                        android:id="@+id/ivCard4"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/logo_registro_diario"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="Icono de moneda"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView de Racha actual -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRachaAct"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="¡Tienes ### monedas!"
-                android:textSize="14sp"
-                android:textColor="#000000"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF8FC"
+                app:layout_constraintTop_toBottomOf="@id/cardRegDiario"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageView
-                android:id="@+id/ivCoin"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/logo_moneda"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:contentDescription="Icono de moneda"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tvTitleC5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Racha actual:"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:fontFamily="@font/titulos"/>
 
-    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/tvDescrpC5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="## Dias en racha"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvTitleC5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:fontFamily="@font/normal"/>
 
-    <!-- CardView de Contenido recomendado -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardContRecom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_margin="16dp"
-        android:background="#FFF8FC"
-        app:layout_constraintTop_toBottomOf="@id/cardMonedas"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+                    <ImageView
+                        android:id="@+id/ivCard5"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/streak"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="Icono de moneda"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tvTitleC3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Contenido recomendado:"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+            </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/tvDescrpC3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Titulo Ej ¿Qué es ansiedad / estrés?"
-                android:textSize="14sp"
-                android:textColor="#000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitleC3"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <ImageView
-                android:id="@+id/ivCard3"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/logo_multimedia"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:contentDescription="Icono de moneda"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- CardView de Registro Diario -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardRegDiario"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_margin="16dp"
-        android:background="#FFF8FC"
-        app:layout_constraintTop_toBottomOf="@id/cardContRecom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tvTitleC4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Registro Diario:"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <TextView
-                android:id="@+id/tvDescrpC4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Si / No has hecho tu registro diario"
-                android:textSize="14sp"
-                android:textColor="#000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitleC4"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <ImageView
-                android:id="@+id/ivCard4"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/logo_registro_diario"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:contentDescription="Icono de moneda"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

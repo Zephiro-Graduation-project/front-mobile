@@ -37,6 +37,7 @@
                 android:text="5$ de recompensa"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:fontFamily="@font/titulos"
                 android:layout_marginStart="4dp"/>
         </LinearLayout>
 
@@ -46,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10 días de racha"
+            android:fontFamily="@font/titulos"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="8dp"/>
@@ -57,6 +59,7 @@
             android:layout_height="wrap_content"
             android:text="Para conseguir la recompensa se debe realizar el registro diario 10 días consecutivos, ¡Tú puedes!"
             android:textSize="14sp"
+            android:fontFamily="@font/normal"
             android:textColor="#666666"
             android:layout_marginTop="8dp"/>
     </LinearLayout>

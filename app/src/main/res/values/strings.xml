@@ -33,7 +33,7 @@
 
     <!-- ContentFragment -->
     <string name="ejemplo">Contenido</string>
-    <string name="nombreCategoria">Nombre categoria</string>
+    <string name="nombreCategoria">Contenido recomendado</string>
     <string name="titulo">Titulo</string>
     <string name="autor">Autor</string>
     <!-- Fin ContentFragment -->
@@ -41,6 +41,7 @@
     <!-- Specific content -->
     <string name="nombreArticulo">Nombre del articulo</string>
     <string name="Lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor </string>
+    <string name="VolverEspecifico">Contenidos</string>
     <string name="Visto">Visto</string>
     <string name="Enlace">Ir</string>
     <!-- Fin Specific content -->
@@ -58,6 +59,9 @@
     <string name="telefonoContacto">Teléfono del contacto</string>
     <string name="correoContacto">Correo del contacto</string>
     <string name="botonCrearContacto">Crear contacto</string>
+    <string name="VolverContactosEmergencia">Contactos de emergencia</string>
+    <string name="botonActualizarContacto">Actualizar contacto</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -103,30 +107,42 @@
     <!-- Fin CreateEmergencyContactFragment -->
 
     <!-- EmergencyNumbersFragment -->
-    <string name="tituloColombia">Colombia</string>
-    <string name="numeroColombia">32011010101</string>
-    <string name="lineaNacional">Linea a nivel nacional</string>
-    <string name="numeroNacional">123</string>
-    <string name="ayudaLinea">Ayuda en linea</string>
-    <string name="url">google.com</string>
-    <string name="avisoImportante">No tenemos afiliación con estos recursos, pero los compartimos como opciones disponibles para quienes requieran apoyo psicológico.</string>
+    <string name="tituloEmergencia">Números de emergencia</string>
+    <string name="numBogota">Línea 106 Bogotá</string>
+    <string name="infoBogota">Apoyo emocional 24/7 para residentes en Bogotá.</string>
+    <string name="numeroBogota">📞 601 106</string>
+    <string name="numNacional">Línea Nacional Salud Mental</string>
+    <string name="infoNacional">Línea gratuita del Ministerio de Salud.</string>
+    <string name="numeroNacional">📞 01 8000 42 47 42</string>
+    <string name="numJaveriana">Bienestar Psicológico Javeriana</string>
+    <string name="infoJaveriana">Orientación psicológica para estudiantes Javerianos.</string>
+    <string name="numeroJaveriana">📞 601 320 83 20 Ext. 2215 – 2235 – 2275</string>
+    <string name="avisoImportante">⚠️ Zephiro no tiene ninguna relación con estas organizaciones. Esta información se proporciona únicamente con fines informativos.</string>
     <!-- Fin EmergencyNumbersFragment -->
 
     <!-- SurveyLargeFragment -->
-    <string name="tituloEncuesta">Titulo - Encuesta larga</string>
+    <string name="tituloEncuesta">Encuesta diurna</string>
+    <string name="tituloEncuestaPm">Encuesta nocturna</string>
+    <string name="tituloEncuestaPSS">Encuesta semanal</string>
+    <string name="tituloEncuestaGAD">Encuesta de estres</string>
     <!-- Fin SurveyLargeFragment -->
 
     <!-- SurveySmallFragment y SurveySmallPm -->
     <string name="estres">Estres</string>
     <string name="nivelEstres">Desliza para indicar tu nivel de estrés al empezar el dia</string>
     <string name="ansiedad">Ansiedad</string>
-    <string name="nivelAnsiedad">Desliza para indicar tu nivel de ansiedad al empezar el dia</string>
+    <string name="nivelAnsiedad">Desliza para indicar tu estado</string>
     <string name="sueno">Sueño</string>
     <string name="nivelSueno">Desliza para indicar cuantas horas dormiste la noche anterior</string>
     <string name="alimentacion">Alimentación</string>
     <string name="nivelAlimentacion">Escribe que comiste hoy durante el dia</string>
     <string name="ejercicio">Ejercicio</string>
     <string name="nivelEjercicio">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelControl">Activa para indicar que el control que tuviste hoy</string>
+    <string name="nivelCalma">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelPensamientos">Activa para indicar que hoy hiciste ejercicio</string>
+    <string name="nivelActividadFisica">Activa para indicar que hoy hiciste ejercicio</string>
+
     <string name="desayuno">Desayuno</string>
     <string name="almuerzo">Almuerzo</string>
     <string name="cena">Cena</string>
@@ -137,5 +153,25 @@
     <string name="volver">Volver</string>
     <string name="tituloEncuestaCorta">Titulo - Encuesta corta am</string>
     <string name="tituloEncuestaCortaPm">Titulo - Encuesta corta pm</string>
+    <!-- Fin SurveySmall -->
+  
+    <!-- TrackerMainFragment -->
+    <string name="tituloTracker">Registros diarios a través del tiempo</string>
+    <!-- Fin TrackerMainFragment -->
+    
+    <!-- GardenScreens -->
+    <string name="VolverJardin">Jardin</string>
 
+    <!-- GardenInventoryFragment -->
+    <string name="tituloALmacenPlantas">Tus plantas guardadas</string>
+    <string name="tituloAlmacenFondos">Tus fondos</string>
+    <!-- Fin GardenInventoryFragment -->
+
+    <!-- GardenStoreFragment -->
+    <string name="tituloTiendaPlantas">Plantas para personalizar tu jardin</string>
+    <string name="tituloTIendaFondos">Fondos para ambientar tu jardin</string>
+    <!-- Fin GardenInventoryFragment -->
+
+    <!-- Grafica -->
+    <string name="tituloGrafica">Graficas a tener en cuenta</string>
 </resources>

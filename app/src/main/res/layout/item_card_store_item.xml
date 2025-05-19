@@ -22,19 +22,18 @@
             android:orientation="horizontal"
             android:gravity="center_horizontal">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lottie_coin"
+            <ImageView
+                android:id="@+id/img_coin"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:lottie_rawRes="@raw/coin"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"/>
+                android:src="@drawable/logo_moneda"/>
 
             <TextView
                 android:id="@+id/txt_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20$"
+                android:fontFamily="@font/titulos"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginStart="4dp"/>
@@ -55,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Planta A"
+            android:fontFamily="@font/titulos"
             android:textSize="14sp"
             android:layout_marginTop="8dp"/>
     </LinearLayout>

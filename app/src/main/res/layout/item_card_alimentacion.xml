@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="@string/alimentacion"
+            android:fontFamily="@font/titulos"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             />
         <TextView
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/nivelAlimentacion"
+            android:fontFamily="@font/normal"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary"/>
 
@@ -42,7 +44,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/normal"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,7 +59,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/normal"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -70,7 +74,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/normal"/>
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

@@ -3,26 +3,26 @@
     <item
         android:id="@+id/menuInicio"
         android:enabled="true"
-        android:icon="@drawable/star"
+        android:icon="@drawable/home"
         android:title="@string/opcion1"/>
     <item
         android:id="@+id/menuSeguimiento"
         android:enabled="true"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/tracker"
         android:title="@string/opcion2"/>
     <item
         android:id="@+id/menuJardin"
         android:enabled="true"
-        android:icon="@drawable/sun"
+        android:icon="@drawable/garden"
         android:title="@string/opcion3"/>
     <item
         android:id="@+id/menuContenido"
         android:enabled="true"
-        android:icon="@drawable/image"
+        android:icon="@drawable/content"
         android:title="@string/opcion4"/>
     <item
         android:id="@+id/menuPerfil"
         android:enabled="true"
-        android:icon="@drawable/user"
+        android:icon="@drawable/profile"
         android:title="@string/opcion5"/>
 </menu>
