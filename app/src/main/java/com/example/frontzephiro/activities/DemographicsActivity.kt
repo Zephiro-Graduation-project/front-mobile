@@ -141,7 +141,7 @@ class DemographicsActivity : AppCompatActivity() {
             userId         = userId,
             surveyId       = "680513147959660978ff6e8f",
             surveyName     = "Cuestionario Sociodemográfico",
-            type           = "Demographics",
+            type           = "Sociodemographic",
             completionDate = date,
             responses      = responses
         )
